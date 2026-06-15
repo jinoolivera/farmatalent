@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="es-PE"><head>
+<meta charset="utf-8">
+<title>FarmaTalent · Mi perfil</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#F8FAF8;color:#111827;font-family:var(--ft-font-sans);min-height:100vh;padding-bottom:64px}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+
+  /* Nav */
+  .nav{background:#fff;border-bottom:1px solid #E5E7EB;position:sticky;top:0;z-index:50}
+  .nav-in{max-width:1180px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:24px}
+  .nav-search{flex:1;max-width:340px;display:flex;align-items:center;gap:8px;padding:9px 14px;background:#F3F4F6;border-radius:999px}
+  .nav-search input{border:0;outline:0;background:transparent;flex:1;font-size:13px;font-family:inherit}
+  .nav-tabs{display:flex;gap:4px;margin-left:auto}
+  .nav-tab{padding:8px 14px;border-radius:999px;font-size:13px;color:#6B7280;font-weight:500}
+  .nav-tab:hover{background:#F3F4F6;color:#111827}
+  .nav-tab.active{background:#111827;color:#fff}
+  .nav-ava{width:36px;height:36px;border-radius:999px;background:linear-gradient(135deg,#22C55E,#15803D);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px}
+
+  /* Layout */
+  .page{max-width:1180px;margin:24px auto 0;padding:0 24px;display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:flex-start}
+
+  /* Profile header */
+  .pcard{background:#fff;border:1px solid #E5E7EB;border-radius:18px;overflow:hidden}
+  .cover{height:180px;background:linear-gradient(135deg,#0F2A14 0%,#15803D 60%,#22C55E 100%);position:relative}
+  .cover::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 80% at 80% 20%,rgba(134,239,172,.4),transparent 60%),radial-gradient(50% 70% at 10% 90%,rgba(254,243,199,.25),transparent 60%)}
+  .head-body{padding:0 28px 28px;position:relative}
+  .ava-big{width:120px;height:120px;border-radius:999px;border:4px solid #fff;background:linear-gradient(135deg,#22C55E,#15803D);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:42px;letter-spacing:-0.02em;margin-top:-60px}
+  .head-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-top:16px}
+  .h1-name{display:flex;align-items:center;gap:10px}
+  .h1-name h1{font-weight:600;font-size:30px;letter-spacing:-0.025em;margin:0;line-height:1.1}
+  .verified{width:24px;height:24px;border-radius:999px;background:#16A34A;color:#fff;display:flex;align-items:center;justify-content:center}
+  .h1-role{font-size:17px;color:#111827;margin-top:4px}
+  .h1-role em{font-family:var(--ft-font-display);font-style:italic;color:#16A34A;font-weight:400}
+  .h1-meta{display:flex;gap:16px;margin-top:8px;font-size:13px;color:#6B7280;flex-wrap:wrap}
+  .h1-meta span{display:inline-flex;align-items:center;gap:5px}
+  .h-actions{display:flex;gap:8px}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;border:0}
+  .btn-pri{background:#111827;color:#fff}
+  .btn-pri:hover{background:#1F2937}
+  .btn-out{background:#fff;color:#111827;border:1px solid #D1D5DB}
+  .btn-out:hover{border-color:#111827}
+  .btn-icon{padding:9px}
+
+  /* Hero stats */
+  .pstats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:24px;border:1px solid #E5E7EB;border-radius:12px;overflow:hidden}
+  .pstat{padding:18px;border-right:1px solid #E5E7EB}
+  .pstat:last-child{border-right:0}
+  .pstat .v{font-size:26px;font-weight:600;letter-spacing:-0.025em;line-height:1}
+  .pstat .v em{font-family:var(--ft-font-display);font-style:italic;font-weight:400;color:#16A34A}
+  .pstat .l{font-size:12px;color:#6B7280;margin-top:6px}
+
+  /* Section */
+  .sect{background:#fff;border:1px solid #E5E7EB;border-radius:16px;padding:24px 28px;margin-top:16px}
+  .sect-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .sect-head h3{font-size:18px;font-weight:600;letter-spacing:-0.015em;margin:0}
+  .sect-head h3 em{font-family:var(--ft-font-display);font-style:italic;color:#16A34A;font-weight:400}
+  .sect-head a{font-size:12px;color:#15803D;font-weight:600}
+
+  .about{font-size:15px;line-height:1.6;color:#111827}
+
+  /* Scores */
+  .scores{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+  .score-tile{background:#F8FAF8;border:1px solid #E5E7EB;border-radius:12px;padding:16px;text-align:center}
+  .ring{position:relative;width:64px;height:64px;margin:0 auto 10px}
+  .ring svg{transform:rotate(-90deg)}
+  .ring-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring-num b{font-size:18px;font-weight:600;letter-spacing:-0.02em;line-height:1}
+  .ring-num span{font-size:9px;color:#9CA3AF;margin-top:1px}
+  .score-lab{font-size:12px;font-weight:500}
+  .score-sub{font-size:11px;color:#6B7280;margin-top:2px}
+
+  /* Badges */
+  .badges-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .badge-card{background:#F8FAF8;border:1px solid #E5E7EB;border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px}
+  .b-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .b-ico.success{background:#DCFCE7;color:#15803D}
+  .b-ico.info{background:#DBEAFE;color:#1E40AF}
+  .b-ico.coral{background:#FEE2E2;color:#B91C1C}
+  .b-ico.warning{background:#FEF3C7;color:#92400E}
+  .b-tx b{font-size:13px;font-weight:600;display:block}
+  .b-tx span{font-size:11px;color:#6B7280}
+
+  /* Timeline */
+  .timeline{display:flex;flex-direction:column}
+  .t-item{display:flex;gap:16px;padding:18px 0;border-bottom:1px solid #F3F4F6}
+  .t-item:last-child{border:0;padding-bottom:0}
+  .t-item:first-child{padding-top:0}
+  .t-logo{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
+  .t-logo.g1{background:linear-gradient(135deg,#15803D,#22C55E)}
+  .t-logo.g2{background:linear-gradient(135deg,#1E40AF,#3B82F6)}
+  .t-logo.g3{background:linear-gradient(135deg,#B45309,#F59E0B)}
+  .t-body{flex:1}
+  .t-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .t-head h5{font-size:15px;font-weight:600;margin:0;letter-spacing:-0.01em}
+  .t-head .when{font-size:12px;color:#6B7280;white-space:nowrap}
+  .t-org{font-size:13px;color:#6B7280;margin-top:2px}
+  .t-desc{font-size:13px;color:#111827;margin-top:8px;line-height:1.55}
+  .t-tags{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600}
+  .badge-success{background:#DCFCE7;color:#15803D}
+  .badge-info{background:#DBEAFE;color:#1E40AF}
+  .badge-neutral{background:#F3F4F6;color:#374151}
+  .badge-warn{background:#FEF3C7;color:#92400E}
+
+  /* Reviews */
+  .rev{padding:18px 0;border-bottom:1px solid #F3F4F6}
+  .rev:last-child{border:0;padding-bottom:0}
+  .rev:first-child{padding-top:0}
+  .rev-head{display:flex;gap:12px;align-items:center}
+  .rev-ava{width:36px;height:36px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;flex-shrink:0}
+  .rev-meta{flex:1}
+  .rev-meta b{font-size:13px;font-weight:600;display:block}
+  .rev-meta span{font-size:11px;color:#6B7280}
+  .rev-quote{font-family:var(--ft-font-display);font-size:17px;line-height:1.5;color:#111827;margin:12px 0 0;font-style:italic}
+  .rev-tags{display:flex;gap:6px;margin-top:12px}
+
+  /* Side pane */
+  .side-pane{background:#fff;border:1px solid #E5E7EB;border-radius:16px;padding:22px}
+  .side-pane + .side-pane{margin-top:14px}
+  .side-pane h4{font-size:14px;font-weight:600;margin:0 0 14px;letter-spacing:-0.01em}
+
+  /* Level pane (Uber-style — replaces tarifa pane) */
+  .level-pane{background:linear-gradient(135deg,#0F2A14 0%,#15803D 100%);color:#fff;border:0;position:relative;overflow:hidden}
+  .level-pane::before{content:"";position:absolute;top:-100px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(255,255,255,.12),transparent 60%)}
+  .level-pane > *{position:relative;z-index:1}
+  .level-pane h4{color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.12em;font-size:11px}
+  .lvl-name{font-family:var(--ft-font-display);font-style:italic;font-weight:400;font-size:36px;line-height:1;letter-spacing:-0.02em;margin:6px 0 8px}
+  .lvl-sub{font-size:12px;color:rgba(255,255,255,.78);line-height:1.5}
+  .lvl-progress{margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.18)}
+  .lvl-progress-top{display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px;color:rgba(255,255,255,.7)}
+  .lvl-progress-top b{color:#fff;font-weight:600}
+  .lvl-bar{height:6px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden}
+  .lvl-bar > div{height:100%;background:linear-gradient(90deg,#86EFAC,#22C55E);width:74%}
+  .lvl-bonus{margin-top:12px;font-size:11px;color:rgba(255,255,255,.7);line-height:1.5}
+  .lvl-bonus b{color:#86EFAC;font-weight:700}
+  .lvl-formula{margin-top:14px;padding:10px;background:rgba(255,255,255,.08);border-radius:8px;font-size:11px;color:rgba(255,255,255,.85);line-height:1.5}
+
+  /* Av */
+  .av-row{display:flex;align-items:center;gap:10px}
+  .av-dot{width:10px;height:10px;border-radius:999px;background:#16A34A;box-shadow:0 0 0 4px rgba(22,163,74,.18)}
+  .av-text{font-size:13px;font-weight:600}
+  .av-sub{font-size:12px;color:#6B7280;margin-top:8px;line-height:1.5}
+  .av-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:14px 0 0}
+  .av-cell{aspect-ratio:1;border-radius:4px;background:#F3F4F6}
+  .av-cell.l1{background:#DCFCE7}
+  .av-cell.l2{background:#86EFAC}
+  .av-cell.l3{background:#22C55E}
+  .av-cell.l4{background:#15803D}
+  .av-cell.off{background:#F3F4F6;opacity:.6}
+  .av-legend{display:flex;align-items:center;gap:6px;font-size:11px;color:#6B7280;margin-top:10px}
+  .av-legend .lg-dot{width:10px;height:10px;border-radius:3px}
+
+  /* Certifications */
+  .cert-row{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #F3F4F6}
+  .cert-row:last-child{border:0;padding-bottom:0}
+  .cert-row:first-child{padding-top:0}
+  .cert-ico{width:32px;height:32px;border-radius:8px;background:#DCFCE7;color:#15803D;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .cert-tx b{font-size:12px;font-weight:600;display:block}
+  .cert-tx span{font-size:11px;color:#6B7280}
+
+  /* Languages */
+  .lang-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F3F4F6;font-size:13px}
+  .lang-row:last-child{border:0}
+  .lang-row b{font-weight:500}
+  .lang-row span{font-size:11px;color:#6B7280}
+</style>
+</head><body>
+
+<nav class="nav">
+  <div class="nav-in">
+    <img src="../../assets/logo.svg" alt="FarmaTalent" height="28"/>
+    <div class="nav-search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input placeholder="Buscar profesionales, boticas…"/>
+    </div>
+    <div class="nav-tabs">
+      <a class="nav-tab" href="../busqueda/index.html">Buscar turnos</a>
+      <a class="nav-tab" href="../dashboard/index.html">Dashboard</a>
+      <a class="nav-tab active">Mi perfil</a>
+      <a class="nav-tab">Mensajes</a>
+    </div>
+    <div class="nav-ava">MR</div>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- MAIN -->
+  <div>
+    <!-- Header -->
+    <div class="pcard">
+      <div class="cover"></div>
+      <div class="head-body">
+        <div class="ava-big">MR</div>
+        <div class="head-row">
+          <div>
+            <div class="h1-name">
+              <h1>María Rodríguez</h1>
+              <div class="verified" title="Identidad verificada"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            </div>
+            <div class="h1-role">Químico farmacéutico · <em>especialista en operación nocturna</em></div>
+            <div class="h1-meta">
+              <span>📍 Lima · Miraflores</span>
+              <span>🕐 Disponible este fin de semana</span>
+              <span>🎓 UNMSM · Q.F. 2019</span>
+              <span>⚡ Responde en ~12 min</span>
+            </div>
+          </div>
+          <div class="h-actions">
+            <button class="btn btn-out btn-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+            <button class="btn btn-out"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Mensaje</button>
+            <button class="btn btn-pri">Invitar a turno →</button>
+          </div>
+        </div>
+
+        <div class="pstats">
+          <div class="pstat"><div class="v"><em>Oro</em></div><div class="l">Nivel actual · Top 12%</div></div>
+          <div class="pstat"><div class="v">94<span style="font-size:16px;color:#9CA3AF;font-weight:500">/100</span></div><div class="l">Score global</div></div>
+          <div class="pstat"><div class="v">142</div><div class="l">Turnos completados</div></div>
+          <div class="pstat"><div class="v">98%</div><div class="l">Tasa de cumplimiento</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- About -->
+    <div class="sect">
+      <div class="sect-head"><h3>Sobre <em>María</em></h3></div>
+      <p class="about">Q.F. con 6 años de experiencia en boticas y clínicas de Lima, mayormente en turnos nocturnos y guardias. Especialista en farmacia de alto volumen — manejo de inventario crítico, atención de receta controlada y operación bajo presión. Mi enfoque es la operación impecable: nunca tarde, nunca corto en stock, siempre con el cliente.</p>
+    </div>
+
+    <!-- Reputación / scores -->
+    <div class="sect">
+      <div class="sect-head">
+        <h3>Reputación <em>verificada</em></h3>
+        <a>¿Cómo se calcula?</a>
+      </div>
+      <div class="scores">
+        <div class="score-tile">
+          <div class="ring"><svg width="64" height="64"><circle cx="32" cy="32" r="28" fill="none" stroke="#E5E7EB" stroke-width="4.5"/><circle cx="32" cy="32" r="28" fill="none" stroke="#16A34A" stroke-width="4.5" stroke-dasharray="98 100" pathLength="100" stroke-linecap="round"/></svg><div class="ring-num"><b>98</b><span>/ 100</span></div></div>
+          <div class="score-lab">Puntualidad</div>
+          <div class="score-sub">140 de 142</div>
+        </div>
+        <div class="score-tile">
+          <div class="ring"><svg width="64" height="64"><circle cx="32" cy="32" r="28" fill="none" stroke="#E5E7EB" stroke-width="4.5"/><circle cx="32" cy="32" r="28" fill="none" stroke="#16A34A" stroke-width="4.5" stroke-dasharray="94 100" pathLength="100" stroke-linecap="round"/></svg><div class="ring-num"><b>94</b><span>/ 100</span></div></div>
+          <div class="score-lab">Operación</div>
+          <div class="score-sub">Sin incidentes</div>
+        </div>
+        <div class="score-tile">
+          <div class="ring"><svg width="64" height="64"><circle cx="32" cy="32" r="28" fill="none" stroke="#E5E7EB" stroke-width="4.5"/><circle cx="32" cy="32" r="28" fill="none" stroke="#16A34A" stroke-width="4.5" stroke-dasharray="96 100" pathLength="100" stroke-linecap="round"/></svg><div class="ring-num"><b>96</b><span>/ 100</span></div></div>
+          <div class="score-lab">Atención</div>
+          <div class="score-sub">128 reseñas</div>
+        </div>
+        <div class="score-tile">
+          <div class="ring"><svg width="64" height="64"><circle cx="32" cy="32" r="28" fill="none" stroke="#E5E7EB" stroke-width="4.5"/><circle cx="32" cy="32" r="28" fill="none" stroke="#16A34A" stroke-width="4.5" stroke-dasharray="99 100" pathLength="100" stroke-linecap="round"/></svg><div class="ring-num"><b>99</b><span>/ 100</span></div></div>
+          <div class="score-lab">Confiabilidad</div>
+          <div class="score-sub">1 cancelación</div>
+        </div>
+        <div class="score-tile">
+          <div class="ring"><svg width="64" height="64"><circle cx="32" cy="32" r="28" fill="none" stroke="#E5E7EB" stroke-width="4.5"/><circle cx="32" cy="32" r="28" fill="none" stroke="#16A34A" stroke-width="4.5" stroke-dasharray="92 100" pathLength="100" stroke-linecap="round"/></svg><div class="ring-num"><b>92</b><span>/ 100</span></div></div>
+          <div class="score-lab">Ventas</div>
+          <div class="score-sub">Top 8% zona</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Distinctions -->
+    <div class="sect">
+      <div class="sect-head"><h3>Distinciones</h3><a>8 más →</a></div>
+      <div class="badges-grid">
+        <div class="badge-card"><div class="b-ico success"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="b-tx"><b>Puntual</b><span>Top 5% · 30 días</span></div></div>
+        <div class="badge-card"><div class="b-ico info"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="3"/><circle cx="17" cy="17" r="3"/><path d="M11.5 11.5L14.5 14.5"/></svg></div><div class="b-tx"><b>Operador clave</b><span>Turnos críticos</span></div></div>
+        <div class="badge-card"><div class="b-ico coral"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="b-tx"><b>Top ventas</b><span>Marzo 2026</span></div></div>
+        <div class="badge-card"><div class="b-ico warning"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 4v16"/></svg></div><div class="b-tx"><b>Inventario experto</b><span>Sin discrepancias</span></div></div>
+        <div class="badge-card"><div class="b-ico success"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2Z"/></svg></div><div class="b-tx"><b>Talento Senior</b><span>+100 turnos</span></div></div>
+        <div class="badge-card"><div class="b-ico info"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><div class="b-tx"><b>Nocturno pro</b><span>87 turnos noche</span></div></div>
+        <div class="badge-card"><div class="b-ico success"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="b-tx"><b>Confiable</b><span>1% cancelaciones</span></div></div>
+        <div class="badge-card"><div class="b-ico coral"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div class="b-tx"><b>Favorita ×3</b><span>QS, Mifarma, BTL</span></div></div>
+      </div>
+    </div>
+
+    <!-- Experiencia -->
+    <div class="sect">
+      <div class="sect-head"><h3>Experiencia</h3></div>
+      <div class="timeline">
+        <div class="t-item">
+          <div class="t-logo g1">QS</div>
+          <div class="t-body">
+            <div class="t-head">
+              <div><h5>Química Suiza · Miraflores</h5><div class="t-org">QF responsable · Nocturno</div></div>
+              <div class="when">2023 — Hoy · 48 turnos</div>
+            </div>
+            <p class="t-desc">Cliente recurrente. Cubro turno nocturno regular (vie-sáb) más guardias. Manejo de receta controlada y farmacovigilancia con DIGEMID.</p>
+            <div class="t-tags">
+              <span class="badge badge-success">★ Empleador favorito</span>
+              <span class="badge badge-info">98% asistencia</span>
+              <span class="badge badge-neutral">Recomendada × 4</span>
+            </div>
+          </div>
+        </div>
+        <div class="t-item">
+          <div class="t-logo g2">IF</div>
+          <div class="t-body">
+            <div class="t-head">
+              <div><h5>Inkafarma · varias sucursales</h5><div class="t-org">QF · Turnos rotativos</div></div>
+              <div class="when">2022 — Hoy · 64 turnos</div>
+            </div>
+            <p class="t-desc">Operación de cadena grande en Lima Sur. Receta digital, polifarmacia, inventario el mismo día.</p>
+            <div class="t-tags">
+              <span class="badge badge-success">96% asistencia</span>
+              <span class="badge badge-info">Inventario experto</span>
+            </div>
+          </div>
+        </div>
+        <div class="t-item">
+          <div class="t-logo g3">MF</div>
+          <div class="t-body">
+            <div class="t-head">
+              <div><h5>Mifarma · Larcomar y Schell</h5><div class="t-org">Q.F. · Cobertura</div></div>
+              <div class="when">2021 — 2023 · 30 turnos</div>
+            </div>
+            <p class="t-desc">Cobertura entre sucursales de Miraflores. Experiencia con POS de cadena y protocolos corporativos.</p>
+            <div class="t-tags">
+              <span class="badge badge-neutral">Cadena</span>
+              <span class="badge badge-success">100% completados</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews -->
+    <div class="sect">
+      <div class="sect-head"><h3>Reseñas de boticas</h3><a>128 reseñas →</a></div>
+      <div class="rev">
+        <div class="rev-head">
+          <div class="rev-ava" style="background:linear-gradient(135deg,#15803D,#22C55E)">QS</div>
+          <div class="rev-meta"><b>Carlos Mendoza · Gerente, Química Suiza Larco</b><span>Hace 3 días · Nocturno · 12 may</span></div>
+          <span class="badge badge-success">✓ Verificado</span>
+        </div>
+        <p class="rev-quote">"María es de los pocos QF que dejamos sin supervisión. Llegó 15 min antes, cerró caja perfecto y atendió 47 clientes en una noche pesada. No la perdemos."</p>
+        <div class="rev-tags">
+          <span class="badge badge-success">Puntual</span>
+          <span class="badge badge-info">Operación impecable</span>
+          <span class="badge badge-info">Recomendada</span>
+        </div>
+      </div>
+      <div class="rev">
+        <div class="rev-head">
+          <div class="rev-ava" style="background:linear-gradient(135deg,#1E40AF,#3B82F6)">IF</div>
+          <div class="rev-meta"><b>Laura Mendoza · Coordinadora, Inkafarma Pardo</b><span>Hace 1 semana · Matutino · 5 may</span></div>
+          <span class="badge badge-success">✓ Verificado</span>
+        </div>
+        <p class="rev-quote">"Tercera vez que trabaja con nosotros. Maneja nuestro POS como si fuera planta fija. La gente del barrio ya pregunta por ella."</p>
+        <div class="rev-tags">
+          <span class="badge badge-success">Atención al cliente</span>
+          <span class="badge badge-info">Sistema dominado</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div>
+    <!-- Level pane (Uber-style, replaces tarifa) -->
+    <div class="side-pane level-pane">
+      <h4>Tu nivel</h4>
+      <div class="lvl-name">Nivel Oro</div>
+      <div class="lvl-sub">Sos parte del <b style="color:#86EFAC">Top 12%</b> de profesionales del Perú. Tu reputación te abre puertas en boticas premium y turnos exclusivos.</div>
+      <div class="lvl-progress">
+        <div class="lvl-progress-top"><span>Progreso a Elite FarmaTalent</span><b>26 turnos restantes</b></div>
+        <div class="lvl-bar"><div></div></div>
+      </div>
+      <div class="lvl-bonus"><b>Prioridad alta absoluta</b> al llegar a Elite · Score 94 actual</div></div>
+      <div class="lvl-formula">💡 Subís de nivel con: <b>turnos</b> + <b>puntualidad</b> + <b>continuidad</b> + <b>reseñas</b></div>
+    </div>
+
+    <div class="side-pane">
+      <h4>Disponibilidad</h4>
+      <div class="av-row"><span class="av-dot"></span><span class="av-text">Disponible este fin de semana</span></div>
+      <div class="av-sub">Próximos turnos abiertos: vie 21, sáb 22, dom 23. Acepta cobertura de emergencia hasta 22:00.</div>
+      <div class="av-cal">
+        <div class="av-cell off"></div><div class="av-cell l1"></div><div class="av-cell l2"></div><div class="av-cell l3"></div><div class="av-cell l4"></div><div class="av-cell l4"></div><div class="av-cell l2"></div>
+        <div class="av-cell off"></div><div class="av-cell l1"></div><div class="av-cell l3"></div><div class="av-cell l3"></div><div class="av-cell l4"></div><div class="av-cell l4"></div><div class="av-cell l3"></div>
+        <div class="av-cell off"></div><div class="av-cell l2"></div><div class="av-cell l1"></div><div class="av-cell l3"></div><div class="av-cell l4"></div><div class="av-cell l4"></div><div class="av-cell l2"></div>
+        <div class="av-cell off"></div><div class="av-cell l1"></div><div class="av-cell l2"></div><div class="av-cell l3"></div><div class="av-cell l4"></div><div class="av-cell l4"></div><div class="av-cell l3"></div>
+      </div>
+      <div class="av-legend">Disponibilidad
+        <span class="lg-dot" style="background:#F3F4F6"></span>
+        <span class="lg-dot" style="background:#DCFCE7"></span>
+        <span class="lg-dot" style="background:#86EFAC"></span>
+        <span class="lg-dot" style="background:#22C55E"></span>
+        <span class="lg-dot" style="background:#15803D"></span>
+      </div>
+    </div>
+
+    <div class="side-pane">
+      <h4>Certificaciones</h4>
+      <div class="cert-row">
+        <div class="cert-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M9 13.5L8 21l4-2 4 2-1-7.5"/></svg></div>
+        <div class="cert-tx"><b>Colegiatura Q.F.</b><span>Colegio Químico Farmacéutico del Perú · CQFP 18234</span></div>
+      </div>
+      <div class="cert-row">
+        <div class="cert-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <div class="cert-tx"><b>Director técnico</b><span>DIGEMID · 2022</span></div>
+      </div>
+      <div class="cert-row">
+        <div class="cert-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg></div>
+        <div class="cert-tx"><b>Farmacovigilancia</b><span>CENADIM · 2023</span></div>
+      </div>
+    </div>
+
+    <div class="side-pane">
+      <h4>Idiomas</h4>
+      <div class="lang-row"><b>Español</b><span>Nativo</span></div>
+      <div class="lang-row"><b>Inglés</b><span>Avanzado · C1</span></div>
+      <div class="lang-row"><b>Quechua</b><span>Básico · A2</span></div>
+    </div>
+  </div>
+</div>
+
+</body></html>

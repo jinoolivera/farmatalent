@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="es-PE"><head>
+<meta charset="utf-8">
+<title>FarmaTalent · Marketplace Perú</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#F8FAF8;color:#111827;font-family:var(--ft-font-sans)}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  .c{max-width:1320px;margin:0 auto;padding:0 28px}
+
+  /* ===== Nav ===== */
+  .nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid #E5E7EB}
+  .nav-in{height:74px;display:flex;align-items:center;gap:24px}
+  .mode{display:flex;background:#F3F4F6;border-radius:999px;padding:4px;margin:0 auto}
+  .mode button{border:0;background:transparent;padding:8px 18px;border-radius:999px;font-size:13px;font-weight:600;color:#4B5563;display:flex;align-items:center;gap:8px;transition:all 160ms}
+  .mode button.active{background:#fff;color:#111827;box-shadow:0 1px 3px rgba(17,24,39,.08)}
+  .mode button:not(.active):hover{color:#111827}
+  .nav-right{display:flex;align-items:center;gap:6px;margin-left:auto}
+  .nav-link{padding:9px 14px;border-radius:999px;font-size:13px;color:#4B5563;font-weight:500}
+  .nav-link:hover{background:#F3F4F6;color:#111827}
+  .btn{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:999px;padding:10px 18px;font-size:13px;font-weight:600;transition:all 160ms;cursor:pointer}
+  .btn-pri{background:#111827;color:#fff}
+  .btn-pri:hover{background:#1F2937}
+  .btn-brand{background:#16A34A;color:#fff}
+  .btn-brand:hover{background:#15803D}
+  .btn-out{background:#fff;color:#111827;border:1px solid #D1D5DB}
+  .btn-out:hover{border-color:#111827}
+  .btn-lg{padding:14px 22px;font-size:14px}
+  .nav-ava{width:38px;height:38px;border-radius:999px;background:linear-gradient(135deg,#22C55E,#15803D);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;margin-left:8px}
+
+  /* ===== Hero ===== */
+  .hero{padding:64px 0 40px;text-align:center;background:radial-gradient(60% 80% at 50% 0%, #ECFDF5, transparent 70%)}
+  .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;background:#DCFCE7;color:#15803D;font-size:12px;font-weight:600;border:1px solid #BBF7D0}
+  .pill .dot{width:6px;height:6px;border-radius:999px;background:#16A34A;box-shadow:0 0 0 4px rgba(22,163,74,.18);animation:pulse 1.8s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+  .hero h1{font-weight:600;font-size:clamp(44px,6vw,72px);line-height:1.02;letter-spacing:-0.035em;margin:18px 0 0;color:#111827}
+  .hero h1 em{font-family:var(--ft-font-display);font-style:italic;font-weight:400;color:#16A34A;letter-spacing:-0.02em}
+  .hero .lead{font-size:19px;color:#4B5563;margin:18px auto 0;max-width:640px;line-height:1.5}
+
+  .search{margin:40px auto 0;background:#fff;border:1px solid #E5E7EB;border-radius:999px;box-shadow:0 10px 28px -10px rgba(17,24,39,.14);display:flex;align-items:center;max-width:960px;padding:6px 6px 6px 0}
+  .sf{flex:1;padding:14px 24px;text-align:left;display:flex;flex-direction:column;border-radius:999px;cursor:pointer;transition:background 120ms;position:relative}
+  .sf:hover{background:#F8FAF8}
+  .sf + .sf::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:1px;background:#E5E7EB}
+  .sf .lbl{font-size:11px;font-weight:600;color:#111827;letter-spacing:.04em;text-transform:uppercase}
+  .sf .val{font-size:13px;color:#6B7280;margin-top:3px;font-weight:500}
+  .sf.flex2{flex:1.4}
+  .search .go{background:#16A34A;color:#fff;border:0;width:52px;height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 160ms}
+  .search .go:hover{background:#15803D}
+  .quick{display:flex;justify-content:center;gap:8px;margin:18px 0 0;flex-wrap:wrap}
+  .qchip{padding:7px 14px;border-radius:999px;background:#fff;color:#374151;font-size:12px;font-weight:500;border:1px solid #E5E7EB;cursor:pointer}
+  .qchip:hover{border-color:#16A34A;color:#15803D}
+
+  .hero-trust{display:flex;align-items:center;justify-content:center;gap:14px;margin:32px 0 0;font-size:13px;color:#6B7280}
+  .avas{display:flex}
+  .ava{width:32px;height:32px;border-radius:999px;border:2px solid #fff;margin-left:-8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff}
+  .ava:first-child{margin-left:0}
+
+  /* ===== Live activity ticker ===== */
+  .ticker{padding:20px 0;border-top:1px solid #E5E7EB;border-bottom:1px solid #E5E7EB;background:#fff;overflow:hidden}
+  .ticker-row{display:flex;gap:32px;font-size:13px;color:#374151;font-weight:500;white-space:nowrap;animation:scroll 40s linear infinite}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .ticker-row b{color:#16A34A;font-weight:700}
+  .ticker-row span{display:inline-flex;align-items:center;gap:8px}
+  .ticker-row .gd{width:6px;height:6px;border-radius:999px;background:#16A34A;flex-shrink:0}
+
+  /* ===== Live cities section ===== */
+  .live{padding:72px 0}
+  .live-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:32px;gap:24px}
+  .live-head .eb{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#6B7280}
+  .live-head h2{font-weight:600;font-size:clamp(32px,4vw,44px);letter-spacing:-0.03em;margin:8px 0 0;line-height:1.05}
+  .live-head h2 em{font-family:var(--ft-font-display);font-style:italic;font-weight:400;color:#16A34A}
+  .live-head .sub{font-size:15px;color:#4B5563;margin-top:8px;max-width:520px;line-height:1.5}
+  .live-head .right{text-align:right}
+  .live-head .right .num{font-size:36px;font-weight:600;letter-spacing:-0.025em;line-height:1}
+  .live-head .right .num em{font-family:var(--ft-font-display);font-style:italic;font-weight:400;color:#16A34A}
+  .live-head .right .nl{font-size:12px;color:#6B7280;margin-top:6px}
+
+  .cities{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .city{background:#fff;border:1px solid #E5E7EB;border-radius:18px;padding:22px;transition:all 200ms;cursor:pointer;display:flex;flex-direction:column;gap:14px}
+  .city:hover{border-color:#16A34A;transform:translateY(-3px);box-shadow:0 14px 32px -12px rgba(22,163,74,.18)}
+  .city.feat{background:linear-gradient(135deg,#15803D 0%,#16A34A 100%);color:#fff;border:0;grid-row:span 2}
+  .city-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+  .city h3{font-size:22px;font-weight:600;letter-spacing:-0.02em;margin:0;line-height:1.15}
+  .city .area{font-size:12px;color:#6B7280;margin-top:3px;font-weight:500}
+  .city.feat .area{color:rgba(255,255,255,.78)}
+  .live-badge{display:inline-flex;align-items:center;gap:5px;background:#DCFCE7;color:#15803D;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:600}
+  .city.feat .live-badge{background:rgba(255,255,255,.18);color:#fff}
+  .live-badge .dot{width:6px;height:6px;border-radius:999px;background:#16A34A;animation:pulse 1.8s ease-in-out infinite}
+  .city.feat .live-badge .dot{background:#fff}
+  .city-stats{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:14px 0;border-top:1px solid #E5E7EB;border-bottom:1px solid #E5E7EB}
+  .city.feat .city-stats{border-color:rgba(255,255,255,.18)}
+  .cstat .v{font-size:24px;font-weight:600;letter-spacing:-0.025em;line-height:1}
+  .cstat .l{font-size:11px;color:#6B7280;margin-top:4px;letter-spacing:.04em;text-transform:uppercase;font-weight:500}
+  .city.feat .cstat .l{color:rgba(255,255,255,.7)}
+  .city.feat .cstat .v{font-size:34px}
+  .city-shifts{display:flex;flex-direction:column;gap:8px}
+  .shift-mini{display:flex;align-items:center;gap:10px;padding:9px 12px;background:#F8FAF8;border-radius:10px;font-size:12px}
+  .city.feat .shift-mini{background:rgba(255,255,255,.1)}
+  .shift-mini .sd{width:32px;height:32px;border-radius:8px;background:#fff;color:#15803D;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0;border:1px solid #E5E7EB}
+  .city.feat .shift-mini .sd{background:rgba(255,255,255,.92);border:0}
+  .shift-mini .sm-tx{flex:1;min-width:0}
+  .shift-mini .sm-tx b{display:block;font-weight:600;color:#111827;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .city.feat .shift-mini .sm-tx b{color:#fff}
+  .shift-mini .sm-tx span{color:#6B7280;font-size:11px}
+  .city.feat .shift-mini .sm-tx span{color:rgba(255,255,255,.75)}
+  .shift-mini .pay{font-weight:600;font-size:16px;color:#15803D;white-space:nowrap}
+  .city.feat .shift-mini .pay{color:#fff}
+  .city-cta{font-size:13px;font-weight:600;color:#15803D;display:inline-flex;align-items:center;gap:6px;margin-top:auto}
+  .city.feat .city-cta{color:#fff}
+
+  /* ===== Audiences ===== */
+  .section{padding:88px 0}
+  .shead{max-width:720px;margin:0 0 48px}
+  .shead .eb{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#6B7280}
+  .shead h2{font-weight:600;font-size:clamp(36px,4.5vw,52px);line-height:1.05;letter-spacing:-0.03em;margin:12px 0 0}
+  .shead h2 em{font-family:var(--ft-font-display);font-style:italic;font-weight:400;color:#16A34A}
+  .shead p{font-size:18px;color:#4B5563;margin:16px 0 0;max-width:580px;line-height:1.5}
+  .aud{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .ac{background:#fff;border:1px solid #E5E7EB;border-radius:20px;padding:28px;transition:all 200ms}
+  .ac:hover{border-color:#16A34A;transform:translateY(-2px);box-shadow:0 12px 32px -10px rgba(17,24,39,.08)}
+  .ai{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;background:#DCFCE7;color:#15803D}
+  .ai.b2{background:#FEF3C7;color:#92400E}
+  .ai.b3{background:#FEE2E2;color:#B91C1C}
+  .ac h3{font-size:22px;font-weight:600;margin:0;letter-spacing:-0.015em}
+  .ac p{font-size:14px;color:#4B5563;margin:8px 0 18px;line-height:1.55}
+  .astats{display:flex;gap:18px;padding-top:18px;border-top:1px solid #E5E7EB}
+  .as .v{font-size:20px;font-weight:600;letter-spacing:-0.02em}
+  .as .l{font-size:11px;color:#6B7280;text-transform:uppercase;letter-spacing:.06em}
+  .ac .lk{margin-top:18px;font-size:13px;color:#15803D;font-weight:600;display:inline-flex;align-items:center;gap:6px}
+
+  /* ===== How ===== */
+  .how{background:#fff;border-top:1px solid #E5E7EB;border-bottom:1px solid #E5E7EB}
+  .hg{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+  .hn{font-family:var(--ft-font-display);font-style:italic;font-size:44px;color:#16A34A;line-height:1}
+  .hs h4{font-size:21px;font-weight:600;letter-spacing:-0.015em;margin:14px 0 6px}
+  .hs p{font-size:14px;color:#4B5563;line-height:1.55;margin:0}
+
+  /* ===== CTA ===== */
+  .ctas{padding:88px 0}
+  .ctab{background:#111827;border-radius:32px;padding:72px 56px;color:#fff;position:relative;overflow:hidden}
+  .ctab::before{content:"";position:absolute;top:-200px;right:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(22,163,74,.32),transparent 60%)}
+  .cti{position:relative;z-index:1;max-width:720px}
+  .cti .eb{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#86EFAC}
+  .cti h2{font-weight:600;font-size:clamp(36px,4.5vw,52px);line-height:1.05;letter-spacing:-0.03em;margin:12px 0 0}
+  .cti h2 em{font-family:var(--ft-font-display);font-style:italic;font-weight:400;color:#86EFAC}
+  .cti p{font-size:18px;color:rgba(255,255,255,.7);margin:16px 0 28px;max-width:540px;line-height:1.5}
+  .ctab .btn-pri{background:#16A34A;color:#fff}
+  .ctab .btn-pri:hover{background:#15803D}
+  .ctab .btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.2);padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer}
+
+  /* ===== Footer ===== */
+  footer{padding:56px 0 40px;border-top:1px solid #E5E7EB;background:#fff}
+  .fg{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px}
+  .fb p{font-size:13px;color:#6B7280;margin:14px 0 0;max-width:280px;line-height:1.55}
+  .fc h6{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#9CA3AF;margin:0 0 14px}
+  .fc a{display:block;font-size:13px;color:#111827;padding:5px 0}
+  .fc a:hover{color:#16A34A}
+  .fbtm{margin-top:48px;padding-top:24px;border-top:1px solid #E5E7EB;display:flex;justify-content:space-between;font-size:12px;color:#9CA3AF}
+</style>
+</head><body>
+
+<nav class="nav">
+  <div class="c nav-in">
+    <img src="../../assets/logo.svg" alt="FarmaTalent" height="32"/>
+    <div class="mode">
+      <button>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+        Buscar talento
+      </button>
+      <button class="active">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Encontrar turnos
+      </button>
+    </div>
+    <div class="nav-right">
+      <a class="nav-link">Cómo funciona</a>
+      <a class="nav-link">Precios</a>
+      <a class="nav-link">Iniciar sesión</a>
+      <button class="btn btn-brand">Crear cuenta</button>
+      <div class="nav-ava">MR</div>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== Hero ===== -->
+<section class="hero">
+  <div class="c">
+    <span class="pill"><span class="dot"></span>1,284 turnos activos en Perú · ahora mismo</span>
+    <h1>El <em>talento farmacéutico</em><br/>del Perú, en un toque.</h1>
+    <p class="lead">Marketplace en tiempo real para farmacias, boticas y profesionales de salud. Matching inteligente, reputación operacional, coordinación rápida.</p>
+
+    <div class="search" role="search">
+      <div class="sf">
+        <div class="lbl">Distrito o ciudad</div>
+        <div class="val">Miraflores, Lima</div>
+      </div>
+      <div class="sf">
+        <div class="lbl">Profesional</div>
+        <div class="val">Químico farmacéutico</div>
+      </div>
+      <div class="sf">
+        <div class="lbl">Fecha</div>
+        <div class="val">Sáb 18 oct</div>
+      </div>
+      <div class="sf flex2">
+        <div class="lbl">Horario</div>
+        <div class="val">Nocturno · 22:00–06:00</div>
+      </div>
+      <button class="go" aria-label="Buscar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+    </div>
+
+    <div class="quick">
+      <button class="qchip">🌙 Nocturnos</button>
+      <button class="qchip">📅 Este fin de semana</button>
+      <button class="qchip">💵 Mejor tarifa</button>
+      <button class="qchip">📍 Cerca de mí</button>
+      <button class="qchip">⚡ Urgente</button>
+      <button class="qchip">⏱ Guardias 24h</button>
+    </div>
+
+    <div class="hero-trust">
+      <div class="avas">
+        <div class="ava" style="background:linear-gradient(135deg,#22C55E,#15803D)">JC</div>
+        <div class="ava" style="background:linear-gradient(135deg,#FBBF24,#B45309)">RM</div>
+        <div class="ava" style="background:linear-gradient(135deg,#F87171,#B91C1C)">LS</div>
+        <div class="ava" style="background:#F3F4F6;color:#4B5563">+</div>
+      </div>
+      <span><b style="color:#111827">8,200+ profesionales</b> activos en Perú</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Live ticker ===== -->
+<div class="ticker">
+  <div class="ticker-row">
+    <span><span class="gd"></span><b>Hace 1 min</b> · Química Suiza Miraflores publicó un turno nocturno · <b>match 96%</b></span>
+    <span><span class="gd"></span><b>Hace 3 min</b> · Andrea Vargas aceptó turno en San Isidro</span>
+    <span><span class="gd"></span><b>Hace 5 min</b> · Botica Inkafarma Arequipa busca técnico para sábado</span>
+    <span><span class="gd"></span><b>Hace 7 min</b> · Mifarma Trujillo cubrió 3 turnos en 12 min</span>
+    <span><span class="gd"></span><b>Hace 9 min</b> · Clínica Internacional confirmó guardia de 24h con Andrea V. (<b>score 94</b>)</span>
+    <span><span class="gd"></span><b>Hace 11 min</b> · BTL San Borja publicó turno matutino</span>
+    <!-- duplicate for seamless scroll -->
+    <span><span class="gd"></span><b>Hace 1 min</b> · Química Suiza Miraflores publicó un turno nocturno · <b>match 96%</b></span>
+    <span><span class="gd"></span><b>Hace 3 min</b> · Andrea Vargas aceptó turno en San Isidro</span>
+    <span><span class="gd"></span><b>Hace 5 min</b> · Botica Inkafarma Arequipa busca técnico para sábado</span>
+    <span><span class="gd"></span><b>Hace 7 min</b> · Mifarma Trujillo cubrió 3 turnos en 12 min</span>
+    <span><span class="gd"></span><b>Hace 9 min</b> · Clínica Internacional confirmó guardia de 24h con Andrea V. (<b>score 94</b>)</span>
+    <span><span class="gd"></span><b>Hace 11 min</b> · BTL San Borja publicó turno matutino</span>
+  </div>
+</div>
+
+<!-- ===== Live cities ===== -->
+<section class="live">
+  <div class="c">
+    <div class="live-head">
+      <div>
+        <span class="eb">Marketplace en vivo</span>
+        <h2>Lo que está pasando <em>ahora mismo</em> en Perú.</h2>
+        <div class="sub">Turnos abiertos en tiempo real por distrito y ciudad. Tocá una zona para ver el mapa con resultados completos.</div>
+      </div>
+      <div class="right">
+        <div class="num"><em>1,284</em></div>
+        <div class="nl">turnos activos hoy</div>
+      </div>
+    </div>
+
+    <div class="cities">
+      <!-- FEATURED: Miraflores (tall) -->
+      <div class="city feat">
+        <div class="city-top">
+          <div>
+            <h3>Miraflores</h3>
+            <div class="area">Lima · Costa Verde</div>
+          </div>
+          <span class="live-badge"><span class="dot"></span>En vivo</span>
+        </div>
+        <div class="city-stats">
+          <div class="cstat"><div class="v">68</div><div class="l">turnos abiertos</div></div>
+          <div class="cstat"><div class="v">94%</div><div class="l">match medio</div></div>
+        </div>
+        <div class="city-shifts">
+          <div class="shift-mini">
+            <div class="sd">QS</div>
+            <div class="sm-tx"><b>Química Suiza · Larco</b><span>Nocturno · Sáb 22:00</span></div>
+            <div class="pay">→</div>
+          </div>
+          <div class="shift-mini">
+            <div class="sd">IF</div>
+            <div class="sm-tx"><b>Inkafarma · Pardo</b><span>Matutino · Lun 07:00</span></div>
+            <div class="pay">→</div>
+          </div>
+          <div class="shift-mini" style="background:linear-gradient(135deg,rgba(254,243,199,.35),rgba(255,255,255,.08))">
+            <div class="sd" style="color:#B45309">SF</div>
+            <div class="sm-tx"><b>SmartFarma Surco</b><span>★ Continuidad L–V · equipo estable</span></div>
+            <div class="pay" style="color:#B45309">★</div>
+          </div>
+          <div class="shift-mini">
+            <div class="sd">BT</div>
+            <div class="sm-tx"><b>Boticas BTL · Diagonal</b><span>24h · Vie 08:00</span></div>
+            <div class="pay">→</div>
+          </div>
+        </div>
+        <a class="city-cta">Ver 68 turnos en mapa →</a>
+      </div>
+
+      <!-- San Isidro -->
+      <div class="city">
+        <div class="city-top">
+          <div>
+            <h3>San Isidro</h3>
+            <div class="area">Lima · Distrito financiero</div>
+          </div>
+          <span class="live-badge"><span class="dot"></span>52 activos</span>
+        </div>
+        <div class="city-stats">
+          <div class="cstat"><div class="v">52</div><div class="l">turnos</div></div>
+          <div class="cstat"><div class="v">92%</div><div class="l">match medio</div></div>
+        </div>
+        <div class="city-shifts">
+          <div class="shift-mini">
+            <div class="sd">CI</div>
+            <div class="sm-tx"><b>Clínica Internacional</b><span>Guardia 24h · Vie</span></div>
+            <div class="pay">→</div>
+          </div>
+          <div class="shift-mini" style="background:linear-gradient(135deg,rgba(254,243,199,.35),rgba(255,255,255,.08))">
+            <div class="sd" style="color:#B45309">IF</div>
+            <div class="sm-tx"><b>Inkafarma Camino Real</b><span>★ Posición estable · matutino</span></div>
+            <div class="pay" style="color:#B45309">★</div>
+          </div>
+        </div>
+        <a class="city-cta">Ver todos →</a>
+      </div>
+
+      <!-- Surco -->
+      <div class="city">
+        <div class="city-top">
+          <div>
+            <h3>Santiago de Surco</h3>
+            <div class="area">Lima · Zona residencial</div>
+          </div>
+          <span class="live-badge"><span class="dot"></span>41 activos</span>
+        </div>
+        <div class="city-stats">
+          <div class="cstat"><div class="v">41</div><div class="l">turnos</div></div>
+          <div class="cstat"><div class="v">89%</div><div class="l">match medio</div></div>
+        </div>
+        <div class="city-shifts">
+          <div class="shift-mini">
+            <div class="sd">MF</div>
+            <div class="sm-tx"><b>Mifarma Caminos del Inca</b><span>Matutino · Sáb</span></div>
+            <div class="pay">→</div>
+          </div>
+          <div class="shift-mini">
+            <div class="sd">BF</div>
+            <div class="sm-tx"><b>BotiFarma · Monterrico</b><span>Nocturno · Vie</span></div>
+            <div class="pay">→</div>
+          </div>
+        </div>
+        <a class="city-cta">Ver todos →</a>
+      </div>
+
+      <!-- San Borja -->
+      <div class="city">
+        <div class="city-top">
+          <div>
+            <h3>San Borja</h3>
+            <div class="area">Lima · Centro residencial</div>
+          </div>
+          <span class="live-badge"><span class="dot"></span>33 activos</span>
+        </div>
+        <div class="city-stats">
+          <div class="cstat"><div class="v">33</div><div class="l">turnos</div></div>
+          <div class="cstat"><div class="v">91%</div><div class="l">match medio</div></div>
+        </div>
+        <div class="city-shifts">
+          <div class="shift-mini">
+            <div class="sd">IF</div>
+            <div class="sm-tx"><b>Inkafarma Aviación</b><span>Vespertino · Hoy</span></div>
+            <div class="pay">→</div>
+          </div>
+          <div class="shift-mini">
+            <div class="sd">BT</div>
+            <div class="sm-tx"><b>Boticas BTL Javier Prado</b><span>Nocturno · Sáb</span></div>
+            <div class="pay">→</div>
+          </div>
+        </div>
+        <a class="city-cta">Ver todos →</a>
+      </div>
+
+      <!-- Arequipa -->
+      <div class="city">
+        <div class="city-top">
+          <div>
+            <h3>Arequipa</h3>
+            <div class="area">Cercado · Yanahuara</div>
+          </div>
+          <span class="live-badge"><span class="dot"></span>27 activos</span>
+        </div>
+        <div class="city-stats">
+          <div class="cstat"><div class="v">27</div><div class="l">turnos</div></div>
+          <div class="cstat"><div class="v">88%</div><div class="l">match medio</div></div>
+        </div>
+        <div class="city-shifts">
+          <div class="shift-mini">
+            <div class="sd">IF</div>
+            <div class="sm-tx"><b>Inkafarma Plaza Yanahuara</b><span>Técnico · Sáb</span></div>
+            <div class="pay">→</div>
+          </div>
+          <div class="shift-mini" style="background:linear-gradient(135deg,rgba(254,243,199,.35),rgba(255,255,255,.08))">
+            <div class="sd" style="color:#B45309">QF</div>
+            <div class="sm-tx"><b>Quimicafarma Cayma</b><span>★ Continuidad semanal · turno fijo</span></div>
+            <div class="pay" style="color:#B45309">★</div>
+          </div>
+        </div>
+        <a class="city-cta">Ver todos →</a>
+      </div>
+
+      <!-- Trujillo -->
+      <div class="city">
+        <div class="city-top">
+          <div>
+            <h3>Trujillo</h3>
+            <div class="area">Centro · Víctor Larco</div>
+          </div>
+          <span class="live-badge"><span class="dot"></span>22 activos</span>
+        </div>
+        <div class="city-stats">
+          <div class="cstat"><div class="v">22</div><div class="l">turnos</div></div>
+          <div class="cstat"><div class="v">86%</div><div class="l">match medio</div></div>
+        </div>
+        <div class="city-shifts">
+          <div class="shift-mini">
+            <div class="sd">MF</div>
+            <div class="sm-tx"><b>Mifarma Real Plaza</b><span>Vespertino · Mié</span></div>
+            <div class="pay">→</div>
+          </div>
+          <div class="shift-mini">
+            <div class="sd">BS</div>
+            <div class="sm-tx"><b>Boticas y Salud · España</b><span>Sáb 24h</span></div>
+            <div class="pay">→</div>
+          </div>
+        </div>
+        <a class="city-cta">Ver todos →</a>
+      </div>
+
+      <!-- Otros distritos roll-up -->
+      <div class="city">
+        <div class="city-top">
+          <div>
+            <h3>Otros distritos</h3>
+            <div class="area">La Molina · Magdalena · Barranco · Chorrillos · Pueblo Libre</div>
+          </div>
+          <span class="live-badge"><span class="dot"></span>+1,041 activos</span>
+        </div>
+        <div class="city-stats">
+          <div class="cstat"><div class="v">1,041</div><div class="l">turnos</div></div>
+          <div class="cstat"><div class="v">14</div><div class="l">distritos / ciudades</div></div>
+        </div>
+        <a class="city-cta" style="margin-top:6px">Explorar todos los distritos →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== Audiencias ===== -->
+<section class="section">
+  <div class="c">
+    <div class="shead">
+      <span class="eb">Quién usa FarmaTalent</span>
+      <h2>Una red, <em>tres formas</em> de operar.</h2>
+      <p>No somos una bolsa de trabajo. Somos el marketplace donde el sector salud del Perú encuentra al talento correcto para cada turno.</p>
+    </div>
+    <div class="aud">
+      <div class="ac">
+        <div class="ai"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></div>
+        <h3>Profesionales</h3>
+        <p>Químicos farmacéuticos, técnicos, auxiliares, doctores. Perfil verificado, scores reales, eligen cuándo y dónde.</p>
+        <div class="astats">
+          <div class="as"><div class="v">8,200+</div><div class="l">activos</div></div>
+          <div class="as"><div class="v">94%</div><div class="l">satisfacción</div></div>
+          <div class="as"><div class="v">2.1h</div><div class="l">a confirmar</div></div>
+        </div>
+        <a class="lk">Soy profesional →</a>
+      </div>
+      <div class="ac">
+        <div class="ai b2"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-6 9 6v13"/><path d="M9 21v-8h6v8"/></svg></div>
+        <h3>Farmacias y boticas</h3>
+        <p>Independientes y cadenas. Inkafarma, Mifarma, BTL, BotiFarma. Publicá un turno, recibí candidatos verificados, cubrí vacantes en horas.</p>
+        <div class="astats">
+          <div class="as"><div class="v">2,400</div><div class="l">sucursales</div></div>
+          <div class="as"><div class="v">87%</div><div class="l">cobertura</div></div>
+          <div class="as"><div class="v">38 min</div><div class="l">tiempo medio</div></div>
+        </div>
+        <a class="lk">Tengo una botica →</a>
+      </div>
+      <div class="ac">
+        <div class="ai b3"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 8v8M8 12h8"/></svg></div>
+        <h3>Clínicas y hospitales</h3>
+        <p>Clínica Internacional, Ricardo Palma, Anglo Americana, laboratorios. Equipos completos para turnos especializados y guardias.</p>
+        <div class="astats">
+          <div class="as"><div class="v">420</div><div class="l">clínicas</div></div>
+          <div class="as"><div class="v">24/7</div><div class="l">cobertura</div></div>
+          <div class="as"><div class="v">+18%</div><div class="l">retención</div></div>
+        </div>
+        <a class="lk">Soy clínica →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Dual mode narrative ===== -->
+<section class="section modes">
+  <div class="c">
+    <div class="shead">
+      <span class="eb">DOS MODOS, UNA RED</span>
+      <h2>No solo cubrimos turnos.<br/><em>Construimos continuidad farmacéutica.</em></h2>
+      <p>FarmaTalent opera en dos velocidades. Una para resolver lo urgente. Otra para construir lo que dura.</p>
+    </div>
+    <div class="modes-grid">
+
+      <!-- Modo 1: Cobertura -->
+      <div class="mode-card cov">
+        <div class="mode-img">
+          <img src="https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=900&q=80&auto=format&fit=crop" alt="Profesional farmacéutico operando turno nocturno"/>
+          <div class="mode-overlay"></div>
+          <span class="mode-tag"><span class="dot"></span>EN VIVO · MIRAFLORES</span>
+          <div class="mode-mini">
+            <div class="mm-ava" style="background:#FEE2E2;color:#B91C1C">QS</div>
+            <div class="mm-tx"><b>Turno nocturno cubierto</b><span>Química Suiza · 38 min de respuesta</span></div>
+          </div>
+        </div>
+        <div class="mode-body">
+          <div class="mode-num">01</div>
+          <h3>Cobertura inmediata</h3>
+          <p>Urgencias, reemplazos, nocturnos, fines de semana, campañas. Matching inteligente en minutos, no días. Perfiles compatibles validados, listos para operar.</p>
+          <div class="mode-stats">
+            <div class="ms"><div class="v">38 min</div><div class="l">respuesta media</div></div>
+            <div class="ms"><div class="v">12,400+</div><div class="l">pros disponibles</div></div>
+            <div class="ms"><div class="v">87%</div><div class="l">cubre primer match</div></div>
+          </div>
+          <a class="mode-link">Explorar turnos abiertos →</a>
+        </div>
+      </div>
+
+      <!-- Modo 2: Continuidad -->
+      <div class="mode-card cont">
+        <div class="mode-img">
+          <img src="https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=900&q=80&auto=format&fit=crop" alt="Equipo farmacéutico construyendo continuidad operativa"/>
+          <div class="mode-overlay"></div>
+          <span class="mode-tag cont"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg>RED ESTABLE</span>
+          <div class="mode-mini">
+            <div class="mm-ava" style="background:linear-gradient(135deg,#FCD34D,#F59E0B);color:#fff">MR</div>
+            <div class="mm-tx"><b>María R. · 48 turnos con QS</b><span>Profesional recurrente · Nivel Oro</span></div>
+          </div>
+        </div>
+        <div class="mode-body">
+          <div class="mode-num">02</div>
+          <h3>Continuidad profesional</h3>
+          <p>Relaciones recurrentes que se vuelven equipo. Farmacias favoritas, profesionales frecuentes, reputación que crece con cada turno. Estabilidad operativa sin contratos.</p>
+          <div class="mode-stats">
+            <div class="ms"><div class="v">61%</div><div class="l">turnos a recurrentes</div></div>
+            <div class="ms"><div class="v">22 pros</div><div class="l">red estable media</div></div>
+            <div class="ms"><div class="v">4 niveles</div><div class="l">Bronce → Elite</div></div>
+          </div>
+          <a class="mode-link">Ver historias de continuidad →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Growth narrative ===== -->
+<section class="section growth">
+  <div class="c">
+    <div class="grow-grid">
+      <div class="grow-img">
+        <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=900&q=80&auto=format&fit=crop" alt="Química farmacéutica profesional"/>
+        <div class="grow-badge">
+          <div class="gb-num">94<span>/100</span></div>
+          <div class="gb-l">SCORE GLOBAL</div>
+          <div class="gb-tier">★ Nivel Oro · Top 12%</div>
+        </div>
+      </div>
+      <div class="grow-tx">
+        <span class="eb">PARA PROFESIONALES</span>
+        <h2>No es un turnito.<br/><em>Es tu carrera farmacéutica.</em></h2>
+        <p>Cada turno cumplido suma a tu reputación operacional. Cada reseña construye tu nivel. Cada botica recurrente abre la siguiente puerta. FarmaTalent te acompaña de Bronce a Elite — paso a paso, mérito a mérito.</p>
+
+        <div class="grow-tiers">
+          <div class="gt done"><span class="gt-dot"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></span>Bronce<small>Primeros turnos</small></div>
+          <div class="gt done"><span class="gt-dot"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></span>Plata<small>Reputación construida</small></div>
+          <div class="gt now"><span class="gt-dot"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="6"/></svg></span>Oro<small>Top 12% Perú</small></div>
+          <div class="gt elite"><span class="gt-dot"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg></span>Elite<small>Acceso premium</small></div>
+        </div>
+
+        <a class="btn btn-primary btn-lg" style="margin-top:24px">Crear mi perfil profesional →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Modes section */
+  .modes{background:#fff;border-top:1px solid #E5E7EB;border-bottom:1px solid #E5E7EB}
+  .modes-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .mode-card{background:#fff;border:1px solid #E5E7EB;border-radius:24px;overflow:hidden;transition:all 240ms}
+  .mode-card:hover{transform:translateY(-3px);box-shadow:0 20px 48px -12px rgba(15,42,20,.16)}
+  .mode-card.cov:hover{border-color:#FCA5A5}
+  .mode-card.cont:hover{border-color:#FCD34D}
+  .mode-img{position:relative;height:280px;overflow:hidden}
+  .mode-img img{width:100%;height:100%;object-fit:cover;display:block}
+  .mode-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,42,20,.12) 0%,rgba(15,42,20,.55) 100%)}
+  .mode-tag{position:absolute;top:18px;left:18px;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(255,255,255,.95);color:#B91C1C;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.06em;backdrop-filter:blur(8px)}
+  .mode-tag .dot{width:6px;height:6px;border-radius:999px;background:#EF4444;animation:pulse 1.6s infinite}
+  .mode-tag.cont{color:#92400E}
+  .mode-mini{position:absolute;bottom:18px;left:18px;right:18px;display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,.96);border-radius:14px;backdrop-filter:blur(8px)}
+  .mm-ava{width:38px;height:38px;border-radius:999px;color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .mm-tx{flex:1;min-width:0}
+  .mm-tx b{display:block;font-size:13px;font-weight:600;letter-spacing:-0.01em;color:#0F2A14}
+  .mm-tx span{font-size:11px;color:#6B7280}
+
+  .mode-body{padding:32px 32px 36px}
+  .mode-num{font-family:var(--ft-font-display);font-style:italic;font-size:28px;color:#16A34A;line-height:1;letter-spacing:-0.02em;margin-bottom:8px}
+  .mode-card.cont .mode-num{color:#B45309}
+  .mode-body h3{font-size:28px;font-weight:600;letter-spacing:-0.025em;margin:0 0 12px;line-height:1.1}
+  .mode-body p{font-size:15px;color:#4B5563;line-height:1.55;margin:0 0 24px}
+  .mode-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:18px 0;border-top:1px solid #E5E7EB;border-bottom:1px solid #E5E7EB;margin-bottom:18px}
+  .ms .v{font-size:20px;font-weight:600;letter-spacing:-0.02em;line-height:1}
+  .ms .l{font-size:11px;color:#6B7280;margin-top:4px;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
+  .mode-link{font-size:13px;font-weight:600;color:#15803D;display:inline-flex;align-items:center;gap:6px}
+  .mode-card.cont .mode-link{color:#B45309}
+
+  /* Growth section */
+  .growth{background:linear-gradient(180deg,#F8FAF8 0%,#fff 100%)}
+  .grow-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+  .grow-img{position:relative;border-radius:24px;overflow:hidden;aspect-ratio:4/5;max-height:560px}
+  .grow-img img{width:100%;height:100%;object-fit:cover;display:block}
+  .grow-badge{position:absolute;bottom:24px;left:24px;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-radius:18px;padding:18px 22px;box-shadow:0 12px 32px rgba(15,42,20,.18)}
+  .gb-num{font-family:var(--ft-font-display);font-style:italic;font-size:48px;line-height:1;color:#0F2A14;font-weight:400;letter-spacing:-0.025em}
+  .gb-num span{font-family:var(--ft-font-sans);font-style:normal;font-size:18px;color:#9CA3AF;font-weight:500}
+  .gb-l{font-size:10px;font-weight:700;color:#6B7280;letter-spacing:.12em;text-transform:uppercase;margin-top:4px}
+  .gb-tier{font-size:13px;font-weight:700;color:#B45309;margin-top:10px;padding-top:10px;border-top:1px solid #E5E7EB}
+  .grow-tx h2{font-weight:600;font-size:clamp(36px,4.5vw,52px);line-height:1.05;letter-spacing:-0.03em;margin:12px 0 18px}
+  .grow-tx h2 em{font-family:var(--ft-font-display);font-style:italic;font-weight:400;color:#B45309}
+  .grow-tx p{font-size:17px;color:#4B5563;line-height:1.55;margin:0 0 28px;max-width:480px}
+  .grow-tiers{display:flex;gap:8px;flex-wrap:wrap}
+  .gt{flex:1;min-width:110px;padding:14px;background:#fff;border:1px solid #E5E7EB;border-radius:14px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;font-size:13px;font-weight:600;color:#9CA3AF;opacity:.6}
+  .gt small{font-size:11px;color:#6B7280;font-weight:500;letter-spacing:0;text-transform:none}
+  .gt-dot{width:24px;height:24px;border-radius:999px;background:#F3F4F6;color:#9CA3AF;display:flex;align-items:center;justify-content:center}
+  .gt.done{opacity:1;color:#15803D}.gt.done .gt-dot{background:#DCFCE7;color:#15803D}
+  .gt.now{opacity:1;color:#B45309;border-color:#FCD34D;background:linear-gradient(135deg,#FEF3C7,#fff);box-shadow:0 4px 12px -2px rgba(180,83,9,.18)}.gt.now .gt-dot{background:#FCD34D;color:#92400E}
+  .gt.elite{opacity:.85;color:#0F2A14;font-style:italic;font-family:var(--ft-font-display);font-size:15px}.gt.elite .gt-dot{background:linear-gradient(135deg,#FCD34D,#F59E0B);color:#0F2A14}.gt.elite small{font-family:var(--ft-font-sans);font-style:normal;font-size:11px}
+</style>
+
+<!-- ===== How ===== -->
+<section class="section how">
+  <div class="c">
+    <div class="shead">
+      <span class="eb">Cómo funciona</span>
+      <h2>De vacante crítica a turno cubierto, <em>en tres pasos</em>.</h2>
+    </div>
+    <div class="hg">
+      <div class="hs">
+        <div class="hn">01.</div>
+        <h4>Publicá o buscá</h4>
+        <p>Menos de 90 segundos. Configurá tu disponibilidad y especialidad. El sistema filtra solo los turnos con match alto.</p>
+      </div>
+      <div class="hs">
+        <div class="hn">02.</div>
+        <h4>Matching inteligente</h4>
+        <p>Filtramos por reputación, distancia, especialidad, colegiatura y disponibilidad. Solo ves lo que es relevante.</p>
+      </div>
+      <div class="hs">
+        <div class="hn">03.</div>
+        <h4>Confirmá y operá</h4>
+        <p>Aplicá con un toque. La botica revisa scores, decide. Check-in, check-out y pago en soles, en plataforma.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="ctas">
+  <div class="c">
+    <div class="ctab">
+      <div class="cti">
+        <span class="eb">EMPEZÁ HOY · ES GRATIS</span>
+        <h2 style="color:#fff">Tu próximo turno —<br/><em>o tu próximo profesional</em> — a un toque.</h2>
+        <p>Crear cuenta es gratis. Sin contratos, sin permanencia, sin comisión hasta cubrir tu primer turno.</p>
+        <div style="display:flex;gap:12px">
+          <button class="btn btn-pri btn-lg">Crear cuenta gratis →</button>
+          <button class="btn-ghost">Hablar con ventas</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="c">
+    <div class="fg">
+      <div class="fb">
+        <img src="../../assets/logo.svg" alt="FarmaTalent" height="28"/>
+        <p>El futuro del talento farmacéutico en el Perú. Marketplace moderno, reputación verificada, matching inteligente.</p>
+      </div>
+      <div class="fc"><h6>Producto</h6><a>Para profesionales</a><a>Para boticas</a><a>Para clínicas</a><a>Precios</a></div>
+      <div class="fc"><h6>Compañía</h6><a>Sobre nosotros</a><a>Blog</a><a>Trabajá con nosotros</a><a>Contacto</a></div>
+      <div class="fc"><h6>Legal</h6><a>Privacidad</a><a>Términos</a><a>Seguridad</a></div>
+    </div>
+    <div class="fbtm">
+      <span>© 2026 FarmaTalent Perú · Todos los derechos reservados</span>
+      <span>Hecho con cuidado · Lima, Perú 🇵🇪</span>
+    </div>
+  </div>
+</footer>
+
+</body></html>

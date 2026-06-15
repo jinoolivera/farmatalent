@@ -1,0 +1,14 @@
+# Environment files (never commit secrets)
+.env.prod
+farmatalent-api/.env.production
+
+# Frontend build artifacts
+farmatalent-web/node_modules/
+farmatalent-web/dist/
+
+# Backend vendor
+farmatalent-api/vendor/
+
+# OS
+.DS_Store
+Thumbs.db

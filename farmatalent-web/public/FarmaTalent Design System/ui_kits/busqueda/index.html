@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="es-PE"><head>
+<meta charset="utf-8">
+<title>FarmaTalent · Buscar turnos en mapa</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#F8FAF8;color:#111827;font-family:var(--ft-font-sans);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+
+  /* ===== Nav ===== */
+  .nav{background:#fff;border-bottom:1px solid #E5E7EB;flex-shrink:0}
+  .nav-in{height:68px;padding:0 24px;display:flex;align-items:center;gap:24px}
+  .mode{display:flex;background:#F3F4F6;border-radius:999px;padding:4px;margin-left:32px}
+  .mode button{border:0;background:transparent;padding:7px 16px;border-radius:999px;font-size:13px;font-weight:600;color:#4B5563;transition:all 160ms}
+  .mode button.active{background:#fff;color:#111827;box-shadow:0 1px 3px rgba(17,24,39,.08)}
+  .nav-right{display:flex;align-items:center;gap:6px;margin-left:auto}
+  .nav-link{padding:8px 12px;border-radius:999px;font-size:13px;color:#4B5563;font-weight:500}
+  .nav-link:hover{background:#F3F4F6;color:#111827}
+  .nav-ava{width:36px;height:36px;border-radius:999px;background:linear-gradient(135deg,#22C55E,#15803D);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px}
+
+  /* ===== Search bar (compact) ===== */
+  .search{background:#fff;border-bottom:1px solid #E5E7EB;padding:14px 24px;flex-shrink:0}
+  .sbar{display:flex;align-items:center;gap:10px;max-width:1200px;margin:0 auto}
+  .sb-pill{display:flex;align-items:center;background:#fff;border:1px solid #E5E7EB;border-radius:999px;padding:4px 4px 4px 0;box-shadow:0 2px 8px rgba(17,24,39,.04);flex:1;max-width:760px}
+  .sf{flex:1;padding:8px 18px;border-radius:999px;cursor:pointer;display:flex;flex-direction:column;position:relative;transition:background 120ms}
+  .sf:hover{background:#F8FAF8}
+  .sf + .sf::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:1px;background:#E5E7EB}
+  .sf .lbl{font-size:10px;font-weight:600;color:#111827;letter-spacing:.04em;text-transform:uppercase}
+  .sf .val{font-size:12px;color:#6B7280;margin-top:2px;font-weight:500}
+  .go{background:#16A34A;color:#fff;border:0;width:40px;height:40px;border-radius:999px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .filter-row{display:flex;gap:6px;flex:1;justify-content:flex-end;flex-wrap:wrap}
+  .qchip{padding:7px 13px;border-radius:999px;background:#fff;color:#374151;font-size:12px;font-weight:500;border:1px solid #E5E7EB;display:inline-flex;align-items:center;gap:5px}
+  .qchip:hover{border-color:#16A34A;color:#15803D}
+  .qchip.on{background:#DCFCE7;border-color:#86EFAC;color:#15803D}
+
+  /* ===== Main split ===== */
+  .main{flex:1;display:grid;grid-template-columns:480px 1fr;min-height:0}
+
+  /* ===== Listings panel ===== */
+  .panel{background:#F8FAF8;border-right:1px solid #E5E7EB;overflow-y:auto;display:flex;flex-direction:column}
+  .panel-head{padding:18px 22px 12px;border-bottom:1px solid #E5E7EB;background:#fff;position:sticky;top:0;z-index:5}
+  .panel-head h2{font-weight:600;font-size:18px;letter-spacing:-0.015em;margin:0}
+  .panel-head h2 em{font-family:var(--ft-font-display);font-style:italic;font-weight:400;color:#16A34A}
+  .panel-head .sub{font-size:12px;color:#6B7280;margin-top:4px}
+  .panel-head .sort{display:flex;align-items:center;gap:6px;font-size:12px;color:#4B5563;margin-top:10px}
+  .panel-head .sort select{border:1px solid #E5E7EB;border-radius:8px;padding:4px 8px;font-size:12px;font-family:inherit;color:#111827}
+
+  .list{padding:14px;display:flex;flex-direction:column;gap:12px}
+  .item{background:#fff;border:1px solid #E5E7EB;border-radius:14px;padding:14px;display:flex;gap:12px;cursor:pointer;transition:all 180ms}
+  .item:hover{border-color:#86EFAC;box-shadow:0 6px 18px -6px rgba(22,163,74,.18)}
+  .item.active{border-color:#16A34A;box-shadow:0 0 0 1px #16A34A,0 8px 24px -6px rgba(22,163,74,.22)}
+  .it-logo{width:48px;height:48px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px}
+  .it-logo.g1{background:linear-gradient(135deg,#15803D,#22C55E)}
+  .it-logo.g2{background:linear-gradient(135deg,#1E40AF,#3B82F6)}
+  .it-logo.g3{background:linear-gradient(135deg,#B45309,#F59E0B)}
+  .it-logo.g4{background:linear-gradient(135deg,#7C2D12,#EF4444)}
+  .it-logo.g5{background:linear-gradient(135deg,#5B21B6,#8B5CF6)}
+  .it-logo.g6{background:linear-gradient(135deg,#0F766E,#14B8A6)}
+  .it-body{flex:1;min-width:0}
+  .it-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .it-title{font-size:14px;font-weight:600;color:#111827;letter-spacing:-0.01em;line-height:1.3}
+  .it-org{font-size:12px;color:#6B7280;margin-top:2px}
+  .match-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:600;background:#DCFCE7;color:#15803D;white-space:nowrap}
+  .match-pill.mid{background:#FEF3C7;color:#92400E}
+  .it-meta{display:flex;gap:12px;font-size:11px;color:#6B7280;margin-top:8px;flex-wrap:wrap}
+  .it-meta span{display:inline-flex;align-items:center;gap:4px}
+  .it-tags{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
+  .tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px}
+  .tag.urg{background:#FEE2E2;color:#B91C1C;display:inline-flex;align-items:center;gap:3px}
+  .tag.urg .ud{width:5px;height:5px;border-radius:999px;background:#EF4444;animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .tag.col{background:#DBEAFE;color:#1E40AF}
+  .tag.exp{background:#F3F4F6;color:#374151}
+  .tag.recur{background:linear-gradient(135deg,#FEF3C7,#FDE68A);color:#92400E;display:inline-flex;align-items:center;gap:3px}
+  .tag.recur svg{color:#B45309}
+  .it-pay{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid #F3F4F6}
+  .pay-est{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#15803D;font-weight:600}
+  .pay-est .pi{width:14px;height:14px;border-radius:999px;background:#DCFCE7;display:inline-flex;align-items:center;justify-content:center;color:#15803D}
+  .apply-btn{background:#111827;color:#fff;border:0;padding:6px 14px;border-radius:999px;font-size:12px;font-weight:600}
+  .apply-btn:hover{background:#1F2937}
+
+  /* ===== Map panel ===== */
+  .mapwrap{position:relative;background:#E7F0E8;overflow:hidden}
+  .mapwrap svg{width:100%;height:100%;display:block}
+  .map-overlay{position:absolute;inset:0;pointer-events:none}
+  .map-overlay > *{pointer-events:auto}
+
+  .map-ctl{position:absolute;top:18px;right:18px;display:flex;flex-direction:column;gap:6px}
+  .mbtn{width:40px;height:40px;border-radius:10px;background:#fff;border:1px solid #E5E7EB;display:flex;align-items:center;justify-content:center;color:#4B5563;cursor:pointer;box-shadow:0 2px 8px rgba(17,24,39,.1)}
+  .mbtn:hover{color:#111827}
+
+  .map-info{position:absolute;top:18px;left:18px;display:flex;gap:8px;align-items:center}
+  .info-chip{background:#fff;border:1px solid #E5E7EB;border-radius:999px;padding:8px 14px;display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#111827;box-shadow:0 2px 8px rgba(17,24,39,.08)}
+  .info-chip .dot{width:8px;height:8px;border-radius:999px;background:#16A34A;animation:pulse 1.8s infinite}
+  .info-chip.dark{background:#111827;color:#fff;border:0}
+
+  /* Map pins — show MATCH %, no prices */
+  .pin{position:absolute;background:#fff;border:2px solid #fff;border-radius:999px;padding:5px 11px 5px 4px;box-shadow:0 4px 14px rgba(17,24,39,.18);cursor:pointer;transition:all 180ms;transform:translate(-50%,-100%);white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+  .pin:hover{transform:translate(-50%,-100%) scale(1.08);z-index:5}
+  .pin .pn-logo{width:24px;height:24px;border-radius:999px;color:#fff;font-weight:700;font-size:10px;display:flex;align-items:center;justify-content:center}
+  .pin .pn-match{font-size:12px;font-weight:700;color:#15803D}
+  .pin .pn-tail{position:absolute;bottom:-7px;left:50%;width:0;height:0;transform:translateX(-50%);border:7px solid transparent;border-top-color:#fff}
+  .pin.active{transform:translate(-50%,-100%) scale(1.1);z-index:6;box-shadow:0 8px 24px rgba(22,163,74,.32)}
+  .pin.active .pn-match{color:#fff}
+  .pin.active{background:#15803D;border-color:#15803D}
+  .pin.active .pn-tail{border-top-color:#15803D}
+  .pin.urg{background:#EF4444;border-color:#EF4444}
+  .pin.urg .pn-match{color:#fff}
+  .pin.urg .pn-tail{border-top-color:#EF4444}
+  .pin.urg::after{content:"";position:absolute;inset:-6px;border-radius:999px;border:2px solid rgba(239,68,68,.5);animation:ripple 2s infinite}
+  @keyframes ripple{0%{transform:scale(.8);opacity:1}100%{transform:scale(1.4);opacity:0}}
+
+  /* Selected shift floating preview */
+  .preview{position:absolute;bottom:24px;left:24px;width:380px;background:#fff;border:1px solid #E5E7EB;border-radius:18px;box-shadow:0 20px 40px -10px rgba(17,24,39,.28);overflow:hidden}
+  .pv-cover{height:120px;background:linear-gradient(135deg,#15803D,#22C55E);position:relative;display:flex;align-items:center;justify-content:center}
+  .pv-cover .pv-cross{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:999px;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;border:0;cursor:pointer}
+  .pv-cover .pv-urg{position:absolute;top:14px;left:14px;background:rgba(255,255,255,.95);color:#B91C1C;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:5px}
+  .pv-cover .pv-urg .pud{width:6px;height:6px;border-radius:999px;background:#EF4444;animation:pulse 1.6s infinite}
+  .pv-cover .pv-logo{width:72px;height:72px;border-radius:18px;background:rgba(255,255,255,.95);color:#15803D;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px}
+  .pv-bd{padding:18px}
+  .pv-bd h3{font-size:17px;font-weight:600;margin:0;letter-spacing:-0.015em;line-height:1.25}
+  .pv-org{font-size:13px;color:#6B7280;margin-top:3px;display:inline-flex;align-items:center;gap:5px}
+  .pv-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 0}
+  .pv-cell{background:#F8FAF8;border-radius:10px;padding:10px 12px}
+  .pv-cell .l{font-size:10px;color:#6B7280;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
+  .pv-cell .v{font-size:13px;font-weight:600;color:#111827;margin-top:2px}
+  .pv-pay{background:linear-gradient(135deg,#DCFCE7,#F0FDF4);border:1px solid #BBF7D0;border-radius:12px;padding:12px 14px;margin-top:14px;display:flex;align-items:center;gap:12px}
+  .pv-pay .pi{width:36px;height:36px;border-radius:10px;background:#fff;color:#15803D;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .pv-pay .pt{flex:1;min-width:0}
+  .pv-pay .pt b{display:block;font-size:13px;color:#15803D;font-weight:700}
+  .pv-pay .pt span{font-size:11px;color:#16A34A;display:block;margin-top:1px}
+  .pv-cta{display:flex;gap:8px;margin-top:14px}
+  .pv-cta .btn-pri{background:#111827;color:#fff;border:0;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;flex:1}
+  .pv-cta .btn-pri:hover{background:#1F2937}
+  .pv-cta .btn-out{background:#fff;color:#111827;border:1px solid #D1D5DB;padding:9px 16px;border-radius:999px;font-size:13px;font-weight:600}
+</style>
+</head><body>
+
+<!-- ===== Nav ===== -->
+<nav class="nav">
+  <div class="nav-in">
+    <img src="../../assets/logo.svg" alt="FarmaTalent" height="30"/>
+    <div class="mode">
+      <button>Buscar talento</button>
+      <button class="active">Encontrar turnos</button>
+    </div>
+    <div class="nav-right">
+      <a class="nav-link" href="../marketing/index.html">Inicio</a>
+      <a class="nav-link" href="../dashboard/index.html">Dashboard</a>
+      <a class="nav-link" href="../perfil/index.html">Mi perfil</a>
+      <div class="nav-ava">MR</div>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== Search bar ===== -->
+<div class="search">
+  <div class="sbar">
+    <div class="sb-pill">
+      <div class="sf"><div class="lbl">Distrito</div><div class="val">Miraflores, Lima</div></div>
+      <div class="sf"><div class="lbl">Profesional</div><div class="val">Químico farmacéutico</div></div>
+      <div class="sf"><div class="lbl">Fecha</div><div class="val">Sáb 22 may</div></div>
+      <div class="sf"><div class="lbl">Horario</div><div class="val">Nocturno</div></div>
+      <button class="go" aria-label="Buscar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+    </div>
+    <div class="filter-row">
+      <button class="qchip on">🌙 Nocturnos</button>
+      <button class="qchip">⚡ Urgentes</button>
+      <button class="qchip">🔁 Continuidad</button>
+      <button class="qchip">📍 ≤3 km</button>
+      <button class="qchip">⭐ Match ≥90%</button>
+      <button class="qchip">+ Más</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Main split ===== -->
+<div class="main">
+
+  <!-- LEFT: listings -->
+  <div class="panel">
+    <div class="panel-head">
+      <h2><em>14</em> oportunidades encontradas</h2>
+      <div class="sub">Miraflores · radio 5km · <b style="color:#0F2A14">10 cobertura</b> + <b style="color:#B45309">4 continuidad</b></div>
+      <div class="sort">
+        <span>Ordenar por</span>
+        <select>
+          <option>Mejor match</option>
+          <option>Más cercano</option>
+          <option>Más reciente</option>
+          <option>Más urgente</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="list">
+
+      <!-- Item 1 -->
+      <div class="item active">
+        <div class="it-logo g1">QS</div>
+        <div class="it-body">
+          <div class="it-top">
+            <div>
+              <div class="it-title">Químico farmacéutico · Nocturno</div>
+              <div class="it-org">Química Suiza · Av. Larco 345 — <b style="color:#15803D">★ botica favorita</b></div>
+            </div>
+            <span class="match-pill">98% match</span>
+          </div>
+          <div class="it-meta"><span>🗓 Sáb 22</span><span>🕐 22:00–06:00</span><span>📍 0.8 km</span></div>
+          <div class="it-tags">
+            <span class="tag urg"><span class="ud"></span>Urgente</span>
+            <span class="tag col">Colegiatura QF</span>
+            <span class="tag exp">Cadena</span>
+          </div>
+          <div class="it-pay">
+            <div class="pay-est"><span class="pi">✓</span>Tarifa propuesta por la botica</div>
+            <button class="apply-btn">Aplicar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 2 (CONTINUIDAD) -->
+      <div class="item">
+        <div class="it-logo g2">SF</div>
+        <div class="it-body">
+          <div class="it-top">
+            <div>
+              <div class="it-title">Q.F. responsable · Continuidad semanal</div>
+              <div class="it-org">SmartFarma Surco — <b style="color:#B45309">vacante estable L–V</b></div>
+            </div>
+            <span class="match-pill">94% match</span>
+          </div>
+          <div class="it-meta"><span>🔁 Lun a Vie</span><span>🕐 14:00–22:00</span><span>📍 4.2 km</span></div>
+          <div class="it-tags">
+            <span class="tag recur"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg>Equipo recurrente</span>
+            <span class="tag col">Colegiatura QF</span>
+            <span class="tag exp">Disponibilidad fija</span>
+          </div>
+          <div class="it-pay">
+            <div class="pay-est"><span class="pi">✓</span>Posición estable · sin contrato</div>
+            <button class="apply-btn">Postular</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 3 -->
+      <div class="item">
+        <div class="it-logo g3">MF</div>
+        <div class="it-body">
+          <div class="it-top">
+            <div>
+              <div class="it-title">Químico · Turno extendido</div>
+              <div class="it-org">Mifarma · Schell 487</div>
+            </div>
+            <span class="match-pill mid">87% match</span>
+          </div>
+          <div class="it-meta"><span>🗓 Sáb 22</span><span>🕐 18:00–06:00</span><span>📍 1.9 km</span></div>
+          <div class="it-tags">
+            <span class="tag urg"><span class="ud"></span>Urgente</span>
+            <span class="tag col">Colegiatura QF</span>
+          </div>
+          <div class="it-pay">
+            <div class="pay-est"><span class="pi">✓</span>Tarifa propuesta por la botica</div>
+            <button class="apply-btn">Aplicar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 4 -->
+      <div class="item">
+        <div class="it-logo g4">CI</div>
+        <div class="it-body">
+          <div class="it-top">
+            <div>
+              <div class="it-title">QF en guardia · 24h</div>
+              <div class="it-org">Clínica Internacional · Garcilaso de la Vega</div>
+            </div>
+            <span class="match-pill">91% match</span>
+          </div>
+          <div class="it-meta"><span>🗓 Vie 21</span><span>🕐 08:00 (24h)</span><span>📍 2.2 km</span></div>
+          <div class="it-tags">
+            <span class="tag col">Colegiatura QF</span>
+            <span class="tag exp">Hospitalario</span>
+          </div>
+          <div class="it-pay">
+            <div class="pay-est"><span class="pi">✓</span>Tarifa propuesta por la botica</div>
+            <button class="apply-btn">Aplicar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 5 -->
+      <div class="item">
+        <div class="it-logo g5">BT</div>
+        <div class="it-body">
+          <div class="it-top">
+            <div>
+              <div class="it-title">QF · Vie + Sáb nocturno</div>
+              <div class="it-org">Boticas BTL · Av. Diagonal 530</div>
+            </div>
+            <span class="match-pill">92% match</span>
+          </div>
+          <div class="it-meta"><span>🗓 Vie 21 + Sáb 22</span><span>🕐 22:00–06:00</span><span>📍 1.1 km</span></div>
+          <div class="it-tags">
+            <span class="tag col">Colegiatura QF</span>
+            <span class="tag exp">2 turnos</span>
+          </div>
+          <div class="it-pay">
+            <div class="pay-est"><span class="pi">✓</span>Tarifa propuesta por la botica</div>
+            <button class="apply-btn">Aplicar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 6 (CONTINUIDAD) -->
+      <div class="item">
+        <div class="it-logo g6">BF</div>
+        <div class="it-body">
+          <div class="it-top">
+            <div>
+              <div class="it-title">Técnico farmacia · Cobertura estable matutina</div>
+              <div class="it-org">BotiFarma Miraflores — <b style="color:#B45309">3 meses, posible extensión</b></div>
+            </div>
+            <span class="match-pill mid">85% match</span>
+          </div>
+          <div class="it-meta"><span>🔁 Lun a Vie</span><span>🕐 07:00–15:00</span><span>📍 1.7 km</span></div>
+          <div class="it-tags">
+            <span class="tag recur"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg>Continuidad 3 meses</span>
+            <span class="tag exp">Inducción incluida</span>
+          </div>
+          <div class="it-pay">
+            <div class="pay-est"><span class="pi">✓</span>Relación operativa duradera</div>
+            <button class="apply-btn">Postular</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT: map -->
+  <div class="mapwrap">
+    <svg viewBox="0 0 800 900" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <pattern id="g" width="50" height="50" patternUnits="userSpaceOnUse">
+          <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(34,139,34,0.06)" stroke-width="1"/>
+        </pattern>
+        <linearGradient id="ocean" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#BFDBFE"/>
+          <stop offset="1" stop-color="#93C5FD"/>
+        </linearGradient>
+      </defs>
+      <!-- Land base -->
+      <rect width="800" height="900" fill="#F0FAF1"/>
+      <rect width="800" height="900" fill="url(#g)"/>
+      <!-- Ocean (Costa Verde / Pacífico) on the left -->
+      <path d="M0 0 Q 120 200 90 450 Q 60 650 140 900 L 0 900 Z" fill="url(#ocean)"/>
+      <text x="40" y="500" font-family="Geist" font-size="11" fill="#1E40AF" font-weight="600" transform="rotate(-90 40 500)">OCÉANO PACÍFICO</text>
+      <!-- Coast cliff line -->
+      <path d="M90 0 Q 120 200 90 450 Q 60 650 140 900" stroke="#86EFAC" stroke-width="3" fill="none" opacity=".6"/>
+      <!-- Parks -->
+      <ellipse cx="380" cy="320" rx="80" ry="60" fill="#86EFAC" opacity=".5"/>
+      <text x="380" y="325" text-anchor="middle" font-family="Geist" font-size="11" fill="#15803D" font-weight="600">Parque Kennedy</text>
+      <ellipse cx="260" cy="540" rx="65" ry="48" fill="#86EFAC" opacity=".5"/>
+      <text x="260" y="544" text-anchor="middle" font-family="Geist" font-size="10" fill="#15803D" font-weight="600">Parque del Amor</text>
+      <ellipse cx="620" cy="220" rx="55" ry="42" fill="#86EFAC" opacity=".5"/>
+      <text x="620" y="224" text-anchor="middle" font-family="Geist" font-size="10" fill="#15803D" font-weight="600">Parque Reducto</text>
+      <!-- Avenues (major) -->
+      <path d="M100 220 Q 400 200 750 260" stroke="#FFF" stroke-width="14" fill="none"/>
+      <path d="M100 220 Q 400 200 750 260" stroke="#E5E7EB" stroke-width="2" fill="none" stroke-dasharray="6 4"/>
+      <text x="600" y="200" font-family="Geist" font-size="11" fill="#6B7280" font-weight="500">Av. Pardo</text>
+      <path d="M180 480 Q 480 440 780 510" stroke="#FFF" stroke-width="16" fill="none"/>
+      <text x="500" y="430" font-family="Geist" font-size="11" fill="#6B7280" font-weight="500">Av. Larco</text>
+      <path d="M150 720 Q 500 700 790 750" stroke="#FFF" stroke-width="12" fill="none"/>
+      <text x="400" y="690" font-family="Geist" font-size="11" fill="#6B7280" font-weight="500">Av. Benavides</text>
+      <path d="M340 0 Q 360 400 410 900" stroke="#FFF" stroke-width="12" fill="none"/>
+      <path d="M580 0 Q 600 400 640 900" stroke="#FFF" stroke-width="10" fill="none"/>
+      <text x="600" y="60" font-family="Geist" font-size="11" fill="#6B7280" font-weight="500">Av. Arequipa</text>
+      <!-- Diagonal -->
+      <path d="M180 200 Q 400 480 720 800" stroke="#FFF" stroke-width="10" fill="none"/>
+      <text x="270" y="320" font-family="Geist" font-size="11" fill="#6B7280" font-weight="500" transform="rotate(40 270 320)">Av. Diagonal</text>
+      <!-- District labels -->
+      <text x="500" y="90" font-family="Geist" font-size="14" fill="#94A3B8" font-weight="700" letter-spacing="2">MIRAFLORES</text>
+      <text x="720" y="840" font-family="Geist" font-size="11" fill="#94A3B8" font-weight="600" letter-spacing="1">SURQUILLO</text>
+      <text x="170" y="850" font-family="Geist" font-size="11" fill="#94A3B8" font-weight="600" letter-spacing="1">BARRANCO</text>
+    </svg>
+
+    <div class="map-overlay">
+      <div class="map-info">
+        <div class="info-chip"><span class="dot"></span>14 turnos activos</div>
+        <div class="info-chip dark">Miraflores · radio 5km</div>
+      </div>
+      <div class="map-ctl">
+        <button class="mbtn" aria-label="Mi ubicación"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg></button>
+        <button class="mbtn" aria-label="Acercar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        <button class="mbtn" aria-label="Alejar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        <button class="mbtn" aria-label="Capa"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></button>
+      </div>
+
+      <!-- Pins -->
+      <div class="pin active" style="left:34%;top:38%"><div class="pn-logo" style="background:#15803D">QS</div><div class="pn-match" style="color:#fff">98%</div><div class="pn-tail"></div></div>
+      <div class="pin" style="left:55%;top:30%"><div class="pn-logo" style="background:#1E40AF">IF</div><div class="pn-match">94%</div><div class="pn-tail"></div></div>
+      <div class="pin urg" style="left:48%;top:48%"><div class="pn-logo" style="background:#fff;color:#B91C1C">MF</div><div class="pn-match">87%</div><div class="pn-tail"></div></div>
+      <div class="pin" style="left:68%;top:42%"><div class="pn-logo" style="background:#7C2D12">CI</div><div class="pn-match">91%</div><div class="pn-tail"></div></div>
+      <div class="pin" style="left:40%;top:60%"><div class="pn-logo" style="background:#5B21B6">BT</div><div class="pn-match">92%</div><div class="pn-tail"></div></div>
+      <div class="pin" style="left:62%;top:66%"><div class="pn-logo" style="background:#0F766E">BF</div><div class="pn-match">85%</div><div class="pn-tail"></div></div>
+      <div class="pin urg" style="left:30%;top:72%"><div class="pn-logo" style="background:#fff;color:#B91C1C">QF</div><div class="pn-match">89%</div><div class="pn-tail"></div></div>
+      <div class="pin" style="left:75%;top:74%"><div class="pn-logo" style="background:#15803D">IF</div><div class="pn-match">88%</div><div class="pn-tail"></div></div>
+      <div class="pin" style="left:50%;top:80%"><div class="pn-logo" style="background:#B45309">MF</div><div class="pn-match">90%</div><div class="pn-tail"></div></div>
+      <div class="pin" style="left:25%;top:48%"><div class="pn-logo" style="background:#0F766E">BS</div><div class="pn-match">93%</div><div class="pn-tail"></div></div>
+      <div class="pin" style="left:18%;top:60%"><div class="pn-logo" style="background:#5B21B6">QC</div><div class="pn-match">86%</div><div class="pn-tail"></div></div>
+
+      <!-- Selected preview -->
+      <div class="preview">
+        <div class="pv-cover">
+          <span class="pv-urg"><span class="pud"></span>Urgente · necesitan cubrir</span>
+          <button class="pv-cross" aria-label="Cerrar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          <div class="pv-logo">QS</div>
+        </div>
+        <div class="pv-bd">
+          <h3>Químico farmacéutico · Nocturno</h3>
+          <div class="pv-org">📍 Química Suiza · Av. Larco 345 · 0.8 km — <b style="color:#15803D">★ trabajaron juntos 48 veces</b></div>
+          <div class="pv-grid">
+            <div class="pv-cell"><div class="l">Match</div><div class="v" style="color:#15803D">98%</div></div>
+            <div class="pv-cell"><div class="l">Fecha</div><div class="v">Sáb 22 may</div></div>
+            <div class="pv-cell"><div class="l">Horario</div><div class="v">22:00 – 06:00</div></div>
+            <div class="pv-cell"><div class="l">Duración</div><div class="v">8 horas</div></div>
+          </div>
+          <div class="pv-pay">
+            <div class="pi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L4 6v6c0 5.5 3.5 9.5 8 10 4.5-.5 8-4.5 8-10V6l-8-4z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+            <div class="pt">
+              <b>Tarifa propuesta · acepta, negocia o rechaza</b>
+              <span>Tu nivel actual: Compatible 98% · Botica recurrente</span>
+            </div>
+          </div>
+          <div class="pv-cta">
+            <button class="btn-pri">Aplicar al turno →</button>
+            <button class="btn-out">Ver detalle</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body></html>

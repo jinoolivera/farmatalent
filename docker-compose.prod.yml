@@ -1,0 +1,84 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: farmatalent_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - farmatalent_db:/var/lib/mysql
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  backend:
+    build:
+      context: ./farmatalent-api
+      dockerfile: Dockerfile.prod
+    image: farmatalent_backend:prod
+    container_name: farmatalent_backend
+    restart: unless-stopped
+    env_file:
+      - ./farmatalent-api/.env.production
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - farmatalent_storage:/var/www/html/storage
+      - farmatalent_cache:/var/www/html/bootstrap/cache
+    networks:
+      - internal
+
+  backend_nginx:
+    image: nginx:1.25-alpine
+    container_name: farmatalent_backend_nginx
+    restart: unless-stopped
+    depends_on:
+      - backend
+    volumes:
+      - ./farmatalent-api/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - farmatalent_storage:/var/www/html/storage:ro
+      - ./farmatalent-api/public:/var/www/html/public:ro
+    networks:
+      - internal
+
+  frontend:
+    build:
+      context: ./farmatalent-web
+      dockerfile: Dockerfile.prod
+      args:
+        VITE_API_URL: /api/v1
+    image: farmatalent_frontend:prod
+    container_name: farmatalent_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend_nginx
+    volumes:
+      - /opt/nginx-proxy/html:/usr/share/nginx/acme:ro
+    environment:
+      VIRTUAL_HOST: ${VIRTUAL_HOST}
+      LETSENCRYPT_HOST: ${VIRTUAL_HOST}
+      LETSENCRYPT_EMAIL: jinooli@gmail.com
+      HTTPS_METHOD: redirect
+      VIRTUAL_PORT: 80
+    networks:
+      - internal
+      - proxy
+
+networks:
+  internal:
+    name: farmatalent_internal
+  proxy:
+    external: true
+    name: asistencia_asistencia-net
+
+volumes:
+  farmatalent_db:
+  farmatalent_storage:
+  farmatalent_cache:

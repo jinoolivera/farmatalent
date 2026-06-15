@@ -1,0 +1,161 @@
+/* =========================================================
+   FarmaTalent — Design Tokens v3
+   Fuente: /public/FarmaTalent Design System/colors_and_type.css
+   --------------------------------------------------------- */
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap");
+
+:root {
+  /* Primary: green-trust */
+  --ft-blue-950: #06122A;
+  --ft-blue-900: #0B1F3F;
+  --ft-blue-800: #133057;
+  --ft-blue-700: #15803D;
+  --ft-blue-600: #16A34A;
+  --ft-blue-500: #22C55E;
+  --ft-blue-400: #7299E8;
+  --ft-blue-300: #A7C0F2;
+  --ft-blue-200: #CFDDF6;
+  --ft-blue-100: #E7EEFA;
+  --ft-blue-50:  #F4F7FC;
+
+  /* Secondary: Sage */
+  --ft-sage-700: #3E6A57;
+  --ft-sage-500: #5E9C7F;
+  --ft-sage-300: #A8CCB8;
+  --ft-sage-100: #E2EFE7;
+  --ft-sage-50:  #F1F7F3;
+
+  /* Accent: Coral */
+  --ft-coral-700: #B23E50;
+  --ft-coral-600: #D85068;
+  --ft-coral-500: #F26D7D;
+  --ft-coral-100: #FDE0E3;
+  --ft-coral-50:  #FEF1F3;
+
+  /* Neutrals */
+  --ft-gray-950: #0A0E14;
+  --ft-gray-900: #121822;
+  --ft-gray-800: #1F2632;
+  --ft-gray-700: #384151;
+  --ft-gray-600: #4F5867;
+  --ft-gray-500: #6B7280;
+  --ft-gray-400: #9099A8;
+  --ft-gray-300: #C4CAD3;
+  --ft-gray-200: #E1E5EB;
+  --ft-gray-150: #ECEFF3;
+  --ft-gray-100: #F2F4F7;
+  --ft-gray-50:  #F8FAFC;
+  --ft-white:    #FFFFFF;
+
+  /* Green aliases (same values as --ft-blue-*, legacy naming) */
+  --ft-green-950: #06122A;
+  --ft-green-700: #15803D;
+  --ft-green-600: #16A34A;
+  --ft-green-500: #22C55E;
+  --ft-green-100: #DCFCE7;
+  --ft-green-50:  #F0FDF4;
+
+  /* Score colors */
+  --ft-score-excellent: #2D8B5F;
+  --ft-score-good:      #5BB07A;
+  --ft-score-ok:        #E8B14C;
+  --ft-score-low:       #D85068;
+
+  /* Semantic */
+  --ft-success-700: #1F7A4F;
+  --ft-success-600: #2D8B5F;
+  --ft-success-100: #DDF0E4;
+  --ft-success-50:  #F0F8F3;
+  --ft-warning-700: #B5750E;
+  --ft-warning-600: #D38A1A;
+  --ft-warning-100: #FBEACD;
+  --ft-danger-700:  #B22A3A;
+  --ft-danger-600:  #D8344A;
+  --ft-danger-100:  #FBDEE2;
+  --ft-info-600:    var(--ft-blue-600);
+  --ft-info-100:    var(--ft-blue-100);
+
+  /* Semantic roles */
+  --ft-bg:           var(--ft-gray-50);
+  --ft-bg-elev:      var(--ft-white);
+  --ft-bg-sunken:    var(--ft-gray-100);
+  --ft-bg-inverse:   var(--ft-gray-950);
+  --ft-fg:           var(--ft-gray-900);
+  --ft-fg-muted:     var(--ft-gray-600);
+  --ft-fg-subtle:    var(--ft-gray-500);
+  --ft-fg-disabled:  var(--ft-gray-400);
+  --ft-fg-on-dark:   var(--ft-white);
+  --ft-fg-link:      var(--ft-blue-700);
+  --ft-border:       var(--ft-gray-200);
+  --ft-border-strong:var(--ft-gray-300);
+  --ft-border-focus: var(--ft-blue-500);
+  --ft-action:       var(--ft-gray-900);
+  --ft-action-hover: var(--ft-gray-800);
+  --ft-action-brand: var(--ft-blue-700);
+  --ft-action-soft:  var(--ft-blue-50);
+
+  /* Typography */
+  --ft-font-display: "Instrument Serif", "Source Serif 4", Georgia, serif;
+  --ft-font-sans:    "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ft-font-mono:    "Geist Mono", ui-monospace, "JetBrains Mono", Menlo, monospace;
+
+  --ft-text-xs:   11px;
+  --ft-text-sm:   13px;
+  --ft-text-base: 15px;
+  --ft-text-md:   17px;
+  --ft-text-lg:   20px;
+  --ft-text-xl:   24px;
+  --ft-text-2xl:  32px;
+  --ft-text-3xl:  44px;
+  --ft-text-4xl:  60px;
+  --ft-text-5xl:  80px;
+
+  --ft-leading-tight: 1.05;
+  --ft-leading-snug:  1.2;
+  --ft-leading-base:  1.5;
+  --ft-leading-loose: 1.65;
+  --ft-tracking-tight: -0.025em;
+  --ft-tracking-snug:  -0.015em;
+  --ft-tracking-caps:  0.08em;
+
+  /* Spacing 4pt grid */
+  --ft-space-1:  4px;
+  --ft-space-2:  8px;
+  --ft-space-3:  12px;
+  --ft-space-4:  16px;
+  --ft-space-5:  20px;
+  --ft-space-6:  24px;
+  --ft-space-7:  28px;
+  --ft-space-8:  32px;
+  --ft-space-10: 40px;
+  --ft-space-12: 48px;
+  --ft-space-14: 56px;
+  --ft-space-16: 64px;
+  --ft-space-20: 80px;
+  --ft-space-24: 96px;
+
+  /* Radii */
+  --ft-radius-xs:   4px;
+  --ft-radius-sm:   6px;
+  --ft-radius-md:   8px;
+  --ft-radius-lg:   12px;
+  --ft-radius-xl:   16px;
+  --ft-radius-2xl:  24px;
+  --ft-radius-pill: 999px;
+
+  /* Shadows */
+  --ft-shadow-xs:        0 1px 2px rgba(10, 14, 20, 0.04);
+  --ft-shadow-sm:        0 1px 3px rgba(10, 14, 20, 0.06), 0 1px 2px rgba(10, 14, 20, 0.04);
+  --ft-shadow-md:        0 4px 12px -2px rgba(10, 14, 20, 0.08), 0 2px 4px rgba(10, 14, 20, 0.04);
+  --ft-shadow-lg:        0 16px 40px -8px rgba(10, 14, 20, 0.16), 0 4px 8px rgba(10, 14, 20, 0.04);
+  --ft-shadow-card:      0 2px 8px rgba(10, 14, 20, 0.06);
+  --ft-shadow-card-hover:0 12px 32px -6px rgba(10, 14, 20, 0.12);
+  --ft-shadow-focus:     0 0 0 3px rgba(68, 118, 214, 0.28);
+
+  /* Motion */
+  --ft-ease-out:    cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ft-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ft-dur-fast:  120ms;
+  --ft-dur-base:  200ms;
+  --ft-dur-slow:  360ms;
+}

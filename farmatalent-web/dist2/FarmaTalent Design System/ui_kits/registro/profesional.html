@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="es-PE"><head>
+<meta charset="utf-8">
+<title>FarmaTalent · Registro profesional</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#F8FAF8;color:#111827;font-family:var(--ft-font-sans);min-height:100vh;display:flex}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer;border:0}
+
+  /* Left brand panel */
+  .brand-panel{width:42%;background:linear-gradient(135deg,#0F2A14 0%,#15803D 100%);color:#fff;padding:48px 56px;display:flex;flex-direction:column;position:relative;overflow:hidden}
+  .brand-panel::before{content:"";position:absolute;top:-200px;right:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(134,239,172,.2),transparent 60%)}
+  .brand-panel::after{content:"";position:absolute;bottom:-200px;left:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(254,243,199,.16),transparent 60%)}
+  .brand-panel > *{position:relative;z-index:1}
+  .bp-logo{height:30px;margin-bottom:auto}
+  .bp-hero h1{font-family:var(--ft-font-display);font-style:italic;font-weight:400;font-size:56px;line-height:1.02;letter-spacing:-0.03em;margin:0}
+  .bp-hero h1 em{font-family:var(--ft-font-sans);font-style:normal;font-weight:600}
+  .bp-hero p{font-size:17px;color:rgba(255,255,255,.84);line-height:1.5;margin:18px 0 0;max-width:420px}
+  .bp-grow{margin-top:32px;padding:20px 22px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:16px}
+  .bp-grow .lab{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#86EFAC}
+  .bp-grow h4{font-size:16px;font-weight:600;margin:6px 0 8px;letter-spacing:-0.01em}
+  .bp-grow p{font-size:13px;color:rgba(255,255,255,.78);line-height:1.5;margin:0}
+  .bp-stages{margin-top:18px;display:flex;flex-direction:column;gap:12px}
+  .bp-stage{display:flex;align-items:flex-start;gap:12px}
+  .bp-stage .bs-dot{width:24px;height:24px;border-radius:999px;background:rgba(255,255,255,.12);color:#86EFAC;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+  .bp-stage.now .bs-dot{background:#22C55E;color:#fff;box-shadow:0 0 0 4px rgba(34,197,94,.3)}
+  .bp-stage.done .bs-dot{background:#fff;color:#15803D}
+  .bp-stage .bs-tx b{display:block;font-size:13px;font-weight:600;color:#fff}
+  .bp-stage .bs-tx span{font-size:12px;color:rgba(255,255,255,.7);line-height:1.5}
+
+  .bp-foot{margin-top:auto;padding-top:32px;font-size:12px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:6px}
+  .bp-foot .ks{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(255,255,255,.1);border-radius:6px;font-size:11px;color:#fff;font-weight:600;font-family:var(--ft-font-mono)}
+
+  /* Right form panel */
+  .form-panel{flex:1;display:flex;flex-direction:column;padding:40px 56px 48px;overflow-y:auto;min-width:0}
+  .top-row{display:flex;justify-content:space-between;align-items:center}
+  .step-pill{font-size:12px;color:#6B7280;font-weight:500}
+  .step-pill b{color:#0F2A14}
+  .lang-toggle{font-size:12px;font-weight:500;color:#6B7280}
+
+  .progress{margin-top:22px;display:flex;gap:6px}
+  .pseg{flex:1;height:5px;border-radius:999px;background:#E5E7EB}
+  .pseg.done{background:#16A34A}
+  .pseg.cur{background:linear-gradient(90deg,#16A34A 50%,#E5E7EB 50%)}
+
+  .step-head{margin-top:36px;max-width:520px}
+  .step-num{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#15803D}
+  .step-num .sd{width:6px;height:6px;border-radius:999px;background:#16A34A}
+  .step-head h2{font-weight:600;font-size:38px;letter-spacing:-0.03em;line-height:1.05;margin:10px 0 8px}
+  .step-head h2 em{font-family:var(--ft-font-display);font-style:italic;font-weight:400;color:#16A34A}
+  .step-head p{font-size:15px;color:#6B7280;line-height:1.55;margin:0}
+
+  /* Form */
+  .form{max-width:560px;margin-top:32px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+  .field{display:flex;flex-direction:column}
+  .field .lbl{font-size:12px;font-weight:600;color:#111827;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+  .field .lbl .opt{font-size:11px;color:#9CA3AF;font-weight:500}
+  .field input,.field select{font-family:inherit;font-size:14px;padding:12px 14px;border:1px solid #D1D5DB;border-radius:12px;background:#fff;color:#111827;outline:0;transition:all 160ms}
+  .field input:focus,.field select:focus{border-color:#16A34A;box-shadow:0 0 0 4px rgba(22,163,74,.12)}
+  .field .hint{font-size:11px;color:#6B7280;margin-top:5px}
+
+  /* Role chips */
+  .role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+  .role{display:flex;flex-direction:column;align-items:flex-start;padding:14px;border:1px solid #E5E7EB;border-radius:12px;background:#fff;cursor:pointer;transition:all 160ms;text-align:left}
+  .role:hover{border-color:#86EFAC;background:#F0FDF4}
+  .role.on{border-color:#16A34A;background:#F0FDF4;box-shadow:0 0 0 1px #16A34A}
+  .role .r-ico{width:36px;height:36px;border-radius:10px;background:#DCFCE7;color:#15803D;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+  .role.on .r-ico{background:#16A34A;color:#fff}
+  .role b{font-size:13px;font-weight:600;letter-spacing:-0.01em}
+  .role span{font-size:11px;color:#6B7280;margin-top:2px;font-weight:500}
+
+  /* Zones / chip multi */
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+  .chip{padding:8px 14px;background:#fff;border:1px solid #D1D5DB;border-radius:999px;font-size:12px;font-weight:500;color:#374151;cursor:pointer}
+  .chip:hover{border-color:#16A34A;color:#15803D}
+  .chip.on{background:#16A34A;color:#fff;border-color:#16A34A}
+  .chip.on::before{content:"✓ ";font-weight:700}
+
+  /* Bottom actions */
+  .footer-actions{margin-top:36px;display:flex;align-items:center;justify-content:space-between;max-width:560px}
+  .back-link{font-size:13px;color:#6B7280;font-weight:500;display:inline-flex;align-items:center;gap:5px}
+  .back-link:hover{color:#111827}
+  .next{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;background:#111827;color:#fff;border-radius:999px;font-size:14px;font-weight:600}
+  .next:hover{background:#1F2937}
+  .next:disabled{opacity:.4;cursor:not-allowed}
+
+  .privacy{margin-top:14px;font-size:11px;color:#9CA3AF;max-width:560px;line-height:1.5}
+  .privacy b{color:#374151}
+</style>
+</head><body>
+
+<!-- Left brand panel -->
+<div class="brand-panel">
+  <img src="../../assets/logo-inverse.svg" alt="FarmaTalent" class="bp-logo"/>
+
+  <div class="bp-hero" style="margin-top:24px">
+    <h1><em>Tu carrera</em><br/>se construye<br/>turno a turno.</h1>
+    <p>FarmaTalent no es una bolsa de trabajo. Es donde tu reputación operacional se vuelve la moneda que abre las mejores oportunidades del Perú.</p>
+  </div>
+
+  <div class="bp-grow">
+    <div class="lab">Cómo crece tu perfil</div>
+    <h4>Sin CVs, sin PDFs. Sin burocracia.</h4>
+    <p>Empezás con lo básico y tu perfil se desarrolla con cada turno completado, cada reseña, cada continuidad con una botica.</p>
+
+    <div class="bp-stages">
+      <div class="bp-stage now">
+        <div class="bs-dot">1</div>
+        <div class="bs-tx"><b>Datos básicos</b><span>Rol, zona y disponibilidad — 90 segundos</span></div>
+      </div>
+      <div class="bp-stage">
+        <div class="bs-dot">2</div>
+        <div class="bs-tx"><b>Primeros turnos</b><span>Postulás · matcheás · operás</span></div>
+      </div>
+      <div class="bp-stage">
+        <div class="bs-dot">3</div>
+        <div class="bs-tx"><b>Reputación se forma</b><span>Score, badges, boticas recurrentes</span></div>
+      </div>
+      <div class="bp-stage">
+        <div class="bs-dot">4</div>
+        <div class="bs-tx"><b>Talento Senior · Master</b><span>Prioridad alta · turnos premium</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bp-foot">
+    Apretá <span class="ks">⏎ Enter</span> para continuar · cualquier momento podés salir y retomar
+  </div>
+</div>
+
+<!-- Right form panel -->
+<main class="form-panel">
+  <div class="top-row">
+    <div class="step-pill">Paso <b>2</b> de 4 · <b>Datos básicos</b></div>
+    <span class="lang-toggle">🇵🇪 Español · Perú</span>
+  </div>
+
+  <div class="progress">
+    <div class="pseg done"></div>
+    <div class="pseg cur"></div>
+    <div class="pseg"></div>
+    <div class="pseg"></div>
+  </div>
+
+  <div class="step-head">
+    <span class="step-num"><span class="sd"></span>PASO 2 · Datos básicos</span>
+    <h2>Decinos <em>quién sos</em>.</h2>
+    <p>Lo justo para empezar a recibir oportunidades. Después tu perfil se construye solo con cada turno.</p>
+  </div>
+
+  <div class="form">
+
+    <!-- Nombre / DNI -->
+    <div class="row">
+      <div class="field">
+        <span class="lbl">Nombre completo</span>
+        <input type="text" value="María Rodríguez Chávez"/>
+      </div>
+      <div class="field">
+        <span class="lbl">DNI <span class="opt">se valida al primer turno</span></span>
+        <input type="text" value="71284572" placeholder="00000000"/>
+      </div>
+    </div>
+
+    <!-- Rol -->
+    <div class="field" style="margin-bottom:16px">
+      <span class="lbl">¿Qué tipo de profesional sos?</span>
+      <div class="role-grid">
+        <div class="role on">
+          <div class="r-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6l2 4h4v13H3V7h4z"/><circle cx="12" cy="14" r="3"/></svg></div>
+          <b>Q.F. responsable</b>
+          <span>Colegiatura activa</span>
+        </div>
+        <div class="role">
+          <div class="r-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M8 8V5a4 4 0 0 1 8 0v3"/></svg></div>
+          <b>Técnico farmacia</b>
+          <span>Título técnico</span>
+        </div>
+        <div class="role">
+          <div class="r-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></div>
+          <b>Auxiliar / apoyo</b>
+          <span>Sin requisitos</span>
+        </div>
+        <div class="role">
+          <div class="r-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></div>
+          <b>Enfermero/a</b>
+          <span>Colegiatura activa</span>
+        </div>
+        <div class="role">
+          <div class="r-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><polyline points="17 11 19 13 23 9"/></svg></div>
+          <b>Practicante</b>
+          <span>Universidad activa</span>
+        </div>
+        <div class="role">
+          <div class="r-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+          <b>Otro</b>
+          <span>Especificar</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Specialidad chips -->
+    <div class="field" style="margin-bottom:18px">
+      <span class="lbl">Especialidades <span class="opt">elegí las que aplican</span></span>
+      <div class="chips">
+        <span class="chip on">Operación nocturna</span>
+        <span class="chip on">Receta controlada</span>
+        <span class="chip">Hospitalario</span>
+        <span class="chip on">Inventario crítico</span>
+        <span class="chip">Quimioterapia</span>
+        <span class="chip">Atención al cliente</span>
+        <span class="chip">POS de cadena</span>
+        <span class="chip">Farmacovigilancia</span>
+        <span class="chip">+ Agregar</span>
+      </div>
+    </div>
+
+    <!-- Zonas -->
+    <div class="field" style="margin-bottom:18px">
+      <span class="lbl">¿En qué zonas de Lima estás disponible?</span>
+      <div class="chips">
+        <span class="chip on">📍 Miraflores</span>
+        <span class="chip on">San Isidro</span>
+        <span class="chip on">Surco</span>
+        <span class="chip">San Borja</span>
+        <span class="chip">Barranco</span>
+        <span class="chip">La Molina</span>
+        <span class="chip">Magdalena</span>
+        <span class="chip">+ Otras</span>
+      </div>
+      <span class="hint">Tu ubicación exacta solo se comparte después de cada match confirmado.</span>
+    </div>
+
+    <!-- Año experiencia -->
+    <div class="row">
+      <div class="field">
+        <span class="lbl">Años de experiencia</span>
+        <select>
+          <option>Sin experiencia previa</option>
+          <option>1–2 años</option>
+          <option>3–5 años</option>
+          <option selected>6+ años</option>
+        </select>
+      </div>
+      <div class="field">
+        <span class="lbl">Colegiatura QF <span class="opt">opcional ahora</span></span>
+        <input type="text" placeholder="CQFP 18234"/>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-actions">
+    <a class="back-link">← Volver al paso 1</a>
+    <button class="next">Continuar a disponibilidad →</button>
+  </div>
+
+  <div class="privacy">
+    🔒 <b>Privacidad operacional.</b> Nadie ve tu nombre, DNI ni teléfono hasta que confirmás un match. Tu perfil público sólo muestra rol, score y zona.
+  </div>
+</main>
+
+</body></html>

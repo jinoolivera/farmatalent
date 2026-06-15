@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="es-PE"><head>
+<meta charset="utf-8">
+<title>FarmaTalent · Crear cuenta</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#F8FAF8;color:#111827;font-family:var(--ft-font-sans);min-height:100vh;display:flex;flex-direction:column}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer;border:0}
+
+  /* Nav */
+  .nav{background:#fff;border-bottom:1px solid #E5E7EB}
+  .nav-in{max-width:1240px;margin:0 auto;height:68px;padding:0 28px;display:flex;align-items:center}
+  .nav-link{margin-left:auto;font-size:13px;color:#6B7280;font-weight:500;padding:8px 14px;border-radius:999px}
+  .nav-link:hover{background:#F3F4F6;color:#111827}
+  .nav-link b{color:#0F2A14}
+
+  /* Hero */
+  .wrap{flex:1;max-width:1100px;margin:0 auto;padding:56px 28px 64px;width:100%}
+  .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;background:#DCFCE7;color:#15803D;font-size:12px;font-weight:600;border:1px solid #BBF7D0}
+  .pill .dot{width:6px;height:6px;border-radius:999px;background:#16A34A;animation:pulse 1.8s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+  h1{font-family:var(--ft-font-sans);font-weight:600;font-size:clamp(40px,5.4vw,60px);line-height:1.02;letter-spacing:-0.035em;margin:18px 0 12px;max-width:760px}
+  h1 em{font-family:var(--ft-font-display);font-style:italic;font-weight:400;color:#16A34A;letter-spacing:-0.02em}
+  .lead{font-size:18px;color:#4B5563;max-width:620px;line-height:1.5;margin:0}
+
+  /* Cards */
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:48px}
+  .card{position:relative;background:#fff;border:1px solid #E5E7EB;border-radius:20px;padding:32px;cursor:pointer;transition:all 240ms;overflow:hidden;display:flex;flex-direction:column;gap:18px}
+  .card:hover{transform:translateY(-3px);box-shadow:0 16px 40px -10px rgba(15,42,20,.14)}
+  .card.pro{border-color:#16A34A}
+  .card.pro:hover{box-shadow:0 16px 40px -10px rgba(22,163,74,.28)}
+  .card.bo:hover{border-color:#0F172A;box-shadow:0 16px 40px -10px rgba(15,23,42,.16)}
+
+  .card-bg{position:absolute;inset:0;pointer-events:none;opacity:.05}
+  .card.pro .card-bg{background:radial-gradient(60% 80% at 80% 20%,#16A34A,transparent 60%)}
+  .card.bo .card-bg{background:radial-gradient(60% 80% at 80% 20%,#0F172A,transparent 60%)}
+
+  .card-head{display:flex;justify-content:space-between;align-items:flex-start;position:relative}
+  .card-ico{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
+  .card.pro .card-ico{background:linear-gradient(135deg,#22C55E,#15803D)}
+  .card.bo .card-ico{background:linear-gradient(135deg,#1F2937,#0F172A)}
+  .recommended{font-size:10px;font-weight:700;letter-spacing:.12em;color:#15803D;background:#DCFCE7;border:1px solid #BBF7D0;padding:5px 10px;border-radius:999px;text-transform:uppercase}
+
+  .card h2{font-size:26px;font-weight:600;letter-spacing:-0.025em;margin:0;position:relative}
+  .card h2 em{font-family:var(--ft-font-display);font-style:italic;font-weight:400}
+  .card.pro h2 em{color:#15803D}
+  .card.bo h2 em{color:#0F172A}
+  .card .desc{font-size:14px;color:#4B5563;line-height:1.55;margin:0;position:relative}
+
+  .feature-list{display:flex;flex-direction:column;gap:8px;margin:4px 0 0;padding:0;list-style:none;position:relative}
+  .feature-list li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#374151;line-height:1.45}
+  .feature-list li svg{flex-shrink:0;margin-top:2px}
+  .card.pro .feature-list svg{color:#16A34A}
+  .card.bo .feature-list svg{color:#0F172A}
+
+  .stats-row{display:flex;gap:0;padding:14px 0;border-top:1px solid #F3F4F6;border-bottom:1px solid #F3F4F6;position:relative}
+  .stat{flex:1;padding:0 8px}
+  .stat:first-child{padding-left:0}
+  .stat:not(:last-child){border-right:1px solid #F3F4F6}
+  .stat .v{font-size:20px;font-weight:600;letter-spacing:-0.02em;line-height:1}
+  .stat .v em{font-family:var(--ft-font-display);font-style:italic;font-weight:400}
+  .card.pro .stat .v em{color:#16A34A}
+  .card.bo .stat .v em{color:#0F172A}
+  .stat .l{font-size:11px;color:#6B7280;margin-top:4px;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
+
+  .card-cta{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:6px;position:relative}
+  .card-cta .price-note{font-size:12px;color:#6B7280}
+  .card-cta .price-note b{color:#0F2A14;font-weight:600}
+  .btn-go{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:999px;font-size:13px;font-weight:600;transition:all 160ms}
+  .card.pro .btn-go{background:#16A34A;color:#fff}
+  .card.pro .btn-go:hover{background:#15803D}
+  .card.bo .btn-go{background:#0F172A;color:#fff}
+  .card.bo .btn-go:hover{background:#1F2937}
+
+  /* Bottom row */
+  .login-row{margin-top:48px;text-align:center;font-size:13px;color:#6B7280}
+  .login-row a{color:#15803D;font-weight:600}
+  .login-row a:hover{text-decoration:underline}
+
+  /* Trust footer */
+  .trust{margin-top:36px;display:flex;align-items:center;justify-content:center;gap:32px;font-size:12px;color:#6B7280;flex-wrap:wrap}
+  .trust span{display:inline-flex;align-items:center;gap:6px}
+  .trust span svg{color:#16A34A}
+</style>
+</head><body>
+
+<nav class="nav">
+  <div class="nav-in">
+    <img src="../../assets/logo.svg" alt="FarmaTalent" height="30"/>
+    <a class="nav-link" href="#">¿Ya tenés cuenta? <b>Iniciá sesión</b></a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <span class="pill"><span class="dot"></span>1,284 turnos activos en Perú · ahora mismo</span>
+  <h1>¿Cómo querés usar <em>FarmaTalent</em>?</h1>
+  <p class="lead">Una sola plataforma. Dos formas de entrar. Elegí la que se ajusta a vos y empezamos en menos de 2 minutos.</p>
+
+  <!-- Cards -->
+  <div class="cards">
+
+    <!-- Profesional -->
+    <a class="card pro" href="profesional.html">
+      <div class="card-bg"></div>
+
+      <div class="card-head">
+        <div class="card-ico">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+        </div>
+        <span class="recommended">★ Recomendado</span>
+      </div>
+
+      <h2>Soy <em>profesional</em><br/>de farmacia</h2>
+      <p class="desc">Químico farmacéutico, técnico, auxiliar, enfermero, practicante o personal de apoyo en farmacia.</p>
+
+      <ul class="feature-list">
+        <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Construí reputación operacional con cada turno</li>
+        <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Subí de nivel: <b>Junior → Senior → Master</b></li>
+        <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Boticas recurrentes te invitan directamente</li>
+        <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Pago seguro · a 24h del cierre del turno</li>
+      </ul>
+
+      <div class="stats-row">
+        <div class="stat"><div class="v"><em>8,200+</em></div><div class="l">pros activos</div></div>
+        <div class="stat"><div class="v">2.1h</div><div class="l">match medio</div></div>
+        <div class="stat"><div class="v">94%</div><div class="l">satisfacción</div></div>
+      </div>
+
+      <div class="card-cta">
+        <span class="price-note">Crear cuenta <b>gratis</b> · 90 segundos</span>
+        <span class="btn-go">Continuar →</span>
+      </div>
+    </a>
+
+    <!-- Botica -->
+    <a class="card bo" href="farmacia.html">
+      <div class="card-bg"></div>
+
+      <div class="card-head">
+        <div class="card-ico">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-6 9 6v13"/><path d="M9 21v-8h6v8"/><path d="M12 11h.01"/></svg>
+        </div>
+      </div>
+
+      <h2>Soy <em>botica,</em><br/>clínica o cadena</h2>
+      <p class="desc">Independientes, cadenas farmacéuticas (Inkafarma, Mifarma…), boticas, clínicas y establecimientos de salud.</p>
+
+      <ul class="feature-list">
+        <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Cobertura en horas, no días — calidad de servicio garantizada</li>
+        <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Acceso a los mejores perfiles validados de Perú</li>
+        <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Construí tu red de <b>profesionales frecuentes</b></li>
+        <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Tu botica también construye reputación visible</li>
+      </ul>
+
+      <div class="stats-row">
+        <div class="stat"><div class="v"><em>2,400</em></div><div class="l">sucursales</div></div>
+        <div class="stat"><div class="v">38 min</div><div class="l">cobertura</div></div>
+        <div class="stat"><div class="v">87%</div><div class="l">match alto</div></div>
+      </div>
+
+      <div class="card-cta">
+        <span class="price-note">Plan Cobertura · <b>1er mes gratis</b></span>
+        <span class="btn-go">Continuar →</span>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="login-row">
+    ¿No estás seguro cuál te corresponde? <a href="#">Hablá con ventas →</a>
+  </div>
+
+  <div class="trust">
+    <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0"/></svg>Cuenta privada · datos protegidos</span>
+    <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Verificación operacional · no documentos al inicio</span>
+    <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Listo en 90 segundos</span>
+  </div>
+</div>
+
+</body></html>

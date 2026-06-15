@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="es-PE"><head>
+<meta charset="utf-8">
+<title>FarmaTalent · Dashboard Botica</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#F8FAF8;color:#111827;font-family:var(--ft-font-sans);min-height:100vh;display:grid;grid-template-columns:248px 1fr}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+
+  /* Sidebar */
+  .side{background:#fff;border-right:1px solid #E5E7EB;padding:20px 16px;height:100vh;position:sticky;top:0;display:flex;flex-direction:column;gap:4px}
+  .side-brand{padding:4px 8px 8px;display:flex;align-items:center;gap:8px}
+  .side-brand .blogo{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#15803D,#22C55E);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+  .side-brand .bname{font-size:13px;font-weight:600}
+  .side-brand .brol{font-size:11px;color:#6B7280}
+  .side-section{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#9CA3AF;padding:16px 12px 8px}
+  .side-link{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;font-size:14px;color:#374151;font-weight:500}
+  .side-link:hover{background:#F3F4F6}
+  .side-link.active{background:#111827;color:#fff}
+  .side-link .badge-num{margin-left:auto;background:#EF4444;color:#fff;padding:2px 7px;border-radius:999px;font-size:11px;font-weight:700}
+  .side-link.active .badge-num{background:#fff;color:#111827}
+  .side-cta{margin-top:18px;background:#16A34A;color:#fff;border:0;border-radius:12px;padding:12px;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer}
+  .side-cta:hover{background:#15803D}
+  .side-foot{margin-top:auto;padding:12px;border-top:1px solid #E5E7EB;padding-top:14px;font-size:11px;color:#6B7280;line-height:1.5}
+  .side-foot b{display:block;color:#111827;font-size:12px;font-weight:600;margin-bottom:2px}
+
+  /* Main */
+  main{padding:28px 36px 64px;min-width:0}
+  .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;gap:24px}
+  .top h1{font-weight:600;font-size:30px;letter-spacing:-0.025em;margin:0}
+  .top h1 em{font-family:var(--ft-font-display);font-style:italic;font-weight:400;color:#16A34A}
+  .top .sub{font-size:14px;color:#6B7280;margin-top:4px}
+  .top-actions{display:flex;gap:8px;align-items:center}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;border:0}
+  .btn-pri{background:#111827;color:#fff}
+  .btn-pri:hover{background:#1F2937}
+  .btn-brand{background:#16A34A;color:#fff}
+  .btn-brand:hover{background:#15803D}
+  .btn-out{background:#fff;color:#111827;border:1px solid #D1D5DB}
+  .btn-out:hover{border-color:#111827}
+  .btn-lg{padding:13px 22px;font-size:14px}
+  .icon-btn{width:40px;height:40px;border-radius:999px;background:#fff;border:1px solid #E5E7EB;display:flex;align-items:center;justify-content:center;color:#6B7280;position:relative}
+  .icon-btn .dot{position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:999px;background:#EF4444;border:2px solid #fff}
+
+  /* Cobertura hero */
+  .coverage{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;margin-bottom:24px}
+  .cov-main{background:linear-gradient(135deg,#0F2A14 0%,#15803D 100%);border-radius:20px;padding:28px 32px;color:#fff;position:relative;overflow:hidden}
+  .cov-main::before{content:"";position:absolute;top:-200px;right:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(134,239,172,.18),transparent 60%)}
+  .cov-main > *{position:relative;z-index:1}
+  .cov-lab{font-size:11px;font-weight:600;letter-spacing:.14em;color:rgba(255,255,255,.7);text-transform:uppercase}
+  .cov-big{font-family:var(--ft-font-display);font-style:italic;font-weight:400;font-size:84px;line-height:1;letter-spacing:-0.03em;margin:8px 0 4px}
+  .cov-big em{font-style:normal;font-family:var(--ft-font-sans);font-size:24px;color:rgba(255,255,255,.7);margin-left:8px;font-weight:500}
+  .cov-sub{font-size:14px;color:rgba(255,255,255,.78);line-height:1.5;max-width:480px}
+  .cov-stats{display:flex;gap:24px;margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,.18)}
+  .cov-stats .cs{flex:1}
+  .cov-stats .cs-v{font-size:22px;font-weight:600;letter-spacing:-0.02em}
+  .cov-stats .cs-l{font-size:11px;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+  .cov-side{display:flex;flex-direction:column;gap:12px}
+  .cov-kpi{background:#fff;border:1px solid #E5E7EB;border-radius:16px;padding:16px 18px}
+  .cov-kpi .l{font-size:11px;color:#6B7280;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+  .cov-kpi .v{font-size:26px;font-weight:600;letter-spacing:-0.025em;margin-top:4px;line-height:1}
+  .cov-kpi .v em{font-family:var(--ft-font-display);font-style:italic;font-weight:400;color:#16A34A;font-size:30px}
+  .cov-kpi .d{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;margin-top:8px;background:#DCFCE7;color:#15803D}
+
+  /* Mode toggle (Cobertura / Continuidad) */
+  .mode-toggle{display:inline-flex;background:#fff;border:1px solid #E5E7EB;border-radius:999px;padding:4px;margin-bottom:24px}
+  .mode-toggle button{border:0;background:transparent;padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;color:#6B7280;display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+  .mode-toggle button.active{background:#0F172A;color:#fff}
+  .mode-toggle button .md-dot{width:6px;height:6px;border-radius:999px;background:currentColor}
+  .mode-toggle button.active.cov .md-dot{background:#86EFAC}
+  .mode-toggle button.active.cont .md-dot{background:#FCD34D}
+  .mode-toggle button .md-tag{font-size:10px;font-weight:500;color:#9CA3AF;margin-left:4px}
+  .mode-toggle button.active .md-tag{color:rgba(255,255,255,.7)}
+
+  /* Smart-match callout */
+  .smart-match{display:flex;align-items:center;gap:12px;padding:14px 18px;background:linear-gradient(135deg,#F0FDF4,#fff);border:1px solid #BBF7D0;border-radius:14px;margin-bottom:24px}
+  .smart-match .sm-ico{width:38px;height:38px;border-radius:10px;background:#15803D;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .smart-match .sm-tx{flex:1;font-size:13px;color:#0F2A14}
+  .smart-match .sm-tx b{font-weight:700}
+  .smart-match .sm-tx em{font-family:var(--ft-font-display);font-style:italic;color:#15803D;font-weight:400}
+
+  /* Tabs */
+  .tabs{display:flex;gap:6px;border-bottom:1px solid #E5E7EB;margin-bottom:20px;padding-bottom:0}
+  .tab{padding:11px 4px;font-size:14px;font-weight:600;color:#6B7280;border:0;background:transparent;border-bottom:2px solid transparent;margin-right:20px}
+  .tab.active{color:#111827;border-bottom-color:#16A34A}
+  .tab .ct{margin-left:6px;background:#F3F4F6;color:#6B7280;padding:2px 7px;border-radius:999px;font-size:11px;font-weight:700}
+  .tab.active .ct{background:#DCFCE7;color:#15803D}
+
+  /* Layout */
+  .work{display:grid;grid-template-columns:1fr 360px;gap:24px;align-items:flex-start}
+
+  /* Shift card (botica POV) */
+  .shift{background:#fff;border:1px solid #E5E7EB;border-radius:16px;padding:20px;margin-bottom:12px;transition:all 180ms}
+  .shift:hover{box-shadow:0 4px 14px rgba(17,24,39,.06)}
+  .shift.urg{border-color:#FCA5A5;background:linear-gradient(135deg,#FEF2F2,#fff 30%)}
+  .shift-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+  .shift-head h4{font-size:17px;font-weight:600;margin:0;letter-spacing:-0.015em}
+  .shift-head .org{font-size:12px;color:#6B7280;margin-top:3px}
+  .shift-head .right{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+  .shift-meta{display:flex;gap:14px;font-size:13px;color:#4B5563;margin-bottom:14px;flex-wrap:wrap}
+  .shift-meta span{display:inline-flex;align-items:center;gap:5px}
+  .tarifa{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:999px;font-size:12px;font-weight:600;color:#15803D}
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600}
+  .b-coral{background:#FEE2E2;color:#B91C1C}
+  .b-mid{background:#FEF3C7;color:#92400E}
+  .b-ok{background:#DCFCE7;color:#15803D}
+  .b-info{background:#DBEAFE;color:#1E40AF}
+  .b-neu{background:#F3F4F6;color:#374151}
+  .applicants-row{display:flex;align-items:center;justify-content:space-between;padding:14px;background:#F8FAF8;border-radius:12px;margin-bottom:12px}
+  .ap-stack{display:flex;align-items:center;gap:14px}
+  .ap-avas{display:flex}
+  .ap-ava{width:36px;height:36px;border-radius:999px;border:2px solid #fff;margin-left:-10px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;position:relative}
+  .ap-ava:first-child{margin-left:0}
+  .ap-ava .mscore{position:absolute;bottom:-2px;right:-4px;background:#16A34A;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:999px;border:1.5px solid #fff;line-height:1.2}
+  .ap-tx b{display:block;font-size:13px;font-weight:600}
+  .ap-tx span{font-size:11px;color:#6B7280}
+  .shift-foot{display:flex;gap:8px;justify-content:flex-end}
+
+  /* Right column */
+  .pane{background:#fff;border:1px solid #E5E7EB;border-radius:16px;padding:22px}
+  .pane + .pane{margin-top:14px}
+  .pane h3{font-size:15px;font-weight:600;letter-spacing:-0.01em;margin:0 0 14px;display:flex;align-items:center;justify-content:space-between}
+  .pane h3 a{font-size:12px;color:#15803D;font-weight:600}
+
+  /* Velocidad gauge */
+  .gauge-wrap{display:flex;flex-direction:column;align-items:center;text-align:center}
+  .gauge{position:relative;width:180px;height:100px}
+  .gauge .big{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-family:var(--ft-font-display);font-style:italic;font-size:42px;line-height:1;color:#16A34A;font-weight:400;letter-spacing:-0.02em}
+  .gauge .big em{font-family:var(--ft-font-sans);font-style:normal;font-size:18px;color:#6B7280;margin-left:4px;font-weight:500}
+  .gauge-cap{font-size:12px;color:#6B7280;margin-top:6px}
+  .gauge-cap b{color:#15803D;font-weight:600}
+
+  /* Profesionales frecuentes */
+  .freq-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F3F4F6}
+  .freq-item:last-child{border:0;padding-bottom:0}
+  .freq-item:first-child{padding-top:0}
+  .freq-ava{width:40px;height:40px;border-radius:999px;color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .freq-tx{flex:1;min-width:0}
+  .freq-tx b{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+  .freq-tx .vchk{width:14px;height:14px;border-radius:999px;background:#16A34A;color:#fff;display:inline-flex;align-items:center;justify-content:center}
+  .freq-tx span{font-size:11px;color:#6B7280}
+  .freq-score{font-size:13px;font-weight:700;color:#15803D}
+  .freq-invite{background:#fff;color:#111827;border:1px solid #D1D5DB;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:600}
+  .freq-invite:hover{border-color:#16A34A;color:#15803D}
+
+  /* Activity */
+  .feed-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #F3F4F6}
+  .feed-item:last-child{border:0;padding-bottom:0}
+  .feed-icon{width:32px;height:32px;border-radius:999px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .feed-icon.success{background:#DCFCE7;color:#15803D}
+  .feed-icon.info{background:#DBEAFE;color:#1E40AF}
+  .feed-icon.coral{background:#FEE2E2;color:#B91C1C}
+  .feed-text{font-size:13px;line-height:1.4}
+  .feed-text b{font-weight:600}
+  .feed-time{font-size:11px;color:#9CA3AF;margin-top:2px}
+</style>
+</head><body>
+
+<!-- Sidebar -->
+<aside class="side">
+  <div class="side-brand">
+    <div class="blogo">QS</div>
+    <div>
+      <div class="bname">Química Suiza</div>
+      <div class="brol">Av. Larco 345 · Miraflores</div>
+    </div>
+  </div>
+
+  <div class="side-section">Operación</div>
+  <a class="side-link active">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+    Cobertura
+  </a>
+  <a class="side-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+    Turnos activos<span class="badge-num">4</span>
+  </a>
+  <a class="side-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
+    Postulantes<span class="badge-num">12</span>
+  </a>
+  <a class="side-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Mensajes<span class="badge-num">3</span>
+  </a>
+
+  <div class="side-section">Red</div>
+  <a class="side-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg>
+    Profesionales frecuentes
+  </a>
+  <a class="side-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    Reputación botica
+  </a>
+  <a class="side-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="13" rx="2"/><line x1="2" y1="11" x2="22" y2="11"/></svg>
+    Facturación
+  </a>
+
+  <button class="side-cta">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Publicar turno
+  </button>
+
+  <div class="side-foot">
+    <b>Plan Cobertura Plus</b>
+    Turnos ilimitados · matching prioritario · soporte 24/7
+  </div>
+</aside>
+
+<main>
+  <div class="top">
+    <div>
+      <h1>Cobertura, <em>en vivo</em>.</h1>
+      <div class="sub">Botica Química Suiza Larco · operando ahora · sáb 17 may, 14:32</div>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="dot"></span></button>
+      <button class="btn btn-out">Ver historial</button>
+      <button class="btn btn-brand btn-lg">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Publicar turno
+      </button>
+    </div>
+  </div>
+
+  <!-- Cobertura hero -->
+  <div class="coverage">
+    <div class="cov-main">
+      <div class="cov-lab">Cobertura esta semana</div>
+      <div class="cov-big">96<em>%</em></div>
+      <div class="cov-sub">12 de 13 turnos cubiertos. Tu velocidad de cobertura es <b>38 min en promedio</b>. Estás en el <b>Top 5%</b> de boticas de Miraflores.</div>
+      <div class="cov-stats">
+        <div class="cs"><div class="cs-v">38 min</div><div class="cs-l">Velocidad media</div></div>
+        <div class="cs"><div class="cs-v">12 / 13</div><div class="cs-l">Cubiertos esta sem.</div></div>
+        <div class="cs"><div class="cs-v">4.9</div><div class="cs-l">Score botica</div></div>
+        <div class="cs"><div class="cs-v">8</div><div class="cs-l">Pros recurrentes</div></div>
+      </div>
+    </div>
+    <div class="cov-side">
+      <div class="cov-kpi">
+        <div class="l">Turnos activos ahora</div>
+        <div class="v"><em>4</em></div>
+        <span class="d">1 urgente · 12 postulantes</span>
+      </div>
+      <div class="cov-kpi">
+        <div class="l">Próximas 48h</div>
+        <div class="v">7<span style="font-size:14px;color:#9CA3AF;font-weight:500"> turnos</span></div>
+        <span class="d">↑ matching alto en 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mode toggle: cobertura vs continuidad -->
+  <div class="mode-toggle">
+    <button class="active cov"><span class="md-dot"></span>Modo Cobertura<span class="md-tag">turnos rápidos</span></button>
+    <button class="cont"><span class="md-dot"></span>Modo Continuidad<span class="md-tag">equipo recurrente</span></button>
+  </div>
+
+  <!-- Smart-match callout: NOT a massive list -->
+  <div class="smart-match">
+    <div class="sm-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg></div>
+    <div class="sm-tx"><b>Matching inteligente activo.</b> Te mostramos solo los <em>perfiles más compatibles</em> según tu historial, no listas masivas. 12 postulantes filtrados de 87 disponibles.</div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active">Turnos activos<span class="ct">4</span></button>
+    <button class="tab">Postulantes<span class="ct">12</span></button>
+    <button class="tab">Programados<span class="ct">7</span></button>
+    <button class="tab">Cerrados<span class="ct">142</span></button>
+  </div>
+
+  <div class="work">
+    <div>
+
+      <!-- Shift card 1: URGENT -->
+      <div class="shift urg">
+        <div class="shift-head">
+          <div>
+            <h4>Químico farmacéutico · Nocturno</h4>
+            <div class="org">🗓 Sáb 17 may · 22:00–06:00 · 8h</div>
+          </div>
+          <div class="right">
+            <span class="badge b-coral">● Urgente · cubrir hoy</span>
+            <span class="tarifa">Tarifa propuesta · S/ 380</span>
+          </div>
+        </div>
+        <div class="shift-meta">
+          <span>📍 Av. Larco 345</span>
+          <span>👥 5 postulantes</span>
+          <span>⚡ Match alto: 3</span>
+        </div>
+
+        <!-- Top 3 candidates compact -->
+        <div class="applicants-row">
+          <div class="ap-stack">
+            <div class="ap-avas">
+              <div class="ap-ava" style="background:linear-gradient(135deg,#22C55E,#15803D)">MR<span class="mscore">98</span></div>
+              <div class="ap-ava" style="background:linear-gradient(135deg,#3B82F6,#1E40AF)">JC<span class="mscore">94</span></div>
+              <div class="ap-ava" style="background:linear-gradient(135deg,#F59E0B,#B45309)">LS<span class="mscore">92</span></div>
+            </div>
+            <div class="ap-tx">
+              <b>3 candidatos compatibles ≥90%</b>
+              <span>María R. (98) recurrente · respuesta promedio 6 min</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-out" style="padding:8px 14px;font-size:12px">Ver todos</button>
+            <button class="btn btn-pri" style="padding:8px 14px;font-size:12px">Elegir →</button>
+          </div>
+        </div>
+
+        <div class="shift-foot">
+          <button class="btn btn-out">Editar turno</button>
+        </div>
+      </div>
+
+      <!-- Shift card 2 -->
+      <div class="shift">
+        <div class="shift-head">
+          <div>
+            <h4>Técnico farmacéutico · Vespertino</h4>
+            <div class="org">🗓 Lun 19 may · 14:00–22:00 · 8h</div>
+          </div>
+          <div class="right">
+            <span class="badge b-mid">⏱ Postulaciones abiertas</span>
+            <span class="tarifa">Tarifa propuesta · S/ 145</span>
+          </div>
+        </div>
+        <div class="shift-meta">
+          <span>📍 Av. Larco 345</span>
+          <span>👥 4 postulantes</span>
+          <span>⚡ Match alto: 2</span>
+        </div>
+        <div class="applicants-row">
+          <div class="ap-stack">
+            <div class="ap-avas">
+              <div class="ap-ava" style="background:linear-gradient(135deg,#10B981,#0F766E)">DR<span class="mscore">91</span></div>
+              <div class="ap-ava" style="background:linear-gradient(135deg,#8B5CF6,#5B21B6)">PG<span class="mscore">88</span></div>
+              <div class="ap-ava" style="background:linear-gradient(135deg,#F87171,#B91C1C)">RV<span class="mscore">85</span></div>
+              <div class="ap-ava" style="background:#9CA3AF">+1</div>
+            </div>
+            <div class="ap-tx">
+              <b>4 postulantes · 2 compatibles ≥90%</b>
+              <span>Diego R. (91) ya trabajó con ustedes 8 veces</span>
+            </div>
+          </div>
+          <button class="btn btn-pri" style="padding:8px 14px;font-size:12px">Revisar →</button>
+        </div>
+        <div class="shift-foot">
+          <button class="btn btn-out">Editar turno</button>
+        </div>
+      </div>
+
+      <!-- Shift card 3 (CONTINUIDAD) -->
+      <div class="shift" style="border-color:#FCD34D;background:linear-gradient(135deg,#FEF3C7,#fff 30%)">
+        <div class="shift-head">
+          <div>
+            <h4>Técnico farmacia · Cobertura estable matutina</h4>
+            <div class="org">🔁 Lun a Vie · 07:00–15:00 · 3 meses (extensible)</div>
+          </div>
+          <div class="right">
+            <span class="badge" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A);color:#92400E">★ Continuidad 3 meses</span>
+            <span class="tarifa" style="background:#FEF3C7;border-color:#FDE68A;color:#B45309">Tarifa propuesta · S/ 145/día</span>
+          </div>
+        </div>
+        <div class="shift-meta">
+          <span>📍 Av. Larco 345</span>
+          <span>👥 2 postulantes recurrentes</span>
+          <span>⚡ Match alto: 2</span>
+        </div>
+        <div class="applicants-row">
+          <div class="ap-stack">
+            <div class="ap-avas">
+              <div class="ap-ava" style="background:linear-gradient(135deg,#22C55E,#15803D)">MR<span class="mscore">98</span></div>
+              <div class="ap-ava" style="background:linear-gradient(135deg,#3B82F6,#1E40AF)">AC<span class="mscore">86</span></div>
+            </div>
+            <div class="ap-tx">
+              <b>María R. quiere los dos turnos</b>
+              <span>Si confirmás se cubre todo el fin de semana</span>
+            </div>
+          </div>
+          <button class="btn btn-pri" style="padding:8px 14px;font-size:12px">Confirmar →</button>
+        </div>
+        <div class="shift-foot">
+          <button class="btn btn-out">Editar pack</button>
+        </div>
+      </div>
+
+      <!-- Shift card 4 -->
+      <div class="shift">
+        <div class="shift-head">
+          <div>
+            <h4>Auxiliar de farmacia · Matutino</h4>
+            <div class="org">🗓 Mar 20 may · 07:00–15:00</div>
+          </div>
+          <div class="right">
+            <span class="badge b-neu">Esperando match</span>
+            <span class="tarifa">Tarifa propuesta · S/ 110</span>
+          </div>
+        </div>
+        <div class="shift-meta">
+          <span>📍 Av. Larco 345</span>
+          <span>👥 1 postulante</span>
+          <span>⚡ Sin matches altos aún</span>
+        </div>
+        <div class="applicants-row">
+          <div class="ap-stack">
+            <div class="ap-avas">
+              <div class="ap-ava" style="background:linear-gradient(135deg,#F59E0B,#B45309)">EP<span class="mscore" style="background:#F59E0B">76</span></div>
+            </div>
+            <div class="ap-tx">
+              <b>Sin candidatos ≥90% por ahora</b>
+              <span>Sugerencia: ampliar zona o subir tarifa propuesta</span>
+            </div>
+          </div>
+          <button class="btn btn-out" style="padding:8px 14px;font-size:12px">Ajustar</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right column -->
+    <div>
+      <!-- Velocidad -->
+      <div class="pane">
+        <h3>Velocidad de cobertura<a>30 días →</a></h3>
+        <div class="gauge-wrap">
+          <div class="gauge">
+            <svg viewBox="0 0 180 100" width="180" height="100">
+              <path d="M 15 95 A 75 75 0 0 1 165 95" stroke="#E5E7EB" stroke-width="10" fill="none" stroke-linecap="round"/>
+              <path d="M 15 95 A 75 75 0 0 1 142 30" stroke="#16A34A" stroke-width="10" fill="none" stroke-linecap="round"/>
+              <circle cx="142" cy="30" r="6" fill="#16A34A"/>
+            </svg>
+            <div class="big">38<em>min</em></div>
+          </div>
+          <div class="gauge-cap">Promedio botica · <b>Top 5% de Miraflores</b></div>
+        </div>
+      </div>
+
+      <!-- Profesionales frecuentes -->
+      <div class="pane">
+        <h3>Profesionales frecuentes<a>Red completa →</a></h3>
+        <div class="freq-item">
+          <div class="freq-ava" style="background:linear-gradient(135deg,#22C55E,#15803D)">MR</div>
+          <div class="freq-tx">
+            <b>María R. <span class="vchk"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></span></b>
+            <span>QF · 48 turnos con ustedes</span>
+          </div>
+          <div class="freq-score">98</div>
+        </div>
+        <div class="freq-item">
+          <div class="freq-ava" style="background:linear-gradient(135deg,#10B981,#0F766E)">DR</div>
+          <div class="freq-tx">
+            <b>Diego R.</b>
+            <span>Técnico · 24 turnos</span>
+          </div>
+          <button class="freq-invite">Invitar</button>
+        </div>
+        <div class="freq-item">
+          <div class="freq-ava" style="background:linear-gradient(135deg,#3B82F6,#1E40AF)">JC</div>
+          <div class="freq-tx">
+            <b>Jorge C.</b>
+            <span>QF · 18 turnos</span>
+          </div>
+          <button class="freq-invite">Invitar</button>
+        </div>
+        <div class="freq-item">
+          <div class="freq-ava" style="background:linear-gradient(135deg,#F87171,#B91C1C)">LS</div>
+          <div class="freq-tx">
+            <b>Laura S.</b>
+            <span>QF · 12 turnos</span>
+          </div>
+          <button class="freq-invite">Invitar</button>
+        </div>
+      </div>
+
+      <!-- Actividad -->
+      <div class="pane">
+        <h3>Actividad reciente</h3>
+        <div class="feed-item">
+          <div class="feed-icon success"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div><div class="feed-text"><b>María R.</b> postuló al turno de hoy</div><div class="feed-time">Hace 4 min · match 98%</div></div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-icon info"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div><div class="feed-text"><b>Diego R.</b> dejó disponibilidad para el lunes</div><div class="feed-time">Hace 22 min</div></div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-icon coral"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="10"/></svg></div>
+          <div><div class="feed-text">Turno matutino sin matches altos — <b>sugerimos ajustar</b></div><div class="feed-time">Hace 1 hora</div></div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-icon success"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg></div>
+          <div><div class="feed-text"><b>+1 reseña 5★</b> de María R.</div><div class="feed-time">Ayer</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+</body></html>

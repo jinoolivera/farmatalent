@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="es-PE"><head>
+<meta charset="utf-8">
+<title>FarmaTalent · Postulación</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:rgba(15,42,20,.78);color:#111827;font-family:var(--ft-font-sans);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px;backdrop-filter:blur(6px);position:relative;overflow:hidden}
+  body::before{content:"";position:fixed;inset:0;background:url('../busqueda/index.html') center/cover no-repeat;opacity:.15;filter:blur(8px);z-index:-1}
+
+  .modal{max-width:560px;width:100%;background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 32px 80px -16px rgba(15,42,20,.32);position:relative}
+
+  /* Top close */
+  .close{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:999px;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;color:#0F2A14;border:0;cursor:pointer;z-index:2;backdrop-filter:blur(8px)}
+  .close:hover{background:#fff}
+
+  /* Cover with match */
+  .cover{position:relative;padding:28px 28px 24px;background:linear-gradient(135deg,#15803D,#22C55E);color:#fff;overflow:hidden}
+  .cover::after{content:"";position:absolute;top:-160px;right:-80px;width:340px;height:340px;background:radial-gradient(circle,rgba(254,243,199,.22),transparent 60%)}
+  .cover > *{position:relative;z-index:1}
+  .cv-lbl{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.18);padding:5px 12px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;backdrop-filter:blur(8px)}
+  .cv-lbl .dot{width:6px;height:6px;border-radius:999px;background:#86EFAC;animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .cv-match{display:flex;align-items:center;gap:14px;margin-top:18px}
+  .cv-match .org{width:54px;height:54px;border-radius:14px;background:rgba(255,255,255,.96);color:#15803D;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center}
+  .cv-match h2{font-size:21px;font-weight:600;margin:0;letter-spacing:-0.015em;line-height:1.2}
+  .cv-match .sub{font-size:12px;color:rgba(255,255,255,.85);margin-top:3px;display:flex;align-items:center;gap:6px}
+  .cv-match .sub .vchk{width:14px;height:14px;border-radius:999px;background:#fff;color:#15803D;display:inline-flex;align-items:center;justify-content:center}
+  .cv-score-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.92);color:#15803D;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;margin-left:auto}
+
+  .shift-info{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
+  .si-pill{background:rgba(255,255,255,.15);padding:6px 12px;border-radius:999px;font-size:12px;font-weight:500;backdrop-filter:blur(8px);display:inline-flex;align-items:center;gap:5px}
+
+  /* Body */
+  .body{padding:28px 28px 8px}
+  .qhead{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .qhead h3{font-size:14px;font-weight:600;margin:0;letter-spacing:-0.01em}
+  .qbadge{font-size:10px;font-weight:700;letter-spacing:.06em;background:#DCFCE7;color:#15803D;padding:3px 8px;border-radius:999px;white-space:nowrap}
+
+  /* Compatibility breakdown */
+  .compat{background:#F0FDF4;border:1px solid #BBF7D0;border-radius:14px;padding:16px;margin-bottom:18px}
+  .compat-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px}
+  .compat-top .l{font-size:11px;font-weight:600;color:#15803D;letter-spacing:.06em;text-transform:uppercase}
+  .compat-top .v{font-family:var(--ft-font-display);font-style:italic;font-weight:400;font-size:42px;line-height:1;color:#0F2A14;letter-spacing:-0.02em}
+  .compat-top .v em{font-family:var(--ft-font-sans);font-style:normal;font-size:18px;color:#15803D;font-weight:500;margin-left:2px}
+  .compat-bars{display:flex;flex-direction:column;gap:8px}
+  .cb-row{display:flex;align-items:center;gap:10px;font-size:12px}
+  .cb-lab{flex:1;color:#0F2A14;font-weight:500}
+  .cb-bar{flex:2;height:5px;background:#E5E7EB;border-radius:999px;overflow:hidden}
+  .cb-fill{height:100%;background:#16A34A;border-radius:999px}
+  .cb-val{font-weight:700;color:#15803D;font-size:11px;min-width:30px;text-align:right}
+
+  /* Tarifa proposed (NOT decided by system) */
+  .tarifa{background:#fff;border:1px dashed #BBF7D0;border-radius:14px;padding:16px;margin-bottom:18px;display:flex;align-items:center;gap:14px}
+  .tarifa .ti{width:44px;height:44px;border-radius:12px;background:#DCFCE7;color:#15803D;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .tarifa .tx{flex:1}
+  .tarifa .tx b{font-size:13px;font-weight:600;color:#0F2A14;display:block}
+  .tarifa .tx span{font-size:11px;color:#6B7280}
+  .tarifa .val{font-size:24px;font-weight:700;letter-spacing:-0.025em;color:#0F2A14}
+  .tarifa .val sup{font-size:11px;font-weight:500;color:#6B7280;margin-right:2px;vertical-align:top}
+
+  /* Optional message */
+  .msg-box{margin-bottom:18px}
+  .msg-box label{font-size:12px;font-weight:600;color:#0F2A14;display:block;margin-bottom:6px}
+  .msg-box label span{font-size:10px;color:#9CA3AF;font-weight:500;margin-left:4px;text-transform:uppercase;letter-spacing:.06em}
+  .msg-box textarea{width:100%;border:1px solid #D1D5DB;border-radius:12px;padding:12px 14px;font-family:inherit;font-size:13px;line-height:1.5;resize:none;height:78px;outline:0;color:#111827;background:#F8FAF8}
+  .msg-box textarea:focus{border-color:#16A34A;box-shadow:0 0 0 4px rgba(22,163,74,.12);background:#fff}
+  .msg-hint{display:flex;justify-content:space-between;font-size:10px;color:#9CA3AF;margin-top:4px}
+
+  /* Privacy line */
+  .privacy{font-size:11px;color:#6B7280;line-height:1.55;margin-bottom:18px;padding:12px 14px;background:#F8FAF8;border-radius:10px;display:flex;align-items:flex-start;gap:8px}
+  .privacy svg{flex-shrink:0;color:#16A34A;margin-top:1px}
+  .privacy b{color:#0F2A14;font-weight:600}
+
+  /* CTAs */
+  .cta-stack{padding:0 28px 24px;display:flex;flex-direction:column;gap:8px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 22px;border-radius:14px;font-size:14px;font-weight:600;border:0;cursor:pointer;width:100%;font-family:inherit}
+  .btn-primary{background:#0F172A;color:#fff}
+  .btn-primary:hover{background:#1F2937}
+  .btn-secondary{background:#fff;color:#0F2A14;border:1px solid #D1D5DB}
+  .btn-secondary:hover{border-color:#0F172A}
+  .btn-tertiary{background:transparent;color:#6B7280;padding:10px;font-size:12px}
+  .btn-tertiary:hover{color:#0F2A14}
+</style>
+</head><body>
+
+<div class="modal">
+  <button class="close" aria-label="Cerrar">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+
+  <!-- Cover with botica + match -->
+  <div class="cover">
+    <span class="cv-lbl"><span class="dot"></span>Postulación a un turno · Sáb 22 may</span>
+    <div class="cv-match">
+      <div class="org">QS</div>
+      <div style="flex:1;min-width:0">
+        <h2>Química Suiza · Larco</h2>
+        <div class="sub">
+          <span class="vchk"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          Botica favorita · trabajaste 48 veces con ellos
+        </div>
+      </div>
+      <span class="cv-score-pill">★ Top empleador</span>
+    </div>
+
+    <div class="shift-info">
+      <span class="si-pill">🩺 Q.F. responsable</span>
+      <span class="si-pill">🌙 Nocturno · 22:00–06:00</span>
+      <span class="si-pill">⏱ 8 horas</span>
+      <span class="si-pill">📍 0.8 km</span>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- Compatibility -->
+    <div class="qhead">
+      <h3>Tu compatibilidad con este turno</h3>
+      <span class="qbadge">★ MATCH ALTO</span>
+    </div>
+    <div class="compat">
+      <div class="compat-top">
+        <div class="l">Compatibilidad general</div>
+        <div class="v">98<em>%</em></div>
+      </div>
+      <div class="compat-bars">
+        <div class="cb-row"><div class="cb-lab">📍 Distancia y zona</div><div class="cb-bar"><div class="cb-fill" style="width:100%"></div></div><div class="cb-val">100</div></div>
+        <div class="cb-row"><div class="cb-lab">🩺 Especialidad y rol</div><div class="cb-bar"><div class="cb-fill" style="width:97%"></div></div><div class="cb-val">97</div></div>
+        <div class="cb-row"><div class="cb-lab">🤝 Historial con la botica</div><div class="cb-bar"><div class="cb-fill" style="width:100%"></div></div><div class="cb-val">100</div></div>
+        <div class="cb-row"><div class="cb-lab">📅 Disponibilidad declarada</div><div class="cb-bar"><div class="cb-fill" style="width:95%"></div></div><div class="cb-val">95</div></div>
+      </div>
+    </div>
+
+    <!-- Tarifa propuesta -->
+    <div class="qhead">
+      <h3>Tarifa propuesta por la botica</h3>
+      <span class="qbadge" style="background:#FEF3C7;color:#92400E">PROPUESTA · NEGOCIABLE</span>
+    </div>
+    <div class="tarifa">
+      <div class="ti"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+      <div class="tx">
+        <b>S/ 380 por turno completo</b>
+        <span>+S/ 40 vs. tu última tarifa con esta botica · pago a 24h del cierre</span>
+      </div>
+      <div class="val"><sup>S/</sup>380</div>
+    </div>
+
+    <!-- Optional message -->
+    <div class="msg-box">
+      <label>Mensaje a Química Suiza <span>opcional · 240 chars</span></label>
+      <textarea placeholder="Ej.: Disponible desde las 21:30. Confirmo asistencia al primer turno.">Disponible desde las 21:30 como siempre. Confirmo asistencia y dejo todo listo al cierre.</textarea>
+      <div class="msg-hint"><span>El mensaje se envía recién si la botica confirma el match.</span><span>97 / 240</span></div>
+    </div>
+
+    <!-- Privacy -->
+    <div class="privacy">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0"/></svg>
+      <div>
+        <b>Privacidad operacional.</b> Tu DNI, teléfono y dirección exacta se desbloquean para la botica únicamente al confirmar el match. Hasta entonces, solo ven tu rol, score y zonas.
+      </div>
+    </div>
+  </div>
+
+  <!-- CTAs -->
+  <div class="cta-stack">
+    <button class="btn btn-primary">
+      Aceptar tarifa y postular
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </button>
+    <button class="btn btn-secondary">
+      Negociar ligeramente · proponer S/ 420
+    </button>
+    <button class="btn btn-tertiary">
+      No me interesa, rechazar el turno
+    </button>
+  </div>
+</div>
+
+</body></html>

@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="es-PE"><head>
+<meta charset="utf-8">
+<title>FarmaTalent · Perfil Botica</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#F8FAF8;color:#111827;font-family:var(--ft-font-sans);min-height:100vh;padding-bottom:64px}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer;border:0}
+
+  /* Nav */
+  .nav{background:#fff;border-bottom:1px solid #E5E7EB;position:sticky;top:0;z-index:50}
+  .nav-in{max-width:1180px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:24px}
+  .nav-tabs{display:flex;gap:4px;margin-left:auto}
+  .nav-tab{padding:8px 14px;border-radius:999px;font-size:13px;color:#6B7280;font-weight:500}
+  .nav-tab:hover{background:#F3F4F6;color:#111827}
+  .nav-tab.active{background:#111827;color:#fff}
+  .nav-ava{width:36px;height:36px;border-radius:999px;background:linear-gradient(135deg,#22C55E,#15803D);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px}
+
+  /* Layout */
+  .page{max-width:1180px;margin:24px auto 0;padding:0 24px;display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:flex-start}
+
+  /* Header */
+  .pcard{background:#fff;border:1px solid #E5E7EB;border-radius:18px;overflow:hidden}
+  .cover{height:180px;background:linear-gradient(135deg,#0F2A14 0%,#1F2937 60%,#0F172A 100%);position:relative;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.04);font-size:120px;font-weight:700;letter-spacing:.1em}
+  .cover::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 80% at 80% 20%,rgba(34,197,94,.18),transparent 60%),radial-gradient(50% 70% at 10% 90%,rgba(254,243,199,.12),transparent 60%)}
+  .cover .cw{position:relative;z-index:1}
+  .head-body{padding:0 28px 28px;position:relative}
+  .logo-big{width:120px;height:120px;border-radius:24px;border:4px solid #fff;background:linear-gradient(135deg,#fff,#E5E7EB);color:#15803D;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:36px;letter-spacing:-0.02em;margin-top:-60px;box-shadow:0 8px 24px rgba(15,42,20,.18)}
+  .head-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-top:16px}
+  .h1-name{display:flex;align-items:center;gap:10px}
+  .h1-name h1{font-weight:600;font-size:30px;letter-spacing:-0.025em;margin:0;line-height:1.1}
+  .verified{width:24px;height:24px;border-radius:999px;background:#16A34A;color:#fff;display:flex;align-items:center;justify-content:center}
+  .h1-role{font-size:17px;color:#111827;margin-top:4px}
+  .h1-role em{font-family:var(--ft-font-display);font-style:italic;color:#15803D;font-weight:400}
+  .h1-meta{display:flex;gap:16px;margin-top:8px;font-size:13px;color:#6B7280;flex-wrap:wrap}
+  .h1-meta span{display:inline-flex;align-items:center;gap:5px}
+  .h-actions{display:flex;gap:8px}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;border:0}
+  .btn-pri{background:#16A34A;color:#fff}
+  .btn-pri:hover{background:#15803D}
+  .btn-out{background:#fff;color:#111827;border:1px solid #D1D5DB}
+  .btn-out:hover{border-color:#111827}
+  .btn-icon{padding:9px}
+
+  /* Stats row */
+  .pstats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:24px;border:1px solid #E5E7EB;border-radius:12px;overflow:hidden}
+  .pstat{padding:18px;border-right:1px solid #E5E7EB}
+  .pstat:last-child{border-right:0}
+  .pstat .v{font-size:26px;font-weight:600;letter-spacing:-0.025em;line-height:1}
+  .pstat .v em{font-family:var(--ft-font-display);font-style:italic;font-weight:400;color:#16A34A}
+  .pstat .l{font-size:12px;color:#6B7280;margin-top:6px}
+
+  /* Section */
+  .sect{background:#fff;border:1px solid #E5E7EB;border-radius:16px;padding:24px 28px;margin-top:16px}
+  .sect-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .sect-head h3{font-size:18px;font-weight:600;letter-spacing:-0.015em;margin:0}
+  .sect-head h3 em{font-family:var(--ft-font-display);font-style:italic;color:#15803D;font-weight:400}
+  .sect-head a{font-size:12px;color:#15803D;font-weight:600}
+
+  .about{font-size:15px;line-height:1.6;color:#111827}
+
+  /* Scores */
+  .scores{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+  .score-tile{background:#F8FAF8;border:1px solid #E5E7EB;border-radius:12px;padding:16px;text-align:center}
+  .ring{position:relative;width:64px;height:64px;margin:0 auto 10px}
+  .ring svg{transform:rotate(-90deg)}
+  .ring-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring-num b{font-size:18px;font-weight:600;letter-spacing:-0.02em;line-height:1}
+  .ring-num span{font-size:9px;color:#9CA3AF;margin-top:1px}
+  .score-lab{font-size:12px;font-weight:600}
+  .score-sub{font-size:11px;color:#6B7280;margin-top:2px}
+
+  /* Distinctions */
+  .badges-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .badge-card{background:#F8FAF8;border:1px solid #E5E7EB;border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px}
+  .b-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .b-ico.success{background:#DCFCE7;color:#15803D}
+  .b-ico.info{background:#DBEAFE;color:#1E40AF}
+  .b-ico.coral{background:#FEE2E2;color:#B91C1C}
+  .b-ico.warning{background:#FEF3C7;color:#92400E}
+  .b-tx b{font-size:13px;font-weight:600;display:block}
+  .b-tx span{font-size:11px;color:#6B7280}
+
+  /* Frequent pros */
+  .pros-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .pro-mini{display:flex;align-items:center;gap:10px;padding:14px;background:#F8FAF8;border:1px solid #E5E7EB;border-radius:12px;cursor:pointer;transition:all 160ms}
+  .pro-mini:hover{border-color:#16A34A;transform:translateY(-2px);box-shadow:0 4px 12px -2px rgba(22,163,74,.18)}
+  .pro-mini .pma{width:42px;height:42px;border-radius:999px;color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
+  .pro-mini .pma .lvl{position:absolute;bottom:-2px;right:-3px;background:#16A34A;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:999px;border:1.5px solid #fff;line-height:1.2}
+  .pro-mini .pmt{flex:1;min-width:0}
+  .pro-mini .pmt b{font-size:13px;font-weight:600;display:block;letter-spacing:-0.01em}
+  .pro-mini .pmt span{font-size:11px;color:#6B7280}
+
+  /* Locations row */
+  .loc-row{display:flex;flex-direction:column;gap:8px}
+  .loc{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#F8FAF8;border:1px solid #E5E7EB;border-radius:10px}
+  .loc-ico{width:32px;height:32px;border-radius:8px;background:#DCFCE7;color:#15803D;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .loc-tx{flex:1}
+  .loc-tx b{font-size:13px;font-weight:600;display:block}
+  .loc-tx span{font-size:11px;color:#6B7280}
+  .loc-stat{display:flex;gap:14px;font-size:11px;color:#6B7280;font-weight:500}
+  .loc-stat b{color:#15803D;font-weight:700;display:block;font-size:13px}
+
+  /* Reviews (pros reviewing botica) */
+  .rev{padding:18px 0;border-bottom:1px solid #F3F4F6}
+  .rev:last-child{border:0;padding-bottom:0}
+  .rev:first-child{padding-top:0}
+  .rev-head{display:flex;gap:12px;align-items:center}
+  .rev-ava{width:36px;height:36px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;flex-shrink:0}
+  .rev-meta{flex:1}
+  .rev-meta b{font-size:13px;font-weight:600;display:block;display:flex;align-items:center;gap:6px}
+  .rev-meta b .lvb{font-size:10px;padding:2px 6px;border-radius:999px;background:#0F172A;color:#fff;font-weight:600;letter-spacing:.04em}
+  .rev-meta span{font-size:11px;color:#6B7280}
+  .rev-quote{font-family:var(--ft-font-display);font-size:17px;line-height:1.5;color:#111827;margin:12px 0 0;font-style:italic}
+  .rev-tags{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600}
+  .badge-success{background:#DCFCE7;color:#15803D}
+  .badge-info{background:#DBEAFE;color:#1E40AF}
+  .badge-neutral{background:#F3F4F6;color:#374151}
+
+  /* Side pane */
+  .side-pane{background:#fff;border:1px solid #E5E7EB;border-radius:16px;padding:22px}
+  .side-pane + .side-pane{margin-top:14px}
+  .side-pane h4{font-size:14px;font-weight:600;margin:0 0 14px;letter-spacing:-0.01em}
+
+  /* Quality pane (Uber-style — replaces tarifa pane) */
+  .quality-pane{background:linear-gradient(135deg,#0F2A14 0%,#15803D 100%);color:#fff;border:0;position:relative;overflow:hidden}
+  .quality-pane::before{content:"";position:absolute;top:-100px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(255,255,255,.12),transparent 60%)}
+  .quality-pane > *{position:relative;z-index:1}
+  .quality-pane h4{color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.12em;font-size:11px}
+  .ql-name{font-family:var(--ft-font-display);font-style:italic;font-weight:400;font-size:36px;line-height:1;letter-spacing:-0.02em;margin:6px 0 8px}
+  .ql-sub{font-size:12px;color:rgba(255,255,255,.78);line-height:1.5}
+  .ql-progress{margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.18)}
+  .ql-progress-top{display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px;color:rgba(255,255,255,.7)}
+  .ql-progress-top b{color:#fff;font-weight:600}
+  .ql-bar{height:6px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden}
+  .ql-bar > div{height:100%;background:linear-gradient(90deg,#86EFAC,#22C55E);width:84%}
+  .ql-bonus{margin-top:12px;font-size:11px;color:rgba(255,255,255,.7);line-height:1.5}
+  .ql-bonus b{color:#86EFAC;font-weight:700}
+
+  /* Plan pane */
+  .plan-pane h4{display:flex;align-items:center;justify-content:space-between}
+  .plan-pane .plan-tag{background:#DCFCE7;color:#15803D;font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;letter-spacing:.04em}
+  .plan-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F3F4F6;font-size:13px}
+  .plan-row:last-child{border:0}
+  .plan-row b{font-weight:500}
+  .plan-row span{font-size:11px;color:#6B7280}
+
+  /* Recurrence widget */
+  .recur{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+  .recur-row{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#F8FAF8;border-radius:8px;font-size:12px}
+  .recur-row b{display:block;font-weight:600;color:#111827}
+  .recur-row span{color:#6B7280;font-size:11px}
+  .recur-row .pct{font-weight:700;color:#15803D;font-size:14px}
+</style>
+</head><body>
+
+<nav class="nav">
+  <div class="nav-in">
+    <img src="../../assets/logo.svg" alt="FarmaTalent" height="28"/>
+    <div class="nav-tabs">
+      <a class="nav-tab" href="../busqueda/index.html">Buscar profesionales</a>
+      <a class="nav-tab" href="../dashboard-farmacia/index.html">Cobertura</a>
+      <a class="nav-tab active">Mi perfil</a>
+      <a class="nav-tab" href="../chat/index.html">Mensajes</a>
+    </div>
+    <div class="nav-ava">CM</div>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- MAIN -->
+  <div>
+    <!-- Header -->
+    <div class="pcard">
+      <div class="cover"><div class="cw">QUÍMICA · SUIZA</div></div>
+      <div class="head-body">
+        <div class="logo-big">QS</div>
+        <div class="head-row">
+          <div>
+            <div class="h1-name">
+              <h1>Química Suiza · Larco</h1>
+              <div class="verified" title="Botica verificada"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            </div>
+            <div class="h1-role">Botica · <em>servicio farmacéutico de calidad desde 1998</em></div>
+            <div class="h1-meta">
+              <span>📍 Av. Larco 345, Miraflores</span>
+              <span>🕐 24/7 · turnos publicados a 7 días</span>
+              <span>📞 8 sucursales en Lima</span>
+              <span>⚡ Responde a postulantes en ~22 min</span>
+            </div>
+          </div>
+          <div class="h-actions">
+            <button class="btn btn-out btn-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></button>
+            <button class="btn btn-out">Ver turnos abiertos</button>
+            <button class="btn btn-pri">Publicar turno →</button>
+          </div>
+        </div>
+
+        <div class="pstats">
+          <div class="pstat"><div class="v"><em>Top 5%</em></div><div class="l">Boticas Miraflores</div></div>
+          <div class="pstat"><div class="v">96%</div><div class="l">Cobertura semanal</div></div>
+          <div class="pstat"><div class="v">38 min</div><div class="l">Velocidad de cobertura</div></div>
+          <div class="pstat"><div class="v">680</div><div class="l">Turnos publicados</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- About -->
+    <div class="sect">
+      <div class="sect-head"><h3>Sobre <em>Química Suiza Larco</em></h3></div>
+      <p class="about">Operamos en Av. Larco desde hace 26 años con foco en calidad farmacéutica, atención al paciente y continuidad operativa. Trabajamos con FarmaTalent porque queremos mantener un servicio impecable también en turnos nocturnos y fines de semana. Buscamos relaciones recurrentes con profesionales que se vuelvan parte de nuestra red estable.</p>
+    </div>
+
+    <!-- Scores -->
+    <div class="sect">
+      <div class="sect-head"><h3>Reputación <em>operativa</em></h3><a>¿Cómo se calcula?</a></div>
+      <div class="scores">
+        <div class="score-tile">
+          <div class="ring"><svg width="64" height="64"><circle cx="32" cy="32" r="28" fill="none" stroke="#E5E7EB" stroke-width="4.5"/><circle cx="32" cy="32" r="28" fill="none" stroke="#16A34A" stroke-width="4.5" stroke-dasharray="98 100" pathLength="100" stroke-linecap="round"/></svg><div class="ring-num"><b>98</b><span>/ 100</span></div></div>
+          <div class="score-lab">Pago puntual</div>
+          <div class="score-sub">680 turnos</div>
+        </div>
+        <div class="score-tile">
+          <div class="ring"><svg width="64" height="64"><circle cx="32" cy="32" r="28" fill="none" stroke="#E5E7EB" stroke-width="4.5"/><circle cx="32" cy="32" r="28" fill="none" stroke="#16A34A" stroke-width="4.5" stroke-dasharray="95 100" pathLength="100" stroke-linecap="round"/></svg><div class="ring-num"><b>95</b><span>/ 100</span></div></div>
+          <div class="score-lab">Claridad operativa</div>
+          <div class="score-sub">Instrucciones claras</div>
+        </div>
+        <div class="score-tile">
+          <div class="ring"><svg width="64" height="64"><circle cx="32" cy="32" r="28" fill="none" stroke="#E5E7EB" stroke-width="4.5"/><circle cx="32" cy="32" r="28" fill="none" stroke="#16A34A" stroke-width="4.5" stroke-dasharray="92 100" pathLength="100" stroke-linecap="round"/></svg><div class="ring-num"><b>92</b><span>/ 100</span></div></div>
+          <div class="score-lab">Ambiente</div>
+          <div class="score-sub">Equipo amable</div>
+        </div>
+        <div class="score-tile">
+          <div class="ring"><svg width="64" height="64"><circle cx="32" cy="32" r="28" fill="none" stroke="#E5E7EB" stroke-width="4.5"/><circle cx="32" cy="32" r="28" fill="none" stroke="#16A34A" stroke-width="4.5" stroke-dasharray="89 100" pathLength="100" stroke-linecap="round"/></svg><div class="ring-num"><b>89</b><span>/ 100</span></div></div>
+          <div class="score-lab">Continuidad</div>
+          <div class="score-sub">Vuelven a llamar</div>
+        </div>
+        <div class="score-tile">
+          <div class="ring"><svg width="64" height="64"><circle cx="32" cy="32" r="28" fill="none" stroke="#E5E7EB" stroke-width="4.5"/><circle cx="32" cy="32" r="28" fill="none" stroke="#16A34A" stroke-width="4.5" stroke-dasharray="94 100" pathLength="100" stroke-linecap="round"/></svg><div class="ring-num"><b>94</b><span>/ 100</span></div></div>
+          <div class="score-lab">Tarifa justa</div>
+          <div class="score-sub">vs. zona</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Distinciones -->
+    <div class="sect">
+      <div class="sect-head"><h3>Distinciones</h3><a>6 más →</a></div>
+      <div class="badges-grid">
+        <div class="badge-card"><div class="b-ico success"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg></div><div class="b-tx"><b>★ Top empleador</b><span>2025 · Miraflores</span></div></div>
+        <div class="badge-card"><div class="b-ico info"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="13" rx="2"/><line x1="2" y1="11" x2="22" y2="11"/></svg></div><div class="b-tx"><b>Pago puntual</b><span>0 atrasos</span></div></div>
+        <div class="badge-card"><div class="b-ico coral"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div class="b-tx"><b>Botica favorita ×8</b><span>profesionales senior</span></div></div>
+        <div class="badge-card"><div class="b-ico warning"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L4 6v6c0 5.5 3.5 9.5 8 10 4.5-.5 8-4.5 8-10V6l-8-4z"/><polyline points="9 12 11 14 15 10"/></svg></div><div class="b-tx"><b>Verificada DIGEMID</b><span>Licencia vigente</span></div></div>
+        <div class="badge-card"><div class="b-ico success"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="b-tx"><b>Cobertura rápida</b><span>38 min media</span></div></div>
+        <div class="badge-card"><div class="b-ico info"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="b-tx"><b>Operación continua</b><span>26 años</span></div></div>
+        <div class="badge-card"><div class="b-ico success"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></div><div class="b-tx"><b>Red estable</b><span>22 pros recurrentes</span></div></div>
+        <div class="badge-card"><div class="b-ico coral"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7L9 18l-5-5"/></svg></div><div class="b-tx"><b>Match alto</b><span>94% promedio</span></div></div>
+      </div>
+    </div>
+
+    <!-- Frequent professionals -->
+    <div class="sect">
+      <div class="sect-head" style="margin-bottom:8px"><h3>Profesionales <em>frecuentes</em></h3><a>Red completa (22) →</a></div>
+      <p style="font-size:13px;color:#6B7280;margin:0 0 18px;line-height:1.5">Pros que volvieron a trabajar con nosotros 3+ veces. <b>El núcleo de nuestra red estable.</b></p>
+      <div class="pros-grid">
+        <div class="pro-mini">
+          <div class="pma" style="background:linear-gradient(135deg,#22C55E,#15803D)">MR<span class="lvl">SR</span></div>
+          <div class="pmt"><b>María Rodríguez</b><span>Q.F. · 48 turnos con nosotros</span></div>
+        </div>
+        <div class="pro-mini">
+          <div class="pma" style="background:linear-gradient(135deg,#10B981,#0F766E)">DR<span class="lvl">SR</span></div>
+          <div class="pmt"><b>Diego Ramírez</b><span>Técnico · 24 turnos</span></div>
+        </div>
+        <div class="pro-mini">
+          <div class="pma" style="background:linear-gradient(135deg,#3B82F6,#1E40AF)">JC<span class="lvl">JR</span></div>
+          <div class="pmt"><b>Jorge Castillo</b><span>Q.F. · 18 turnos</span></div>
+        </div>
+        <div class="pro-mini">
+          <div class="pma" style="background:linear-gradient(135deg,#F87171,#B91C1C)">LS<span class="lvl">SR</span></div>
+          <div class="pmt"><b>Laura Sandoval</b><span>Q.F. · 12 turnos</span></div>
+        </div>
+        <div class="pro-mini">
+          <div class="pma" style="background:linear-gradient(135deg,#8B5CF6,#5B21B6)">PG<span class="lvl">JR</span></div>
+          <div class="pmt"><b>Pablo Gómez</b><span>Auxiliar · 10 turnos</span></div>
+        </div>
+        <div class="pro-mini">
+          <div class="pma" style="background:linear-gradient(135deg,#F59E0B,#B45309)">RV<span class="lvl">JR</span></div>
+          <div class="pmt"><b>Rita Valdez</b><span>Técnico · 8 turnos</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reseñas de profesionales -->
+    <div class="sect">
+      <div class="sect-head"><h3>Reseñas de profesionales</h3><a>284 reseñas →</a></div>
+      <div class="rev">
+        <div class="rev-head">
+          <div class="rev-ava" style="background:linear-gradient(135deg,#22C55E,#15803D)">MR</div>
+          <div class="rev-meta">
+            <b>María Rodríguez <span class="lvb">SENIOR</span></b>
+            <span>Q.F. · 48 turnos con QS · 12 may</span>
+          </div>
+          <span class="badge badge-success">✓ 48 turnos verificados</span>
+        </div>
+        <p class="rev-quote">"Trabajar acá es predecible y profesional. El cierre de caja está siempre bien dejado por el equipo, el back office es claro, y Carlos responde a tiempo cuando hay un imprevisto. Volvería siempre."</p>
+        <div class="rev-tags">
+          <span class="badge badge-success">Pago puntual</span>
+          <span class="badge badge-info">Equipo claro</span>
+          <span class="badge badge-info">Buen ambiente</span>
+        </div>
+      </div>
+      <div class="rev">
+        <div class="rev-head">
+          <div class="rev-ava" style="background:linear-gradient(135deg,#10B981,#0F766E)">DR</div>
+          <div class="rev-meta">
+            <b>Diego Ramírez <span class="lvb">SENIOR</span></b>
+            <span>Técnico · 24 turnos con QS · 6 may</span>
+          </div>
+          <span class="badge badge-success">✓ 24 turnos verificados</span>
+        </div>
+        <p class="rev-quote">"Es mi botica de confianza para inventarios pesados. Saben lo que hacen, no improvisan. Recomiendo trabajar de noche acá — el barrio es seguro y el equipo es atento."</p>
+        <div class="rev-tags">
+          <span class="badge badge-success">Bien organizada</span>
+          <span class="badge badge-info">Zona segura</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div>
+    <!-- Quality pane (Uber-style for botica) -->
+    <div class="side-pane quality-pane">
+      <h4>Nivel de botica</h4>
+      <div class="ql-name">Top 5%</div>
+      <div class="ql-sub">Tu reputación operativa atrae a los mejores perfiles y reduce el tiempo de cobertura. Crece con cada turno bien gestionado.</div>
+      <div class="ql-progress">
+        <div class="ql-progress-top"><span>Top 1% (Elite Network)</span><b>52 turnos restantes</b></div>
+        <div class="ql-bar"><div></div></div>
+      </div>
+      <div class="ql-bonus"><b>Acceso a Elite Network</b> al alcanzar Top 1% · matching prioritario con Senior+</div>
+    </div>
+
+    <!-- Recurrencia -->
+    <div class="side-pane">
+      <h4>Continuidad operativa</h4>
+      <div class="recur">
+        <div class="recur-row">
+          <div><b>Profesionales recurrentes</b><span>22 de 36 únicos</span></div>
+          <span class="pct">61%</span>
+        </div>
+        <div class="recur-row">
+          <div><b>Turnos cubiertos por la misma persona ≥3 veces</b><span>esta semana</span></div>
+          <span class="pct">78%</span>
+        </div>
+        <div class="recur-row">
+          <div><b>Match con red estable</b><span>vs. nuevos perfiles</span></div>
+          <span class="pct">94%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sucursales -->
+    <div class="side-pane">
+      <h4>Sucursales activas (8)</h4>
+      <div class="loc-row">
+        <div class="loc">
+          <div class="loc-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div class="loc-tx"><b>Larco · Miraflores</b><span>Av. Larco 345</span></div>
+          <div class="loc-stat"><div><b>5</b>turnos abiertos</div></div>
+        </div>
+        <div class="loc">
+          <div class="loc-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div class="loc-tx"><b>San Isidro · Camino Real</b><span>Av. Camino Real 1234</span></div>
+          <div class="loc-stat"><div><b>3</b>turnos abiertos</div></div>
+        </div>
+        <div class="loc">
+          <div class="loc-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div class="loc-tx"><b>Surco · Caminos del Inca</b><span>Av. Caminos del Inca 2400</span></div>
+          <div class="loc-stat"><div><b>2</b>turnos abiertos</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Plan -->
+    <div class="side-pane plan-pane">
+      <h4>Plan actual<span class="plan-tag">COBERTURA PLUS</span></h4>
+      <div class="plan-row"><b>Turnos publicados</b><span>Ilimitados</span></div>
+      <div class="plan-row"><b>Matching prioritario</b><span>Sí · top score</span></div>
+      <div class="plan-row"><b>Soporte</b><span>24/7</span></div>
+      <div class="plan-row"><b>Comisión</b><span>10% sobre tarifa</span></div>
+    </div>
+  </div>
+</div>
+
+</body></html>

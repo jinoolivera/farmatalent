@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="es-PE"><head>
+<meta charset="utf-8">
+<title>FarmaTalent · Dashboard</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#F8FAF8;color:#111827;font-family:var(--ft-font-sans);min-height:100vh;display:grid;grid-template-columns:248px 1fr}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+
+  /* ===== Sidebar ===== */
+  .side{background:#fff;border-right:1px solid #E5E7EB;padding:20px 16px;height:100vh;position:sticky;top:0;display:flex;flex-direction:column;gap:4px}
+  .side-brand{padding:4px 8px 24px}
+  .side-section{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#9CA3AF;padding:16px 12px 8px}
+  .side-link{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;font-size:14px;color:#374151;font-weight:500}
+  .side-link:hover{background:#F3F4F6}
+  .side-link.active{background:#111827;color:#fff}
+  .side-link .badge-num{margin-left:auto;background:#16A34A;color:#fff;padding:2px 7px;border-radius:999px;font-size:11px;font-weight:700}
+  .side-link.active .badge-num{background:#fff;color:#111827}
+  .side-foot{margin-top:auto;padding:12px;display:flex;align-items:center;gap:10px;border-top:1px solid #E5E7EB;padding-top:16px}
+  .side-foot .ava{width:36px;height:36px;border-radius:999px;background:linear-gradient(135deg,#22C55E,#15803D);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px}
+  .side-foot .nm{font-size:13px;font-weight:600}
+  .side-foot .rl{font-size:11px;color:#6B7280}
+
+  /* ===== Main ===== */
+  main{padding:28px 36px 64px;min-width:0}
+  .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;gap:24px}
+  .top h1{font-weight:600;font-size:30px;letter-spacing:-0.025em;margin:0}
+  .top h1 em{font-family:var(--ft-font-display);font-style:italic;font-weight:400;color:#16A34A}
+  .top .sub{font-size:14px;color:#6B7280;margin-top:4px}
+  .search{display:flex;align-items:center;gap:8px;padding:10px 16px;background:#fff;border:1px solid #E5E7EB;border-radius:999px;width:340px}
+  .search input{border:0;outline:0;flex:1;font-size:13px;font-family:inherit;background:transparent}
+  .top-actions{display:flex;gap:8px;align-items:center}
+  .icon-btn{width:40px;height:40px;border-radius:999px;background:#fff;border:1px solid #E5E7EB;display:flex;align-items:center;justify-content:center;color:#6B7280;position:relative}
+  .icon-btn:hover{color:#111827;border-color:#16A34A}
+  .icon-btn .dot{position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:999px;background:#EF4444;border:2px solid #fff}
+
+  /* ===== Career tier card (prestige) ===== */
+  .level{background:linear-gradient(135deg,#0F2A14 0%,#15803D 100%);border-radius:20px;padding:24px 28px;color:#fff;margin-bottom:24px;display:grid;grid-template-columns:1.2fr 1fr;gap:32px;position:relative;overflow:hidden}
+  .tier-track{display:flex;align-items:center;gap:6px;margin-top:14px}
+  .tier-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;opacity:.45;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+  .tier-step .ts-dot{width:18px;height:18px;border-radius:999px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center}
+  .tier-step.done{opacity:.85}.tier-step.done .ts-dot{background:#86EFAC;color:#0F2A14}
+  .tier-step.now{opacity:1;color:#fff}.tier-step.now .ts-dot{background:#fff;color:#15803D;box-shadow:0 0 0 4px rgba(255,255,255,.18)}
+  .tier-step.elite{font-style:italic;font-family:var(--ft-font-display)}.tier-step.elite .ts-dot{background:linear-gradient(135deg,#FCD34D,#F59E0B);color:#0F2A14}
+  .tier-line{flex:0.5;height:2px;background:rgba(255,255,255,.18);border-radius:999px}
+  .tier-line.done{background:#86EFAC}
+  .level::before{content:"";position:absolute;top:-180px;right:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(255,255,255,.12),transparent 60%)}
+  .lvl-l{position:relative;z-index:1}
+  .lvl-l .lab{font-size:11px;font-weight:600;letter-spacing:.14em;color:rgba(255,255,255,.7);text-transform:uppercase}
+  .lvl-l h2{font-family:var(--ft-font-display);font-style:italic;font-weight:400;font-size:48px;line-height:1;margin:8px 0 4px;letter-spacing:-0.02em}
+  .lvl-l .nrm{font-family:var(--ft-font-sans);font-style:normal}
+  .lvl-l p{font-size:13px;color:rgba(255,255,255,.78);margin:6px 0 0;line-height:1.5;max-width:380px}
+  .lvl-r{position:relative;z-index:1;display:flex;flex-direction:column;gap:10px;justify-content:center}
+  .lvl-bar-wrap{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:rgba(255,255,255,.7);margin-bottom:6px}
+  .lvl-bar-wrap b{color:#fff;font-weight:600}
+  .lvl-bar{height:8px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden;position:relative}
+  .lvl-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#86EFAC,#22C55E);width:74%;position:relative}
+  .lvl-tip{font-size:11px;color:rgba(255,255,255,.7);margin-top:6px}
+  .lvl-tip b{color:#86EFAC;font-weight:600}
+
+  /* ===== KPIs ===== */
+  .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+  .kpi{background:#fff;border:1px solid #E5E7EB;border-radius:14px;padding:18px;position:relative;overflow:hidden}
+  .kpi .lbl{font-size:12px;color:#6B7280;font-weight:500}
+  .kpi .val{font-size:30px;font-weight:600;letter-spacing:-0.025em;margin-top:6px;line-height:1}
+  .kpi .val em{font-family:var(--ft-font-display);font-style:italic;font-weight:400;color:#16A34A}
+  .kpi .delta{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;margin-top:10px}
+  .delta.up{background:#DCFCE7;color:#15803D}
+  .delta.flat{background:#F3F4F6;color:#374151}
+  .kpi .spark{position:absolute;right:14px;bottom:14px;opacity:.7}
+
+  /* ===== Filter ===== */
+  .filter-bar{display:flex;gap:8px;margin-bottom:20px;align-items:center;flex-wrap:wrap}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;background:#fff;border:1px solid #E5E7EB;font-size:13px;font-weight:500;color:#374151;white-space:nowrap}
+  .chip:hover{border-color:#16A34A;color:#15803D}
+  .chip.active{background:#111827;color:#fff;border-color:#111827}
+  .chip .ct{background:#F3F4F6;padding:1px 7px;border-radius:999px;font-size:11px}
+  .chip.active .ct{background:rgba(255,255,255,.18)}
+
+  /* ===== Layout ===== */
+  .work{display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:flex-start}
+
+  /* ===== Shift card ===== */
+  .shift{background:#fff;border:1px solid #E5E7EB;border-radius:16px;padding:18px;margin-bottom:12px;transition:all 200ms;cursor:pointer}
+  .shift:hover{border-color:#86EFAC;box-shadow:0 6px 18px -6px rgba(22,163,74,.18)}
+  .shift.selected{border-color:#16A34A;box-shadow:0 0 0 1px #16A34A}
+  .shift-head{display:flex;gap:14px;align-items:flex-start}
+  .org-logo{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
+  .org-logo.b1{background:linear-gradient(135deg,#15803D,#22C55E)}
+  .org-logo.b2{background:linear-gradient(135deg,#1E40AF,#3B82F6)}
+  .org-logo.b3{background:linear-gradient(135deg,#B45309,#F59E0B)}
+  .org-logo.b4{background:linear-gradient(135deg,#7C2D12,#EF4444)}
+  .org-logo.b5{background:linear-gradient(135deg,#5B21B6,#8B5CF6)}
+  .shift-title{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+  .shift-title h4{font-size:16px;font-weight:600;margin:0;letter-spacing:-0.01em}
+  .shift-title .org{font-size:13px;color:#6B7280;margin-top:2px}
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600}
+  .b-ok{background:#DCFCE7;color:#15803D}
+  .b-mid{background:#FEF3C7;color:#92400E}
+  .b-info{background:#DBEAFE;color:#1E40AF}
+  .b-coral{background:#FEE2E2;color:#B91C1C}
+  .b-neu{background:#F3F4F6;color:#374151}
+  .shift-badges{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+  .shift-meta{display:flex;gap:16px;margin:12px 0 0;font-size:13px;color:#6B7280}
+  .shift-meta span{display:inline-flex;align-items:center;gap:5px}
+  .shift-foot{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid #F3F4F6}
+  .pay-est{display:inline-flex;align-items:center;gap:10px;padding:8px 12px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:999px}
+  .pay-est .pe-ico{width:24px;height:24px;border-radius:999px;background:#fff;color:#15803D;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .pay-est .pe-tx{display:flex;flex-direction:column;line-height:1.2}
+  .pay-est .pe-tx b{font-size:12px;color:#15803D;font-weight:700}
+  .pay-est .pe-tx span{font-size:10px;color:#16A34A;font-weight:500}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;border:0}
+  .btn-pri{background:#111827;color:#fff}
+  .btn-pri:hover{background:#1F2937}
+  .btn-out{background:#fff;color:#111827;border:1px solid #D1D5DB}
+  .btn-out:hover{border-color:#111827}
+
+  /* ===== Right column ===== */
+  .pane{background:#fff;border:1px solid #E5E7EB;border-radius:16px;padding:22px}
+  .pane + .pane{margin-top:14px}
+  .pane h3{font-size:15px;font-weight:600;letter-spacing:-0.01em;margin:0 0 16px}
+  .pane .h-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .pane .h-row a{font-size:12px;color:#15803D;font-weight:600}
+
+  /* Activity */
+  .feed-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #F3F4F6}
+  .feed-item:last-child{border:0;padding-bottom:0}
+  .feed-icon{width:32px;height:32px;border-radius:999px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .feed-icon.success{background:#DCFCE7;color:#15803D}
+  .feed-icon.info{background:#DBEAFE;color:#1E40AF}
+  .feed-icon.warning{background:#FEF3C7;color:#92400E}
+  .feed-icon.coral{background:#FEE2E2;color:#B91C1C}
+  .feed-text{font-size:13px;line-height:1.4}
+  .feed-text b{font-weight:600}
+  .feed-time{font-size:11px;color:#9CA3AF;margin-top:2px}
+
+  /* Perf */
+  .perf-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .perf-cell{background:#F8FAF8;border-radius:10px;padding:12px}
+  .perf-lbl{font-size:10px;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+  .perf-val{font-size:22px;font-weight:600;letter-spacing:-0.02em;margin-top:4px;line-height:1}
+  .perf-bar{height:3px;border-radius:999px;background:#E5E7EB;margin-top:8px;overflow:hidden}
+  .perf-fill{height:100%;border-radius:999px;background:#16A34A}
+</style>
+</head><body>
+
+<!-- ===== Sidebar ===== -->
+<aside class="side">
+  <div class="side-brand">
+    <img src="../../assets/logo.svg" alt="FarmaTalent" height="28"/>
+  </div>
+
+  <div class="side-section">Operación</div>
+  <a class="side-link" href="../busqueda/index.html">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    Buscar turnos
+  </a>
+  <a class="side-link active">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+    Dashboard
+  </a>
+  <a class="side-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+    Mis turnos
+  </a>
+  <a class="side-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    Postulaciones<span class="badge-num">3</span>
+  </a>
+  <a class="side-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Mensajes
+  </a>
+
+  <div class="side-section">Perfil</div>
+  <a class="side-link" href="../perfil/index.html">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+    Mi perfil
+  </a>
+  <a class="side-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    Reputación
+  </a>
+  <a class="side-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="13" rx="2"/><line x1="2" y1="11" x2="22" y2="11"/></svg>
+    Pagos
+  </a>
+  <a class="side-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    Ajustes
+  </a>
+
+  <div class="side-foot">
+    <div class="ava">MR</div>
+    <div>
+      <div class="nm">María Rodríguez</div>
+      <div class="rl">Q.F. · Oro</div>
+    </div>
+  </div>
+</aside>
+
+<!-- ===== Main ===== -->
+<main>
+  <div class="top">
+    <div>
+      <h1>Buenos días, <em>María</em>.</h1>
+      <div class="sub">14 turnos nuevos cerca de Miraflores · tu match promedio: 94/100 · <b style="color:#15803D">3 boticas favoritas con turnos abiertos</b></div>
+    </div>
+    <div class="top-actions">
+      <div class="search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input placeholder="Buscar turnos, boticas…"/>
+      </div>
+      <button class="icon-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="dot"></span></button>
+    </div>
+  </div>
+
+  <!-- Career tier (prestige) -->
+  <div class="level">
+    <div class="lvl-l">
+      <div class="lab">Tu carrera en FarmaTalent</div>
+      <h2><span class="nrm">Nivel</span> Oro</h2>
+      <p>Sos parte del Top 12% de profesionales del Perú. Tu reputación operacional te abre las puertas de boticas premium y turnos exclusivos.</p>
+      <div class="tier-track">
+        <div class="tier-step done"><div class="ts-dot"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>Bronce</div>
+        <div class="tier-line done"></div>
+        <div class="tier-step done"><div class="ts-dot"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>Plata</div>
+        <div class="tier-line done"></div>
+        <div class="tier-step now"><div class="ts-dot"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="6"/></svg></div>Oro</div>
+        <div class="tier-line"></div>
+        <div class="tier-step elite"><div class="ts-dot"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg></div>Elite</div>
+      </div>
+    </div>
+    <div class="lvl-r">
+      <div class="lvl-bar-wrap"><span>Oro · Top 12%</span><b>26 turnos para Elite</b></div>
+      <div class="lvl-bar"><div class="lvl-fill"></div></div>
+      <div class="lvl-tip"><b>Elite FarmaTalent</b> desbloquea matching prioritario absoluto + turnos exclusivos en cadenas premium</div>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="lbl">Turnos completados</div>
+      <div class="val"><em>142</em></div>
+      <span class="delta up">↑ 8 este mes</span>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Score global</div>
+      <div class="val">94<span style="font-size:18px;color:#9CA3AF;font-weight:500">/100</span></div>
+      <span class="delta flat">→ Estable</span>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Ranking Miraflores</div>
+      <div class="val">#7<span style="font-size:16px;color:#9CA3AF;font-weight:500"> de 480</span></div>
+      <span class="delta up">↑ subiste 3</span>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Tasa de aceptación</div>
+      <div class="val">87%</div>
+      <span class="delta up">↑ 3.2%</span>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-bar">
+    <button class="chip active">Todos<span class="ct">14</span></button>
+    <button class="chip">Nocturno<span class="ct">6</span></button>
+    <button class="chip">Fin de semana<span class="ct">8</span></button>
+    <button class="chip">≤3 km<span class="ct">9</span></button>
+    <button class="chip">Match ≥90%</button>
+    <button class="chip">+ Más</button>
+  </div>
+
+  <div class="work">
+    <div>
+      <!-- Shift 1 -->
+      <div class="shift selected">
+        <div class="shift-head">
+          <div class="org-logo b1">QS</div>
+          <div style="flex:1;min-width:0">
+            <div class="shift-title">
+              <div>
+                <h4>Químico farmacéutico · Nocturno</h4>
+                <div class="org">Química Suiza · Av. Larco 345, Miraflores — <b style="color:#15803D">★ botica favorita · 48 turnos</b></div>
+              </div>
+              <span class="badge b-coral">● Urgente</span>
+            </div>
+            <div class="shift-badges">
+              <span class="badge b-ok">98% match</span>
+              <span class="badge b-info">Colegiatura QF</span>
+              <span class="badge b-neu">Cadena</span>
+            </div>
+          </div>
+        </div>
+        <div class="shift-meta">
+          <span>🗓 Sáb 22 may</span>
+          <span>🕐 22:00–06:00 · 8h</span>
+          <span>📍 0.8 km</span>
+        </div>
+        <div class="shift-foot">
+          <div class="pay-est">
+            <div class="pe-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2L4 6v6c0 5.5 3.5 9.5 8 10 4.5-.5 8-4.5 8-10V6l-8-4z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+            <div class="pe-tx"><b>Tarifa propuesta por la botica</b><span>Compatible 98% · Botica recurrente</span></div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-out">Ver detalle</button>
+            <button class="btn btn-pri">Aplicar ahora →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shift 2 -->
+      <div class="shift">
+        <div class="shift-head">
+          <div class="org-logo b2">IF</div>
+          <div style="flex:1;min-width:0">
+            <div class="shift-title">
+              <div>
+                <h4>QF responsable · Matutino</h4>
+                <div class="org">Inkafarma · Av. Pardo 215, Miraflores</div>
+              </div>
+              <span class="badge b-mid">⏱ 6h restantes</span>
+            </div>
+            <div class="shift-badges">
+              <span class="badge b-ok">92% match</span>
+              <span class="badge b-neu">Cadena</span>
+              <span class="badge b-info">Colegiatura QF</span>
+            </div>
+          </div>
+        </div>
+        <div class="shift-meta">
+          <span>🗓 Lun 24 may</span>
+          <span>🕐 07:00–15:00 · 8h</span>
+          <span>📍 1.4 km</span>
+        </div>
+        <div class="shift-foot">
+          <div class="pay-est">
+            <div class="pe-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2L4 6v6c0 5.5 3.5 9.5 8 10 4.5-.5 8-4.5 8-10V6l-8-4z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+            <div class="pe-tx"><b>Tarifa propuesta por la botica</b><span>Compatible 92% · Cadena verificada</span></div>
+          </div>
+          <button class="btn btn-pri">Aplicar →</button>
+        </div>
+      </div>
+
+      <!-- Shift 3 (CONTINUIDAD) -->
+      <div class="shift" style="border-color:#FCD34D;background:linear-gradient(135deg,#FEF3C7,#fff 30%)">
+        <div class="shift-head">
+          <div class="org-logo b3">SF</div>
+          <div style="flex:1;min-width:0">
+            <div class="shift-title">
+              <div>
+                <h4>Q.F. responsable · Continuidad semanal</h4>
+                <div class="org">SmartFarma Surco — <b style="color:#B45309">vacante estable L–V</b></div>
+              </div>
+              <span class="badge" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A);color:#92400E">★ Recurrente</span>
+            </div>
+            <div class="shift-badges">
+              <span class="badge b-ok">95% match</span>
+              <span class="badge" style="background:#FEF3C7;color:#B45309">Equipo recurrente</span>
+              <span class="badge b-info">Disponibilidad fija</span>
+            </div>
+          </div>
+        </div>
+        <div class="shift-meta">
+          <span>🔁 Lun a Vie</span>
+          <span>🕐 14:00–22:00 · 8h/día</span>
+          <span>📍 4.2 km</span>
+        </div>
+        <div class="shift-foot">
+          <div class="pay-est" style="background:#FEF3C7;border-color:#FDE68A">
+            <div class="pe-ico" style="color:#B45309"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg></div>
+            <div class="pe-tx"><b style="color:#92400E">Relación operativa duradera</b><span style="color:#B45309">Tarifa estable · sin contrato · pago semanal</span></div>
+          </div>
+          <button class="btn btn-pri">Postular →</button>
+        </div>
+      </div>
+
+      <!-- Shift 4 -->
+      <div class="shift">
+        <div class="shift-head">
+          <div class="org-logo b4">CI</div>
+          <div style="flex:1;min-width:0">
+            <div class="shift-title">
+              <div>
+                <h4>QF en guardia · 24h</h4>
+                <div class="org">Clínica Internacional · Av. Garcilaso, Lima Centro</div>
+              </div>
+              <span class="badge b-coral">● Urgente</span>
+            </div>
+            <div class="shift-badges">
+              <span class="badge b-ok">91% match</span>
+              <span class="badge b-info">Hospitalario</span>
+              <span class="badge b-info">Colegiatura QF</span>
+            </div>
+          </div>
+        </div>
+        <div class="shift-meta">
+          <span>🗓 Vie 21 may</span>
+          <span>🕐 08:00 (24h)</span>
+          <span>📍 2.2 km</span>
+        </div>
+        <div class="shift-foot">
+          <div class="pay-est">
+            <div class="pe-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2L4 6v6c0 5.5 3.5 9.5 8 10 4.5-.5 8-4.5 8-10V6l-8-4z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+            <div class="pe-tx"><b>Tarifa propuesta por la botica</b><span>Compatible 91% · Hospitalario</span></div>
+          </div>
+          <button class="btn btn-pri">Aplicar →</button>
+        </div>
+      </div>
+
+      <!-- Shift 5 -->
+      <div class="shift">
+        <div class="shift-head">
+          <div class="org-logo b5">BT</div>
+          <div style="flex:1;min-width:0">
+            <div class="shift-title">
+              <div>
+                <h4>QF · Vie + Sáb nocturno</h4>
+                <div class="org">Boticas BTL · Av. Diagonal 530, Miraflores</div>
+              </div>
+              <span class="badge b-neu">Programado</span>
+            </div>
+            <div class="shift-badges">
+              <span class="badge b-ok">92% match</span>
+              <span class="badge b-info">2 turnos</span>
+            </div>
+          </div>
+        </div>
+        <div class="shift-meta">
+          <span>🗓 Vie 21 + Sáb 22</span>
+          <span>🕐 22:00–06:00</span>
+          <span>📍 1.1 km</span>
+        </div>
+        <div class="shift-foot">
+          <div class="pay-est">
+            <div class="pe-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2L4 6v6c0 5.5 3.5 9.5 8 10 4.5-.5 8-4.5 8-10V6l-8-4z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+            <div class="pe-tx"><b>Tarifa propuesta por la botica</b><span>Compatible 92% · Pack 2 turnos</span></div>
+          </div>
+          <button class="btn btn-pri">Aplicar →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column -->
+    <div>
+      <div class="pane">
+        <div class="h-row">
+          <h3>Tu reputación esta semana</h3>
+          <a>Ver todo →</a>
+        </div>
+        <div class="perf-grid">
+          <div class="perf-cell"><div class="perf-lbl">Puntualidad</div><div class="perf-val">98</div><div class="perf-bar"><div class="perf-fill" style="width:98%"></div></div></div>
+          <div class="perf-cell"><div class="perf-lbl">Operación</div><div class="perf-val">94</div><div class="perf-bar"><div class="perf-fill" style="width:94%"></div></div></div>
+          <div class="perf-cell"><div class="perf-lbl">Atención</div><div class="perf-val">96</div><div class="perf-bar"><div class="perf-fill" style="width:96%"></div></div></div>
+          <div class="perf-cell"><div class="perf-lbl">Confiabilidad</div><div class="perf-val">99</div><div class="perf-bar"><div class="perf-fill" style="width:99%"></div></div></div>
+        </div>
+        <div style="display:flex;gap:5px;margin-top:14px;flex-wrap:wrap">
+          <span class="badge b-ok">Puntual</span>
+          <span class="badge b-info">Operador clave</span>
+          <span class="badge b-coral">Top ventas</span>
+          <span class="badge b-mid">Nocturno pro</span>
+        </div>
+      </div>
+
+      <div class="pane">
+        <h3>Actividad reciente</h3>
+        <div class="feed-item">
+          <div class="feed-icon success"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div><div class="feed-text"><b>Inkafarma Pardo</b> confirmó tu turno</div><div class="feed-time">Hace 12 min</div></div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-icon coral"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+          <div><div class="feed-text">3 turnos urgentes cerca · <b>match alto</b></div><div class="feed-time">Hace 1 hora</div></div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-icon info"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg></div>
+          <div><div class="feed-text">Subiste a nivel <b>Oro</b> 🎉</div><div class="feed-time">Ayer</div></div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-icon warning"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="2" y="6" width="20" height="13" rx="2"/><line x1="2" y1="11" x2="22" y2="11"/></svg></div>
+          <div><div class="feed-text">Pago de tu última semana depositado</div><div class="feed-time">Hace 2 días</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+</body></html>

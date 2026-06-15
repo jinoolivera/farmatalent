@@ -1,0 +1,66 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: farmatalent-mysql
+    environment:
+      MYSQL_DATABASE: farmatalent
+      MYSQL_USER: farmatalent
+      MYSQL_PASSWORD: farmatalent
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./farmatalent-api
+    container_name: farmatalent-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      APP_NAME: FarmaTalent
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8000
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: farmatalent
+      DB_USERNAME: farmatalent
+      DB_PASSWORD: farmatalent
+      FRONTEND_URL: http://localhost:5173
+      SANCTUM_STATEFUL_DOMAINS: localhost:5173,127.0.0.1:5173
+      SESSION_DRIVER: database
+      CACHE_STORE: database
+      QUEUE_CONNECTION: database
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./farmatalent-api:/var/www/html
+      - api-vendor:/var/www/html/vendor
+    command: sh -c "test -f .env || cp .env.example .env && composer install && php artisan key:generate --force && php artisan migrate --seed --force && php artisan serve --host=0.0.0.0 --port=8000"
+
+  web:
+    build:
+      context: ./farmatalent-web
+    container_name: farmatalent-web
+    depends_on:
+      - api
+    environment:
+      VITE_API_URL: http://localhost:8000/api/v1
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./farmatalent-web:/app
+      - web-node-modules:/app/node_modules
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+
+volumes:
+  mysql-data:
+  api-vendor:
+  web-node-modules:
