@@ -4,17 +4,33 @@ import { useAuth } from '../auth/AuthContext'
 import { fetchShifts } from '../api/shiftsApi'
 import { fetchProfessionalsCount } from '../api/profileApi'
 
-/* ── ticker de actividad reciente ────────────────────────── */
-const TICKER_ITEMS = [
-  'Hace 2 min · Botica San Marcos (Miraflores) publicó turno de Técnico Farmacéutico · diurno 08:00',
-  'Hace 5 min · Clínica del Norte (Trujillo) busca Químico Farmacéutico · guardia 22:00–06:00',
-  'Hace 8 min · Inkafarma Los Olivos confirmó cobertura de Técnico · turno estable L–V',
-  'Hace 11 min · Botica Arequipa Centro publicó vacante de Practicante Pre-profesional · tarde 14:00',
-  'Hace 14 min · Mifarma San Isidro busca Técnico Farmacéutico · posición estable',
-  'Hace 17 min · Clínica Cayetano (Lima) confirmó turno de Q.F. Responsable · 07:00–19:00',
-  'Hace 20 min · Botica Popular (Chiclayo) publicó turno de Practicante · 08:00–14:00',
-  'Hace 23 min · Farmacia Universal (Cusco) busca Técnico · fin de semana · tarifa extra',
-]
+/* ── ticker de actividad reciente (generado desde turnos reales) ── */
+function relativeTime(dateStr) {
+  if (!dateStr) return 'Recién'
+  const diffMs = Date.now() - new Date(dateStr).getTime()
+  const mins = Math.max(1, Math.round(diffMs / 60000))
+  if (mins < 60) return `Hace ${mins} min`
+  const hours = Math.round(mins / 60)
+  if (hours < 24) return `Hace ${hours} h`
+  return `Hace ${Math.round(hours / 24)} d`
+}
+
+function buildTickerItems(shifts) {
+  return shifts
+    .slice()
+    .sort((a, b) => new Date(b.created_at ?? 0) - new Date(a.created_at ?? 0))
+    .slice(0, 8)
+    .map((s) => {
+      const meta    = s.metadata ?? {}
+      const company = s.company?.name ?? meta.local ?? 'Farmacia'
+      const place   = meta.district ?? s.location ?? 'Perú'
+      const tipo    = TYPE_LABEL[s.professional_type] ?? 'profesional'
+      const time    = s.starts_at && s.ends_at ? `${s.starts_at}–${s.ends_at}` : ''
+      const stable  = (meta.tags ?? []).includes('turno_estable')
+      const verb    = s.assigned_user_id ? 'confirmó cobertura de' : stable ? 'publicó posición estable de' : 'publicó turno de'
+      return `${relativeTime(s.created_at)} · ${company} (${place}) ${verb} ${tipo}${time ? ` · ${time}` : ''}`
+    })
+}
 
 /* chips de búsqueda rápida */
 const QUICK_CHIPS = [
@@ -111,7 +127,6 @@ function nextSaturday() {
 export function LandingPage() {
   const navigate    = useNavigate()
   const { user }    = useAuth()
-  const tickerDouble = [...TICKER_ITEMS, ...TICKER_ITEMS]
 
   const [mode, setMode]             = useState('profesional')
   const [district, setDistrict]     = useState('')
@@ -128,6 +143,10 @@ export function LandingPage() {
 
   const comoRef    = useRef(null)
   const preciosRef = useRef(null)
+
+  /* ticker de actividad — derivado de los turnos reales, vacío si no hay datos */
+  const tickerItems  = buildTickerItems(shifts)
+  const tickerDouble = tickerItems.length > 0 ? [...tickerItems, ...tickerItems] : []
 
   /* fetch al montar */
   useEffect(() => {
@@ -311,13 +330,15 @@ export function LandingPage() {
       </section>
 
       {/* ===== Ticker ===== */}
-      <div className="lp-ticker">
-        <div className="lp-ticker-row">
-          {tickerDouble.map((item, i) => (
-            <span key={i}><span className="lp-ticker-dot" />{item}</span>
-          ))}
+      {tickerDouble.length > 0 && (
+        <div className="lp-ticker">
+          <div className="lp-ticker-row">
+            {tickerDouble.map((item, i) => (
+              <span key={i}><span className="lp-ticker-dot" />{item}</span>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* ===== Marketplace en vivo ===== */}
       <section className="lp-live">
