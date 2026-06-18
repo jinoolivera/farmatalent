@@ -20,6 +20,17 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      // Páginas de compartir con Open Graph dinámico
+      '/compartir': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/images': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
 })

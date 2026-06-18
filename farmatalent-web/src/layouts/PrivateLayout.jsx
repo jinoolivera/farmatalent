@@ -57,12 +57,18 @@ const IconBell = () => (
     <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
   </svg>
 )
+const IconMenu = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+  </svg>
+)
 
 export function PrivateLayout() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const companyAccount = isCompanyAccount(user)
   const [showNotif, setShowNotif] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   async function handleLogout() {
     await logout()
@@ -90,9 +96,19 @@ export function PrivateLayout() {
     searchRef.current?.blur()
   }
 
+  function closeSidebar() {
+    setSidebarOpen(false)
+  }
+
   return (
     <div className="ft-shell">
-      <aside className="ft-sidebar">
+      <div
+        className={`ft-sidebar-backdrop${sidebarOpen ? ' open' : ''}`}
+        onClick={closeSidebar}
+        aria-hidden="true"
+      />
+
+      <aside className={`ft-sidebar${sidebarOpen ? ' open' : ''}`}>
         <div className="ft-sidebar-brand">
           <img src="/farmatalent-logo.svg" alt="FarmaTalent" style={{ height: 28, width: 'auto' }} />
         </div>
@@ -100,45 +116,46 @@ export function PrivateLayout() {
         <div className="ft-sidebar-section">Operación</div>
 
         {!companyAccount && (
-          <NavLink className={({ isActive }) => `ft-nav-link${isActive ? ' active' : ''}`} to="/app/turnos">
+          <NavLink onClick={closeSidebar} className={({ isActive }) => `ft-nav-link${isActive ? ' active' : ''}`} to="/app/turnos">
             <IconSearch /> Buscar turnos
           </NavLink>
         )}
 
         <NavLink
           end
+          onClick={closeSidebar}
           className={({ isActive }) => `ft-nav-link${isActive ? ' active' : ''}`}
           to={companyAccount ? '/app/farmacia' : '/app'}
         >
           <IconDashboard /> Dashboard
         </NavLink>
 
-        <NavLink className={({ isActive }) => `ft-nav-link${isActive ? ' active' : ''}`} to="/app/turnos">
+        <NavLink onClick={closeSidebar} className={({ isActive }) => `ft-nav-link${isActive ? ' active' : ''}`} to="/app/turnos">
           <IconCalendar /> {companyAccount ? 'Turnos publicados' : 'Mis turnos'}
         </NavLink>
 
-        <NavLink className={({ isActive }) => `ft-nav-link${isActive ? ' active' : ''}`} to="/app/postulaciones">
+        <NavLink onClick={closeSidebar} className={({ isActive }) => `ft-nav-link${isActive ? ' active' : ''}`} to="/app/postulaciones">
           <IconCheck />
           {companyAccount ? 'Postulaciones recibidas' : 'Postulaciones'}
         </NavLink>
 
-        <NavLink className={({ isActive }) => `ft-nav-link${isActive ? ' active' : ''}`} to="/app/mensajes">
+        <NavLink onClick={closeSidebar} className={({ isActive }) => `ft-nav-link${isActive ? ' active' : ''}`} to="/app/mensajes">
           <IconChat /> Mensajes
         </NavLink>
 
         <div className="ft-sidebar-section">Perfil</div>
 
-        <NavLink className={({ isActive }) => `ft-nav-link${isActive ? ' active' : ''}`} to="/app/perfil">
+        <NavLink onClick={closeSidebar} className={({ isActive }) => `ft-nav-link${isActive ? ' active' : ''}`} to="/app/perfil">
           <IconUser /> {companyAccount ? 'Perfil de cuenta' : 'Mi perfil'}
         </NavLink>
 
         {!companyAccount && (
-          <NavLink className={({ isActive }) => `ft-nav-link${isActive ? ' active' : ''}`} to="/app/disponibilidad">
+          <NavLink onClick={closeSidebar} className={({ isActive }) => `ft-nav-link${isActive ? ' active' : ''}`} to="/app/disponibilidad">
             <IconToggle /> Disponibilidad
           </NavLink>
         )}
 
-        <NavLink className={({ isActive }) => `ft-nav-link${isActive ? ' active' : ''}`} to="/app/reputacion">
+        <NavLink onClick={closeSidebar} className={({ isActive }) => `ft-nav-link${isActive ? ' active' : ''}`} to="/app/reputacion">
           <IconChart /> Reputación
         </NavLink>
 
@@ -171,6 +188,13 @@ export function PrivateLayout() {
         )}
 
         <header className="ft-topbar">
+          <button
+            className="ft-sidebar-toggle"
+            aria-label="Abrir menú"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <IconMenu />
+          </button>
           <form className="ft-search" onSubmit={handleSearch}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ft-gray-400)" strokeWidth="2">
               <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>

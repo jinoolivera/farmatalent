@@ -38,7 +38,7 @@ export function LoginPage() {
         <div className="auth-header">
           <Link to="/" className="lp-logo" style={{ fontSize: 17, display: 'block', marginBottom: 24 }}>FarmaTalent</Link>
           <h1 className="auth-title">Bienvenido de vuelta</h1>
-          <p className="auth-sub">Ingresá para ver tus turnos y oportunidades.</p>
+          <p className="auth-sub">Ingresa para ver tus turnos y oportunidades.</p>
         </div>
 
         {error && <div className="auth-error">{error}</div>}

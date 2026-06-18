@@ -675,3 +675,19 @@
 }
 
 .ft-empty h3 { font-size: 18px; font-weight: 600; color: var(--ft-fg); margin-bottom: 8px; }
+
+/* =====================================================
+   Responsive
+   ===================================================== */
+@media (max-width: 900px) {
+  .ft-dash-work { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .ft-tier-card { grid-template-columns: 1fr; gap: 20px; }
+  .ft-kpi-row { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .ft-kpi-row { grid-template-columns: 1fr; }
+  .ft-perf-grid { grid-template-columns: 1fr; }
+  .ft-tier-card { padding: 20px; }
+}

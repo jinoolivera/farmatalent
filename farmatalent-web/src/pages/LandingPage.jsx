@@ -134,6 +134,7 @@ export function LandingPage() {
   const [fecha, setFecha]           = useState('')
   const [horario, setHorario]       = useState('')
   const [activeChip, setActiveChip] = useState(null)
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
   /* turnos y profesionales reales desde la API */
   const [shifts, setShifts]         = useState([])
@@ -177,6 +178,7 @@ export function LandingPage() {
     .sort((a, b) => b[1].length - a[1].length)
 
   function scrollTo(ref) {
+    setMobileNavOpen(false)
     ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
@@ -239,7 +241,45 @@ export function LandingPage() {
               Crear cuenta
             </Link>
           </div>
+
+          <button
+            className={`lp-nav-burger${mobileNavOpen ? ' active' : ''}`}
+            aria-label={mobileNavOpen ? 'Cerrar menú' : 'Abrir menú'}
+            aria-expanded={mobileNavOpen}
+            onClick={() => setMobileNavOpen((v) => !v)}
+          >
+            <span /><span /><span />
+          </button>
         </div>
+
+        {mobileNavOpen && (
+          <div className="lp-nav-drawer">
+            <div className="lp-mode-toggle lp-nav-drawer-toggle">
+              <button
+                className={`lp-mode-btn${mode === 'empresa' ? ' active' : ''}`}
+                onClick={() => setMode('empresa')}
+              >
+                Buscar talento
+              </button>
+              <button
+                className={`lp-mode-btn${mode === 'profesional' ? ' active' : ''}`}
+                onClick={() => setMode('profesional')}
+              >
+                Encontrar turnos
+              </button>
+            </div>
+            <button className="lp-nav-drawer-link" onClick={() => scrollTo(comoRef)}>Cómo funciona</button>
+            <button className="lp-nav-drawer-link" onClick={() => scrollTo(preciosRef)}>Red</button>
+            <Link className="lp-nav-drawer-link" to="/login" onClick={() => setMobileNavOpen(false)}>Iniciar sesión</Link>
+            <Link
+              className="lp-btn lp-btn-brand lp-nav-drawer-cta"
+              to={mode === 'empresa' ? '/registro/farmacia' : '/registro/profesional'}
+              onClick={() => setMobileNavOpen(false)}
+            >
+              Crear cuenta
+            </Link>
+          </div>
+        )}
       </nav>
 
       {/* ===== Hero ===== */}
@@ -253,7 +293,7 @@ export function LandingPage() {
           {mode === 'profesional' ? (
             <h1>El <em>talento farmacéutico</em><br />del Perú, en un toque.</h1>
           ) : (
-            <h1>Cubrí tu próximo turno<br /><em>en menos de 38 minutos.</em></h1>
+            <h1>Cubre tu próximo turno<br /><em>en menos de 38 minutos.</em></h1>
           )}
 
           <p className="lp-lead">

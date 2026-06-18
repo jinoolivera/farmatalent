@@ -22,6 +22,14 @@
 .lp-nav-link { padding: 9px 14px; border-radius: 999px; font-size: 13px; color: #4B5563; font-weight: 500; background: none; border: none; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
 .lp-nav-link:hover { background: #F3F4F6; color: #111827; }
 
+/* Mobile nav: hamburger + drawer (hidden on desktop) */
+.lp-nav-burger { display: none; flex-direction: column; justify-content: center; gap: 4px; width: 36px; height: 36px; border: none; background: transparent; cursor: pointer; margin-left: auto; flex-shrink: 0; }
+.lp-nav-burger span { display: block; width: 20px; height: 2px; background: #111827; border-radius: 2px; transition: transform 160ms, opacity 160ms; }
+.lp-nav-burger.active span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.lp-nav-burger.active span:nth-child(2) { opacity: 0; }
+.lp-nav-burger.active span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+.lp-nav-drawer { display: none; }
+
 .lp-btn { display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 999px; padding: 10px 18px; font-size: 13px; font-weight: 600; transition: all 160ms; cursor: pointer; text-decoration: none; }
 .lp-btn-brand { background: #16A34A; color: #fff; }
 .lp-btn-brand:hover { background: #15803D; }
@@ -557,6 +565,14 @@
 }
 @media (max-width: 820px) {
   .lp-nav-in .lp-mode-toggle { display: none; }
+  .lp-nav-right { display: none; }
+  .lp-nav-burger { display: flex; }
+  .lp-nav-drawer { display: flex; flex-direction: column; gap: 4px; padding: 12px 20px 20px; border-top: 1px solid #E5E7EB; background: #fff; }
+  .lp-nav-drawer-toggle { margin: 0 0 8px; width: 100%; }
+  .lp-nav-drawer-toggle .lp-mode-btn { flex: 1; justify-content: center; }
+  .lp-nav-drawer-link { padding: 12px 8px; border-radius: 8px; font-size: 14px; color: #374151; font-weight: 500; background: none; border: none; text-align: left; cursor: pointer; text-decoration: none; }
+  .lp-nav-drawer-link:hover { background: #F3F4F6; }
+  .lp-nav-drawer-cta { justify-content: center; margin-top: 8px; }
   .lp-aud-grid, .lp-steps { grid-template-columns: 1fr; }
   .lp-footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
   .reg-cards { grid-template-columns: 1fr; }
@@ -565,6 +581,12 @@
   .onb-form-panel { padding: 32px 28px; }
   .onb-row { grid-template-columns: 1fr; }
   .onb-role-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .onb-brand { padding: 24px 20px; }
+  .onb-form-panel { padding: 24px 18px; }
+  .onb-role-grid { grid-template-columns: 1fr; }
+  .lp-footer-grid { grid-template-columns: 1fr; gap: 28px; }
 }
 @media (max-width: 600px) {
   .lp-c { padding: 0 16px; }
@@ -934,6 +956,11 @@
 .sd-tarifa-tx span { font-size: 11px; color: #16A34A; }
 
 .sd-cta { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.sd-share-fb {
+  background: #1877F2; color: #fff; display: inline-flex; align-items: center; gap: 8px;
+}
+.sd-share-fb:hover { background: #166FE5; }
 
 .sd-aside { position: sticky; top: 20px; }
 
@@ -1433,6 +1460,9 @@
   .prof-dims { grid-template-columns: repeat(3,1fr); }
   .prof-hero-inner { flex-wrap: wrap; }
 }
+@media (max-width: 420px) {
+  .prof-dims { grid-template-columns: repeat(2,1fr); }
+}
 
 /* =====================================================
    CHAT PAGE  ch-*  (Sprint 7)
@@ -1693,6 +1723,12 @@
   text-align: center; color: #6B7280; padding: 40px;
 }
 
+.ms-back-btn {
+  display: none; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 999px; flex-shrink: 0;
+  background: none; border: 1px solid #E5E7EB; color: #374151; cursor: pointer;
+}
+
 /* Chat header */
 .ms-chat-head {
   padding: 14px 24px; background: #fff; border-bottom: 1px solid #E5E7EB;
@@ -1896,7 +1932,14 @@
 }
 @media (max-width: 720px) {
   .mensajes-shell { grid-template-columns: 1fr; }
-  .ms-threads { display: none; }
+  /* Por defecto: mostrar lista de conversaciones, ocultar el chat */
+  .ms-chat, .ms-chat-empty-state { display: none; }
+  .ms-back-btn { display: flex; }
+
+  /* Cuando hay una conversación seleccionada: mostrar chat, ocultar lista */
+  .mensajes-shell.ms-chat-open .ms-threads { display: none; }
+  .mensajes-shell.ms-chat-open .ms-chat,
+  .mensajes-shell.ms-chat-open .ms-chat-empty-state { display: flex; }
 }
 
 /* =====================================================

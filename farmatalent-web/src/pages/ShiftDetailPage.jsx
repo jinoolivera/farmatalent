@@ -30,6 +30,13 @@ const IconShield  = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="
 const IconClock   = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
 const IconMapPin  = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
 const IconUsers   = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
+const IconFacebook = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12.06C22 6.51 17.52 2 12 2S2 6.51 2 12.06c0 5 3.66 9.15 8.44 9.94v-7.03H7.9v-2.91h2.54V9.84c0-2.5 1.49-3.89 3.78-3.89 1.1 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.91h-2.34V22c4.78-.79 8.44-4.94 8.44-9.94z"/></svg>
+
+function shareTurnoOnFacebook(shiftId) {
+  const shareUrl = `${window.location.origin}/compartir/turno/${shiftId}`
+  const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`
+  window.open(fbUrl, 'compartir-facebook', 'width=600,height=640,noopener,noreferrer')
+}
 
 export function ShiftDetailPage() {
   const { shiftId }  = useParams()
@@ -189,6 +196,13 @@ export function ShiftDetailPage() {
             <div className="sd-cta">
               <button className="ft-btn ft-btn-outline" onClick={() => navigate('/app/turnos')}>
                 Ver todos los turnos
+              </button>
+              <button
+                className="ft-btn sd-share-fb"
+                onClick={() => shareTurnoOnFacebook(shift.id)}
+                title="Compartir este turno en Facebook"
+              >
+                <IconFacebook /> Compartir en Facebook
               </button>
               {!isCompany && (
                 <button

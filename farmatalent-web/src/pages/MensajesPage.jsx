@@ -102,7 +102,7 @@ function Stepper({ app }) {
 }
 
 /* ── Center chat panel ───────────────────────────────────── */
-function ChatCenter({ app, user, isCompany }) {
+function ChatCenter({ app, user, isCompany, onBack }) {
   const [messages, setMessages] = useState([])
   const [loading,  setLoading]  = useState(false)
   const [text,     setText]     = useState('')
@@ -155,7 +155,7 @@ function ChatCenter({ app, user, isCompany }) {
     return (
       <div className="ms-chat-empty-state">
         <div style={{ fontSize: 52, marginBottom: 14 }}>💬</div>
-        <div style={{ fontWeight: 700, fontSize: 17, color: '#111827', marginBottom: 6 }}>Seleccioná una conversación</div>
+        <div style={{ fontWeight: 700, fontSize: 17, color: '#111827', marginBottom: 6 }}>Selecciona una conversación</div>
         <div style={{ fontSize: 13, color: '#6B7280' }}>El chat se habilita cuando una botica acepta tu postulación.</div>
       </div>
     )
@@ -172,6 +172,9 @@ function ChatCenter({ app, user, isCompany }) {
     <section className="ms-chat">
       {/* Chat header */}
       <div className="ms-chat-head">
+        <button className="ms-back-btn" aria-label="Volver a conversaciones" onClick={onBack}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        </button>
         <div className="ms-ch-ava">
           {initials(companyName)}
           <span className="ms-vchk"><IcoCheck /></span>
@@ -416,7 +419,7 @@ export function MensajesPage() {
       </nav>
 
       {/* ── 3-panel layout ── */}
-      <div className="mensajes-shell">
+      <div className={`mensajes-shell${selected ? ' ms-chat-open' : ''}`}>
 
         {/* Left: threads */}
         <aside className="ms-threads">
@@ -496,7 +499,7 @@ export function MensajesPage() {
         </aside>
 
         {/* Center: chat */}
-        <ChatCenter app={selected} user={user} isCompany={isCompany} />
+        <ChatCenter app={selected} user={user} isCompany={isCompany} onBack={() => setSelected(null)} />
 
         {/* Right: shift details */}
         <ShiftSidebar app={selected} />

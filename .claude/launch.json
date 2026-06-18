@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "marketing-assets",
+      "runtimeExecutable": "C:\\Python314\\python.exe",
+      "runtimeArgs": ["-m", "http.server", "4173", "--directory", "\\\\wsl.localhost\\ubuntu\\home\\jolivera\\projects\\farmatalent\\marketing\\facebook"],
+      "port": 4173
+    },
+    {
+      "name": "farmatalent-web",
+      "runtimeExecutable": "echo",
+      "runtimeArgs": ["already running via docker on 5176"],
+      "port": 5176
+    }
+  ]
+}
