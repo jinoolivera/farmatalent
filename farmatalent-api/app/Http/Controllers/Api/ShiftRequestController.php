@@ -7,8 +7,10 @@ use App\Http\Requests\ShiftRequestFormRequest;
 use App\Http\Resources\ShiftRequestResource;
 use App\Models\Company;
 use App\Models\ShiftRequest;
+use App\Notifications\AdminActivityNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class ShiftRequestController extends Controller
 {
@@ -46,6 +48,15 @@ class ShiftRequestController extends Controller
             'created_by' => $request->user()->id,
             'status' => $data['status'] ?? 'open',
         ]);
+
+        Notification::route('mail', config('app.admin_email'))->notify(new AdminActivityNotification(
+            'Nuevo turno publicado',
+            'Actividad en FarmaTalent',
+            [
+                $company->name . ' publicó el turno "' . ($shiftRequest->title ?? 'Turno') . '".',
+                'Tipo: ' . ($shiftRequest->professional_type ?? '—'),
+            ]
+        ));
 
         return ShiftRequestResource::make($shiftRequest->load('company')->loadCount('applications'));
     }

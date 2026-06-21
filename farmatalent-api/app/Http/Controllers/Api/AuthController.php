@@ -8,9 +8,11 @@ use App\Models\ProfessionalProfile;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\WorkerMetric;
+use App\Notifications\AdminNewUserNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -48,6 +50,9 @@ class AuthController extends Controller
 
         // Enviar correo de verificación (logueado en local, enviado en producción)
         $user->sendEmailVerificationNotification();
+
+        Notification::route('mail', config('app.admin_email'))
+            ->notify(new AdminNewUserNotification($user, $accountType));
 
         return response()->json([
             'token' => $user->createToken('web')->plainTextToken,

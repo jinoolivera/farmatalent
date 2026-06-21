@@ -26,6 +26,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Admin Email
+    |--------------------------------------------------------------------------
+    | Correo del administrador de la plataforma. Recibe notificaciones de
+    | nuevos registros, turnos publicados y postulaciones.
+    */
+    'admin_email' => env('ADMIN_EMAIL', 'jinooli@gmail.com'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |
