@@ -691,7 +691,8 @@ export function LandingPage() {
                   { label: 'Sobre nosotros', to: '/' },
                   { label: 'Blog', to: '/' },
                   { label: 'Trabaja con nosotros', href: 'mailto:hola@farmatalent.pe' },
-                  { label: 'Contacto', href: 'mailto:hola@farmatalent.pe' },
+                  { label: 'Contacto por WhatsApp', href: 'https://wa.me/51920614965' },
+                  { label: 'Contacto por email', href: 'mailto:hola@farmatalent.pe' },
                 ]},
               { title: 'Legal', links: [
                   { label: 'Privacidad', to: '/privacidad' },

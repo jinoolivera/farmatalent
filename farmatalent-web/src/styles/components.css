@@ -691,3 +691,28 @@
   .ft-perf-grid { grid-template-columns: 1fr; }
   .ft-tier-card { padding: 20px; }
 }
+
+/* WhatsApp floating button */
+.wa-float-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #25D366;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
+  z-index: 500;
+  transition: transform 160ms ease-out, box-shadow 160ms ease-out;
+}
+.wa-float-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .3);
+}
+@media (max-width: 480px) {
+  .wa-float-btn { width: 50px; height: 50px; bottom: 16px; right: 16px; }
+}

@@ -24,11 +24,13 @@ import { EmailVerificationPage } from './pages/EmailVerificationPage'
 import { RequireAuth } from './routes/RequireAuth'
 import { RequireRole } from './routes/RequireRole'
 import { CookieConsent } from './components/CookieConsent'
+import { WhatsAppFloatButton } from './components/WhatsAppFloatButton'
 
 export default function App() {
   return (
     <>
     <CookieConsent />
+    <WhatsAppFloatButton />
     <Routes>
       <Route path="/" element={<LandingPage />} />
 
