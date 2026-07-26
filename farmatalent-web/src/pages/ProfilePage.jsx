@@ -597,7 +597,7 @@ function ProfessionalProfile() {
 
 /* ── public export — dispatches to correct view ─────────── */
 export function ProfilePage() {
-  const { user } = useAuth()
-  if (isCompanyAccount(user)) return <CompanyProfileView user={user} />
+  const { user, appMode } = useAuth()
+  if (isCompanyAccount(user, appMode)) return <CompanyProfileView user={user} />
   return <ProfessionalProfile />
 }

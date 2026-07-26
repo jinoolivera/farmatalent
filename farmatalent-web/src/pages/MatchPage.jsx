@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { fetchApplicationById } from '../api/applicationsApi'
 import { getApiErrorMessage } from '../api/client'
 import { useAuth } from '../auth/AuthContext'
+import { isCompanyAccount } from '../auth/authRouting'
 import { ReviewModal } from '../components/marketplace/ReviewModal'
 
 /* ── icons ─────────────────────────────────────────────── */
@@ -45,8 +46,8 @@ const UNLOCK_ITEMS = [
 export function MatchPage() {
   const { applicationId } = useParams()
   const navigate           = useNavigate()
-  const { user }           = useAuth()
-  const isCompany          = !user?.professional_type
+  const { user, appMode }  = useAuth()
+  const isCompany          = isCompanyAccount(user, appMode)
 
   const [app, setApp]           = useState(null)
   const [loading, setLoading]   = useState(true)

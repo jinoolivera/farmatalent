@@ -4,7 +4,7 @@ import { fetchMyApplications, fetchCompanyApplications } from '../api/applicatio
 import { fetchChatMessages, sendChatMessage } from '../api/chatApi'
 import { getApiErrorMessage } from '../api/client'
 import { useAuth } from '../auth/AuthContext'
-import { isCompanyAccount } from '../auth/authRouting'
+import { hasCompanyAccount, hasProfessionalAccount, isCompanyAccount } from '../auth/authRouting'
 
 const POLL_MS = 5000
 
@@ -344,9 +344,10 @@ function ShiftSidebar({ app }) {
 
 /* ── Root ─────────────────────────────────────────────────── */
 export function MensajesPage() {
-  const { user, logout } = useAuth()
+  const { user, logout, appMode, setAppMode } = useAuth()
   const navigate         = useNavigate()
-  const isCompany        = isCompanyAccount(user)
+  const isCompany        = isCompanyAccount(user, appMode)
+  const canSwitchModes   = hasCompanyAccount(user) && hasProfessionalAccount(user)
 
   const [threads,  setThreads]  = useState([])
   const [loading,  setLoading]  = useState(true)
@@ -408,6 +409,26 @@ export function MensajesPage() {
               </NavLink>
             ))}
           </div>
+          {canSwitchModes && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 'auto', marginRight: 12, padding: '4px', border: '1px solid rgba(255,255,255,.12)', borderRadius: 999 }}>
+              <button
+                type="button"
+                className={`ft-btn ${!isCompany ? 'ft-btn-brand' : 'ft-btn-ghost'} ft-btn-sm`}
+                style={{ padding: '6px 10px' }}
+                onClick={() => { setAppMode('professional'); navigate('/app/mensajes', { replace: true }) }}
+              >
+                Profesional
+              </button>
+              <button
+                type="button"
+                className={`ft-btn ${isCompany ? 'ft-btn-brand' : 'ft-btn-ghost'} ft-btn-sm`}
+                style={{ padding: '6px 10px' }}
+                onClick={() => { setAppMode('company'); navigate('/app/mensajes', { replace: true }) }}
+              >
+                Empresa
+              </button>
+            </div>
+          )}
           <button
             className="ms-nav-ava"
             onClick={async () => { await logout(); navigate('/login', { replace: true }) }}

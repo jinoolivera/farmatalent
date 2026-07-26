@@ -6,6 +6,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
+import { isCompanyAccount as isCompanyUser } from '../auth/authRouting'
 import { fetchMyApplications, reviewApplication, withdrawApplication } from '../api/applicationsApi'
 import { fetchShifts } from '../api/shiftsApi'
 import { getApiErrorMessage } from '../api/client'
@@ -125,7 +126,7 @@ function SearchNav({ user, onLogout }) {
           ) : (
             <>
               <Link className="sr-nav-link" to="/login">Iniciar sesión</Link>
-              <Link className="sr-nav-link sr-nav-cta" to="/registro/profesional">Crear cuenta</Link>
+              <Link className="sr-nav-link sr-nav-cta" to="/registro">Crear cuenta</Link>
             </>
           )}
         </div>
@@ -273,13 +274,13 @@ function PreviewCard({ shift, applied, busy, onApply, onDetail, onClose }) {
 
 /* ── componente principal ───────────────────────────────── */
 export function ShiftResultsPage() {
-  const { user, logout }                = useAuth()
+  const { user, logout, appMode }       = useAuth()
   const navigate                        = useNavigate()
   const location                        = useLocation()
   const [searchParams, setSearchParams] = useSearchParams()
 
   const isLoggedIn       = !!user
-  const isCompanyAccount = isLoggedIn && !user?.professional_type
+  const isCompanyAccount = isLoggedIn && isCompanyUser(user, appMode)
 
   const [items,        setItems]        = useState([])
   const [loading,      setLoading]      = useState(true)
@@ -370,6 +371,10 @@ export function ShiftResultsPage() {
   function handleApply(shiftId) {
     if (!isLoggedIn) {
       navigate(`/login?redirect=${encodeURIComponent(location.pathname + location.search)}`)
+      return
+    }
+    if (!isCompanyAccount && !user?.professional_type) {
+      navigate(`/app/activar-profesional?next=${encodeURIComponent(location.pathname + location.search)}`)
       return
     }
     const shift = displayShifts.find((s) => s.id === shiftId)

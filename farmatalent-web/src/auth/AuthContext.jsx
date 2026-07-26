@@ -1,6 +1,7 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { getApiErrorMessage, setAuthToken } from '../api/client'
 import * as authApi from '../api/authApi'
+import { APP_MODE_KEY, resolveAppMode } from './authRouting'
 
 const TOKEN_KEY = 'farmatalent_token'
 const AuthContext = createContext(null)
@@ -8,6 +9,7 @@ const AuthContext = createContext(null)
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY))
   const [user, setUser] = useState(null)
+  const [preferredAppMode, setPreferredAppMode] = useState(() => localStorage.getItem(APP_MODE_KEY))
   const [loading, setLoading] = useState(false)
   const [initializing, setInitializing] = useState(Boolean(token))
   const [authError, setAuthError] = useState('')
@@ -16,7 +18,6 @@ export function AuthProvider({ children }) {
     setAuthToken(token)
 
     if (!token) {
-      setInitializing(false)
       return
     }
 
@@ -34,6 +35,11 @@ export function AuthProvider({ children }) {
       })
       .finally(() => setInitializing(false))
   }, [token])
+
+  const appMode = useMemo(
+    () => resolveAppMode(user, preferredAppMode),
+    [preferredAppMode, user],
+  )
 
   async function login(credentials) {
     setLoading(true)
@@ -79,12 +85,14 @@ export function AuthProvider({ children }) {
       localStorage.removeItem(TOKEN_KEY)
       setToken(null)
       setUser(null)
+      setPreferredAppMode(null)
       setAuthToken(null)
+      localStorage.removeItem(APP_MODE_KEY)
       setLoading(false)
     }
   }
 
-  async function refreshUser() {
+  const refreshUser = useCallback(async () => {
     if (!token) {
       return null
     }
@@ -92,7 +100,14 @@ export function AuthProvider({ children }) {
     const data = await authApi.fetchCurrentUser()
     setUser(data.user)
     return data.user
-  }
+  }, [token])
+
+  const setAppMode = useCallback((mode) => {
+    const nextMode = resolveAppMode(user, mode)
+    if (!nextMode) return
+    localStorage.setItem(APP_MODE_KEY, nextMode)
+    setPreferredAppMode(nextMode)
+  }, [user])
 
   const value = useMemo(
     () => ({
@@ -102,12 +117,14 @@ export function AuthProvider({ children }) {
       initializing,
       authError,
       isAuthenticated: Boolean(token && user),
+      appMode,
       login,
       register,
       logout,
       refreshUser,
+      setAppMode,
     }),
-    [authError, initializing, loading, token, user],
+    [appMode, authError, initializing, loading, logout, refreshUser, setAppMode, token, user],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

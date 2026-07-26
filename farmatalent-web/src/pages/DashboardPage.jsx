@@ -91,7 +91,7 @@ function useAvailability(initial = true) {
 
 /* ── component ──────────────────────────────────────────── */
 export function DashboardPage() {
-  const { user } = useAuth()
+  const { user, appMode } = useAuth()
   const navigate = useNavigate()
   const [activeFilter, setActiveFilter] = useState(0)
   const [selectedShift, setSelectedShift] = useState(null)
@@ -100,7 +100,7 @@ export function DashboardPage() {
   const { shifts: apiShifts, applications, metrics: apiMetrics, loadingShifts } = useDashboardData()
 
   // Redirect company accounts to their dashboard (after hooks)
-  if (isCompanyAccount(user)) {
+  if (isCompanyAccount(user, appMode)) {
     return <Navigate to="/app/farmacia" replace />
   }
 

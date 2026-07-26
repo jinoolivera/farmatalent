@@ -104,8 +104,8 @@ function relativeTime(iso) {
 
 export function NotificationsDropdown({ onClose }) {
   const navigate     = useNavigate()
-  const { user }     = useAuth()
-  const isCompany    = isCompanyAccount(user)
+  const { user, appMode } = useAuth()
+  const isCompany    = isCompanyAccount(user, appMode)
   const ref          = useRef(null)
   const [notifs, setNotifs]   = useState([])
   const [loading, setLoading] = useState(true)

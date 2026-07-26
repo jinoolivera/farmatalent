@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
+import { isCompanyAccount } from '../auth/authRouting'
 import { Badge } from '../components/ui/Badge'
 import { Avatar } from '../components/ui/Avatar'
 import { PublicarTurnoModal } from '../components/marketplace/PublicarTurnoModal'
@@ -350,7 +351,7 @@ function AppRow({ app, onAccept, onReject, onMatch, onViewProfile, onReview, bus
 
 /* ── component ──────────────────────────────────────────── */
 export function PharmacyDashboardPage() {
-  const { user }  = useAuth()
+  const { user, appMode }  = useAuth()
   const navigate  = useNavigate()
   const [mode, setMode]             = useState('cobertura')
   const [activeTab, setActiveTab]   = useState(0)
@@ -857,3 +858,6 @@ export function PharmacyDashboardPage() {
     </>
   )
 }
+  if (!isCompanyAccount(user, appMode)) {
+    return <Navigate to="/app" replace />
+  }

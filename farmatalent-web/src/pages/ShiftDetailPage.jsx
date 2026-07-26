@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
+import { isCompanyAccount } from '../auth/authRouting'
 import { fetchMyApplications } from '../api/applicationsApi'
 import { getApiErrorMessage } from '../api/client'
 import { fetchShiftById } from '../api/shiftsApi'
@@ -41,8 +42,8 @@ function shareTurnoOnFacebook(shiftId) {
 export function ShiftDetailPage() {
   const { shiftId }  = useParams()
   const navigate     = useNavigate()
-  const { user }     = useAuth()
-  const isCompany    = !user?.professional_type
+  const { user, appMode } = useAuth()
+  const isCompany    = isCompanyAccount(user, appMode)
 
   const [shift, setShift]         = useState(null)
   const [loading, setLoading]     = useState(true)
@@ -208,7 +209,13 @@ export function ShiftDetailPage() {
                 <button
                   className="ft-btn ft-btn-primary"
                   disabled={!canApply}
-                  onClick={() => setShowModal(true)}
+                  onClick={() => {
+                    if (!user?.professional_type) {
+                      navigate(`/app/activar-profesional?next=${encodeURIComponent(`/app/turnos/${shift.id}`)}`)
+                      return
+                    }
+                    setShowModal(true)
+                  }}
                   style={{ minWidth: 160 }}
                 >
                   {applied ? '✓ Ya postulaste' : 'Aplicar al turno →'}

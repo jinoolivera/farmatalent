@@ -28,7 +28,7 @@ class AuthController extends Controller
             'professional_type' => ['nullable', Rule::in(['pharmacist', 'pharmacy_technician', 'doctor', 'assistant'])],
         ]);
 
-        $accountType = $data['account_type'] ?? 'professional';
+        $accountType = $data['account_type'] ?? null;
         $professionalType = $accountType === 'professional' ? ($data['professional_type'] ?? null) : null;
 
         $user = User::create([
@@ -52,7 +52,7 @@ class AuthController extends Controller
         $user->sendEmailVerificationNotification();
 
         Notification::route('mail', config('app.admin_email'))
-            ->notify(new AdminNewUserNotification($user, $accountType));
+            ->notify(new AdminNewUserNotification($user, $accountType ?? 'neutral'));
 
         return response()->json([
             'token' => $user->createToken('web')->plainTextToken,

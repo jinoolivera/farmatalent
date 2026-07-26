@@ -4,7 +4,7 @@ import { PrivateLayout } from './layouts/PrivateLayout'
 import { LandingPage } from './pages/LandingPage'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
-import { RegisterProfessionalPage } from './pages/RegisterProfessionalPage'
+import { OnboardingChoicePage } from './pages/OnboardingChoicePage'
 import { DashboardPage } from './pages/DashboardPage'
 import { ProfilePage } from './pages/ProfilePage'
 import { ShiftResultsPage } from './pages/ShiftResultsPage'
@@ -13,7 +13,8 @@ import { MatchPage } from './pages/MatchPage'
 import { ChatPage } from './pages/ChatPage'
 import { PharmacyDashboardPage } from './pages/PharmacyDashboardPage'
 import { AvailabilityPage } from './pages/AvailabilityPage'
-import { RegisterFarmaciaPage } from './pages/RegisterFarmaciaPage'
+import { ActivateCompanyPage } from './pages/ActivateCompanyPage'
+import { ActivateProfessionalPage } from './pages/ActivateProfessionalPage'
 import { PostulacionesPage } from './pages/PostulacionesPage'
 import { MensajesPage } from './pages/MensajesPage'
 import { ReputacionPage } from './pages/ReputacionPage'
@@ -37,8 +38,8 @@ export default function App() {
       {/* Rutas públicas de auth */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/registro" element={<RegisterPage />} />
-      <Route path="/registro/profesional" element={<RegisterProfessionalPage />} />
-      <Route path="/registro/farmacia" element={<RegisterFarmaciaPage />} />
+      <Route path="/registro/profesional" element={<Navigate to="/registro" replace />} />
+      <Route path="/registro/farmacia" element={<Navigate to="/registro" replace />} />
 
       {/* Páginas legales */}
       <Route path="/terminos" element={<TerminosPage />} />
@@ -63,6 +64,9 @@ export default function App() {
         <Route path="/app/mensajes" element={<MensajesPage />} />
 
         <Route path="/app" element={<PrivateLayout />}>
+          <Route path="empezar" element={<OnboardingChoicePage />} />
+          <Route path="activar-profesional" element={<ActivateProfessionalPage />} />
+          <Route path="activar-empresa" element={<ActivateCompanyPage />} />
           <Route index element={<DashboardPage />} />
           <Route element={<RequireRole roles={['company-owner', 'company-admin', 'company-operator', 'super-admin']} />}>
             <Route path="farmacia" element={<PharmacyDashboardPage />} />

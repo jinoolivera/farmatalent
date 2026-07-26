@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../auth/AuthContext'
 import { fetchShifts } from '../api/shiftsApi'
 import { fetchProfessionalsCount } from '../api/profileApi'
 
@@ -42,13 +41,6 @@ const QUICK_CHIPS = [
   { label: '⏱ Guardias 24h',       horario: '24h'        },
 ]
 
-/* gradientes por tipo */
-const TYPE_GRADIENT = {
-  pharmacy_technician: 'linear-gradient(135deg,#1E40AF,#3B82F6)',
-  assistant:           'linear-gradient(135deg,#B45309,#F59E0B)',
-  pharmacist:          'linear-gradient(135deg,#15803D,#22C55E)',
-  doctor:              'linear-gradient(135deg,#7C2D12,#EF4444)',
-}
 const TYPE_LABEL = {
   pharmacy_technician: 'Técnico',
   assistant:           'Practicante',
@@ -126,7 +118,6 @@ function nextSaturday() {
 /* ── componente principal ───────────────────────────────── */
 export function LandingPage() {
   const navigate    = useNavigate()
-  const { user }    = useAuth()
 
   const [mode, setMode]             = useState('profesional')
   const [district, setDistrict]     = useState('')
@@ -236,7 +227,7 @@ export function LandingPage() {
             <Link className="lp-nav-link" to="/login">Iniciar sesión</Link>
             <Link
               className="lp-btn lp-btn-brand"
-              to={mode === 'empresa' ? '/registro/farmacia' : '/registro/profesional'}
+              to="/registro"
             >
               Crear cuenta
             </Link>
@@ -273,7 +264,7 @@ export function LandingPage() {
             <Link className="lp-nav-drawer-link" to="/login" onClick={() => setMobileNavOpen(false)}>Iniciar sesión</Link>
             <Link
               className="lp-btn lp-btn-brand lp-nav-drawer-cta"
-              to={mode === 'empresa' ? '/registro/farmacia' : '/registro/profesional'}
+              to="/registro"
               onClick={() => setMobileNavOpen(false)}
             >
               Crear cuenta
@@ -469,19 +460,19 @@ export function LandingPage() {
                 icon: '👤', color: 'green', title: 'Profesionales',
                 desc: 'Químicos farmacéuticos, técnicos, auxiliares. Perfil verificado, scores reales, elige cuándo y dónde trabajas.',
                 stats: [['TF', 'técnico farmacia'], ['PP', 'practicante'], ['QF', 'responsable']],
-                link: 'Soy profesional →', to: '/registro/profesional',
+                link: 'Soy profesional →', to: '/registro',
               },
               {
                 icon: '🏪', color: 'amber', title: 'Farmacias y boticas',
                 desc: 'Publica tu vacante, recibe candidatos verificados y gestiona todos tus locales desde una sola plataforma.',
                 stats: [['38 min', 'cobertura media'], ['94%', 'satisfacción'], ['48h', 'tiempo match']],
-                link: 'Tengo una botica →', to: '/registro/farmacia',
+                link: 'Tengo una botica →', to: '/registro',
               },
               {
                 icon: '🏥', color: 'coral', title: 'Clínicas y hospitales',
                 desc: 'Equipos completos para turnos especializados y guardias. Reputación operacional verificada por FarmaTalent.',
                 stats: [['24/7', 'cobertura'], ['QF', 'colegiados'], ['+3', 'especialidades']],
-                link: 'Soy clínica →', to: '/registro/farmacia',
+                link: 'Soy clínica →', to: '/registro',
               },
             ].map((aud) => (
               <div key={aud.title} className="lp-aud-card">
@@ -536,7 +527,7 @@ export function LandingPage() {
                   <div><b>38 min</b><span>cobertura media</span></div>
                   <div><b>Top 5%</b><span>Miraflores</span></div>
                 </div>
-                <Link className="lp-mode-link" to="/registro/farmacia">Publicar turno urgente →</Link>
+                <Link className="lp-mode-link" to="/registro">Publicar turno urgente →</Link>
               </div>
             </div>
 
@@ -564,7 +555,7 @@ export function LandingPage() {
                   <div><b>4.9★</b><span>score promedio</span></div>
                   <div><b>−40%</b><span>rotación</span></div>
                 </div>
-                <Link className="lp-mode-link" to="/registro/farmacia">Armar mi equipo →</Link>
+                <Link className="lp-mode-link" to="/registro">Armar mi equipo →</Link>
               </div>
             </div>
           </div>
@@ -608,7 +599,7 @@ export function LandingPage() {
                   </div>
                 ))}
               </div>
-              <Link className="lp-btn lp-btn-brand" to="/registro/profesional" style={{ marginTop: 32, alignSelf: 'flex-start' }}>
+              <Link className="lp-btn lp-btn-brand" to="/registro" style={{ marginTop: 32, alignSelf: 'flex-start' }}>
                 Empezar a construir mi reputación →
               </Link>
             </div>
@@ -657,7 +648,7 @@ export function LandingPage() {
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                 <Link
                   className="lp-btn lp-btn-brand lp-btn-lg"
-                  to={mode === 'empresa' ? '/registro/farmacia' : '/registro/profesional'}
+                  to="/registro"
                 >
                   Crear cuenta gratis →
                 </Link>
@@ -682,9 +673,9 @@ export function LandingPage() {
             </div>
             {[
               { title: 'Producto', links: [
-                  { label: 'Para profesionales', to: '/registro/profesional' },
-                  { label: 'Para boticas', to: '/registro/farmacia' },
-                  { label: 'Para clínicas', to: '/registro/farmacia' },
+                  { label: 'Para profesionales', to: '/registro' },
+                  { label: 'Para boticas', to: '/registro' },
+                  { label: 'Para clínicas', to: '/registro' },
                   { label: 'Comunidad', to: '/#comunidad' },
                 ]},
               { title: 'Compañía', links: [

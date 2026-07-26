@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
-import { isCompanyAccount } from '../auth/authRouting'
+import { hasCompanyAccount, hasProfessionalAccount, isCompanyAccount } from '../auth/authRouting'
 import { Avatar } from '../components/ui/Avatar'
 import { NotificationsDropdown } from '../components/ui/NotificationsDropdown'
 import { EmailVerificationBanner } from '../components/EmailVerificationBanner'
@@ -64,9 +64,12 @@ const IconMenu = () => (
 )
 
 export function PrivateLayout() {
-  const { user, logout } = useAuth()
+  const { user, logout, appMode, setAppMode } = useAuth()
   const navigate = useNavigate()
-  const companyAccount = isCompanyAccount(user)
+  const companyAccount = isCompanyAccount(user, appMode)
+  const canUseProfessional = hasProfessionalAccount(user)
+  const canUseCompany = hasCompanyAccount(user)
+  const canSwitchModes = canUseProfessional && canUseCompany
   const [showNotif, setShowNotif] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
@@ -100,6 +103,12 @@ export function PrivateLayout() {
     setSidebarOpen(false)
   }
 
+  function switchMode(mode) {
+    setAppMode(mode)
+    navigate(mode === 'company' ? '/app/farmacia' : '/app', { replace: true })
+    closeSidebar()
+  }
+
   return (
     <div className="ft-shell">
       <div
@@ -112,6 +121,30 @@ export function PrivateLayout() {
         <div className="ft-sidebar-brand">
           <img src="/farmatalent-logo.svg" alt="FarmaTalent" style={{ height: 28, width: 'auto' }} />
         </div>
+
+        {canSwitchModes && (
+          <>
+            <div className="ft-sidebar-section">Modo</div>
+            <div style={{ display: 'grid', gap: 8, marginBottom: 14 }}>
+              <button
+                type="button"
+                className={`ft-btn ${!companyAccount ? 'ft-btn-brand' : 'ft-btn-outline'} ft-btn-sm`}
+                style={{ width: '100%', justifyContent: 'flex-start' }}
+                onClick={() => switchMode('professional')}
+              >
+                👤 Modo profesional
+              </button>
+              <button
+                type="button"
+                className={`ft-btn ${companyAccount ? 'ft-btn-brand' : 'ft-btn-outline'} ft-btn-sm`}
+                style={{ width: '100%', justifyContent: 'flex-start' }}
+                onClick={() => switchMode('company')}
+              >
+                🏪 Modo empresa
+              </button>
+            </div>
+          </>
+        )}
 
         <div className="ft-sidebar-section">Operación</div>
 
@@ -207,6 +240,26 @@ export function PrivateLayout() {
             />
           </form>
           <div className="ft-topbar-actions">
+            {canSwitchModes && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px', border: '1px solid var(--ft-gray-200)', borderRadius: 999 }}>
+                <button
+                  type="button"
+                  className={`ft-btn ${!companyAccount ? 'ft-btn-brand' : 'ft-btn-ghost'} ft-btn-sm`}
+                  style={{ padding: '6px 10px' }}
+                  onClick={() => switchMode('professional')}
+                >
+                  Profesional
+                </button>
+                <button
+                  type="button"
+                  className={`ft-btn ${companyAccount ? 'ft-btn-brand' : 'ft-btn-ghost'} ft-btn-sm`}
+                  style={{ padding: '6px 10px' }}
+                  onClick={() => switchMode('company')}
+                >
+                  Empresa
+                </button>
+              </div>
+            )}
             <div style={{ position: 'relative' }}>
               <button className="ft-icon-btn" title="Notificaciones" onClick={() => setShowNotif((v) => !v)}>
                 <IconBell />

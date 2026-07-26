@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { applyToShift } from '../../api/applicationsApi'
 import { getApiErrorMessage } from '../../api/client'
+import { useAuth } from '../../auth/AuthContext'
 
 /* ── icons ─────────────────────────────────────────────── */
 const IconX      = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -38,6 +40,9 @@ function getSubScores(overall) {
  *   onSuccess   — (applicationId?) => void   called after successful application
  */
 export function PostulacionModal({ shift, onClose, onSuccess }) {
+  const { user } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
   const [message, setMessage]   = useState('')
   const [busy, setBusy]         = useState(false)
   const [error, setError]       = useState('')
@@ -61,6 +66,12 @@ export function PostulacionModal({ shift, onClose, onSuccess }) {
   }, [onClose])
 
   async function handleApply() {
+    if (!user?.professional_type) {
+      onClose()
+      navigate(`/app/activar-profesional?next=${encodeURIComponent(location.pathname + location.search)}`)
+      return
+    }
+
     setBusy(true)
     setError('')
     try {
