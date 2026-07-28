@@ -25,7 +25,7 @@ services:
     container_name: farmatalent_backend
     restart: unless-stopped
     env_file:
-      - ./farmatalent-api/.env.production
+      - ./.env.prod
     depends_on:
       mysql:
         condition: service_healthy
@@ -43,7 +43,7 @@ services:
     container_name: farmatalent_backend_queue
     restart: unless-stopped
     env_file:
-      - ./farmatalent-api/.env.production
+      - ./.env.prod
     depends_on:
       mysql:
         condition: service_healthy
