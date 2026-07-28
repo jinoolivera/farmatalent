@@ -61,7 +61,7 @@ export function LoginPage() {
           <div className="onb-field" style={{ marginBottom: 8 }}>
             <label className="onb-label" htmlFor="password">
               Contraseña
-              <a href="#" style={{ float: 'right', color: 'var(--ft-blue-700)', fontWeight: 600, fontSize: 11 }}>¿Olvidaste?</a>
+              <Link to="/olvide-mi-contrasena" style={{ float: 'right', color: 'var(--ft-blue-700)', fontWeight: 600, fontSize: 11 }}>¿Olvidaste?</Link>
             </label>
             <input
               className="onb-input"

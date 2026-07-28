@@ -22,7 +22,7 @@ return [
     | URL de la aplicación React. Se usa para redirigir al usuario después de
     | verificar su email desde el enlace enviado por correo.
     */
-    'frontend_url' => env('FRONTEND_URL', 'http://localhost:5173'),
+    'frontend_url' => env('FRONTEND_URL', env('APP_URL', 'http://localhost:5173')),
 
     /*
     |--------------------------------------------------------------------------
@@ -32,6 +32,10 @@ return [
     | nuevos registros, turnos publicados y postulaciones.
     */
     'admin_email' => env('ADMIN_EMAIL', 'jinooli@gmail.com'),
+
+    'host' => env('APP_HOST', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST) ?: 'localhost'),
+
+    'protocol' => env('APP_PROTOCOL', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_SCHEME) ?: 'http'),
 
     /*
     |--------------------------------------------------------------------------

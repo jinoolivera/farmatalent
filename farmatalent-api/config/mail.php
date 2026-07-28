@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'default' => env('MAIL_MAILER', 'log'),
+    'default' => env('MAIL_MAILER', env('APP_ENV') === 'production' ? 'failover' : 'log'),
 
     /*
     |--------------------------------------------------------------------------
@@ -39,14 +39,16 @@ return [
 
         'smtp' => [
             'transport' => 'smtp',
-            'scheme' => env('MAIL_SCHEME'),
+            'scheme' => in_array(env('MAIL_SCHEME', env('MAIL_ENCRYPTION')), ['tls', 'starttls', 'smtp'], true)
+                ? null
+                : env('MAIL_SCHEME', env('MAIL_ENCRYPTION')),
             'url' => env('MAIL_URL'),
-            'host' => env('MAIL_HOST', '127.0.0.1'),
-            'port' => env('MAIL_PORT', 2525),
-            'username' => env('MAIL_USERNAME'),
-            'password' => env('MAIL_PASSWORD'),
-            'timeout' => null,
-            'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+            'host' => env('MAIL_HOST', env('AWS_SES_SMTP_ADDRESS', '127.0.0.1')),
+            'port' => (int) env('MAIL_PORT', env('AWS_SES_SMTP_PORT', 2525)),
+            'username' => env('MAIL_USERNAME', env('AWS_SES_SMTP_USERNAME')),
+            'password' => env('MAIL_PASSWORD', env('AWS_SES_SMTP_PASSWORD')),
+            'timeout' => (int) env('MAIL_TIMEOUT', 10),
+            'local_domain' => env('MAIL_EHLO_DOMAIN', env('APP_HOST', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST))),
         ],
 
         'ses' => [
@@ -109,8 +111,13 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        'address' => env('MAIL_FROM_ADDRESS', 'notificaciones@farmatalent.pe'),
+        'name' => env('MAIL_FROM_NAME', 'FarmaTalent'),
+    ],
+
+    'reply_to' => [
+        'address' => env('MAIL_REPLY_TO'),
+        'name' => env('MAIL_REPLY_TO_NAME', env('MAIL_FROM_NAME', 'FarmaTalent')),
     ],
 
 ];

@@ -1,6 +1,8 @@
 # Environment files (never commit secrets)
 .env.prod
 farmatalent-api/.env.production
+farmatalent-api/.env
+farmatalent-web/.env
 
 # Frontend build artifacts
 farmatalent-web/node_modules/

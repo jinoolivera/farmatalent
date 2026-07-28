@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ChatMessageController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\EmailVerificationController;
+use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\ProfessionalProfileController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\RoleController;
@@ -23,6 +24,12 @@ Route::prefix('v1')->group(function () {
     // 10 intentos de login por minuto por IP (anti-fuerza bruta)
     Route::middleware(['throttle:10,1'])
         ->post('/auth/login', [AuthController::class, 'login']);
+
+    Route::middleware(['throttle:3,1'])
+        ->post('/auth/forgot-password', [PasswordResetController::class, 'store']);
+
+    Route::middleware(['throttle:5,1'])
+        ->post('/auth/reset-password', [PasswordResetController::class, 'update']);
 
     /* ── Verificación de email (URL firmada desde el correo) ─ */
     Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])

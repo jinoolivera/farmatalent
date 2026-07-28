@@ -2,11 +2,17 @@
 
 namespace App\Notifications;
 
+use App\Notifications\Concerns\BuildsTransactionalMailMessage;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class AdminActivityNotification extends Notification
+class AdminActivityNotification extends Notification implements ShouldQueue
 {
+    use BuildsTransactionalMailMessage;
+    use Queueable;
+
     /**
      * @param array<int, string> $lines
      */
@@ -24,14 +30,16 @@ class AdminActivityNotification extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
-        $mail = (new MailMessage)
+        return $this->transactionalMailMessage()
             ->subject($this->subject)
-            ->greeting($this->greeting);
-
-        foreach ($this->lines as $line) {
-            $mail->line($line);
-        }
-
-        return $mail->salutation('FarmaTalent · Notificación automática');
+            ->view(
+                ['emails.admin_activity', 'emails.admin_activity_text'],
+                $this->viewData([
+                    'title' => $this->subject,
+                    'preheader' => 'Se registró una actividad administrativa en FarmaTalent.',
+                    'greeting' => $this->greeting,
+                    'lines' => $this->lines,
+                ])
+            );
     }
 }

@@ -20,6 +20,16 @@ export async function logout() {
   return data
 }
 
+export async function requestPasswordReset(payload) {
+  const { data } = await api.post('/auth/forgot-password', payload)
+  return data
+}
+
+export async function resetPassword(payload) {
+  const { data } = await api.post('/auth/reset-password', payload)
+  return data
+}
+
 /** POST /email/resend — reenvía el correo de verificación al usuario autenticado */
 export async function resendVerificationEmail() {
   const { data } = await api.post('/email/resend')

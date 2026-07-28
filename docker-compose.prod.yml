@@ -35,6 +35,27 @@ services:
     networks:
       - internal
 
+  backend_queue:
+    build:
+      context: ./farmatalent-api
+      dockerfile: Dockerfile.prod
+    image: farmatalent_backend:prod
+    container_name: farmatalent_backend_queue
+    restart: unless-stopped
+    env_file:
+      - ./farmatalent-api/.env.production
+    depends_on:
+      mysql:
+        condition: service_healthy
+      backend:
+        condition: service_started
+    command: php artisan queue:work database --queue=default --sleep=3 --tries=3 --backoff=10 --timeout=60
+    volumes:
+      - farmatalent_storage:/var/www/html/storage
+      - farmatalent_cache:/var/www/html/bootstrap/cache
+    networks:
+      - internal
+
   backend_nginx:
     image: nginx:1.25-alpine
     container_name: farmatalent_backend_nginx

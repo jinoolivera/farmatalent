@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Notifications\Concerns\BuildsTransactionalMailMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -14,8 +15,9 @@ use Illuminate\Support\Carbon;
  * Genera una URL firmada temporalmente que apunta al endpoint de la API,
  * la cual luego redirige al frontend.
  */
-class VerifyEmailNotification extends Notification
+class VerifyEmailNotification extends Notification implements ShouldQueue
 {
+    use BuildsTransactionalMailMessage;
     use Queueable;
 
     public function via(object $notifiable): array
@@ -34,14 +36,16 @@ class VerifyEmailNotification extends Notification
             ]
         );
 
-        return (new MailMessage)
+        return $this->transactionalMailMessage()
             ->subject('Verifica tu correo en FarmaTalent')
-            ->greeting('¡Hola, ' . $notifiable->name . '!')
-            ->line('Gracias por registrarte en FarmaTalent, el marketplace del talento farmacéutico en el Perú.')
-            ->line('Haz clic en el botón para verificar tu dirección de correo y activar tu cuenta.')
-            ->action('Verificar correo electrónico', $verifyUrl)
-            ->line('Este enlace expira en **60 minutos**.')
-            ->line('Si no creaste una cuenta en FarmaTalent, puedes ignorar este mensaje.')
-            ->salutation('El equipo de FarmaTalent');
+            ->view(
+                ['emails.verify_email', 'emails.verify_email_text'],
+                $this->viewData([
+                    'title' => 'Verifica tu correo en FarmaTalent',
+                    'preheader' => 'Activa tu cuenta y comienza a usar FarmaTalent.',
+                    'userName' => $notifiable->name,
+                    'actionUrl' => $verifyUrl,
+                ])
+            );
     }
 }

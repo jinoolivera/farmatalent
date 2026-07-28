@@ -22,6 +22,8 @@ import { TerminosPage } from './pages/TerminosPage'
 import { PrivacidadPage } from './pages/PrivacidadPage'
 import { CookiesPage } from './pages/CookiesPage'
 import { EmailVerificationPage } from './pages/EmailVerificationPage'
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
+import { ResetPasswordPage } from './pages/ResetPasswordPage'
 import { RequireAuth } from './routes/RequireAuth'
 import { RequireRole } from './routes/RequireRole'
 import { CookieConsent } from './components/CookieConsent'
@@ -38,6 +40,8 @@ export default function App() {
       {/* Rutas públicas de auth */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/registro" element={<RegisterPage />} />
+      <Route path="/olvide-mi-contrasena" element={<ForgotPasswordPage />} />
+      <Route path="/restablecer-contrasena" element={<ResetPasswordPage />} />
       <Route path="/registro/profesional" element={<Navigate to="/registro" replace />} />
       <Route path="/registro/farmacia" element={<Navigate to="/registro" replace />} />
 

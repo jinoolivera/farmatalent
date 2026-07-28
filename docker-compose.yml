@@ -19,6 +19,8 @@ services:
     build:
       context: ./farmatalent-api
     container_name: farmatalent-api
+    env_file:
+      - ./farmatalent-api/.env
     depends_on:
       mysql:
         condition: service_healthy
@@ -27,6 +29,8 @@ services:
       APP_ENV: local
       APP_DEBUG: "true"
       APP_URL: http://localhost:8000
+      APP_HOST: localhost
+      APP_PROTOCOL: http
       DB_CONNECTION: mysql
       DB_HOST: mysql
       DB_PORT: 3306
@@ -44,6 +48,40 @@ services:
       - ./farmatalent-api:/var/www/html
       - api-vendor:/var/www/html/vendor
     command: sh -c "test -f .env || cp .env.example .env && composer install && php artisan key:generate --force && php artisan migrate --seed --force && php artisan serve --host=0.0.0.0 --port=8000"
+
+  api_queue:
+    build:
+      context: ./farmatalent-api
+    container_name: farmatalent-api-queue
+    env_file:
+      - ./farmatalent-api/.env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      api:
+        condition: service_started
+    environment:
+      APP_NAME: FarmaTalent
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8000
+      APP_HOST: localhost
+      APP_PROTOCOL: http
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: farmatalent
+      DB_USERNAME: farmatalent
+      DB_PASSWORD: farmatalent
+      FRONTEND_URL: http://localhost:5173
+      SANCTUM_STATEFUL_DOMAINS: localhost:5173,127.0.0.1:5173
+      SESSION_DRIVER: database
+      CACHE_STORE: database
+      QUEUE_CONNECTION: database
+    volumes:
+      - ./farmatalent-api:/var/www/html
+      - api-vendor:/var/www/html/vendor
+    command: sh -c "test -f .env || cp .env.example .env && composer install && php artisan queue:work database --queue=default --sleep=3 --tries=3 --backoff=10 --timeout=60"
 
   web:
     build:
