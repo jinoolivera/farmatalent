@@ -31,7 +31,6 @@ services:
         condition: service_healthy
     volumes:
       - farmatalent_storage:/var/www/html/storage
-      - farmatalent_cache:/var/www/html/bootstrap/cache
     networks:
       - internal
 
@@ -52,7 +51,6 @@ services:
     command: php artisan queue:work database --queue=default --sleep=3 --tries=3 --backoff=10 --timeout=60
     volumes:
       - farmatalent_storage:/var/www/html/storage
-      - farmatalent_cache:/var/www/html/bootstrap/cache
     networks:
       - internal
 
@@ -102,4 +100,3 @@ networks:
 volumes:
   farmatalent_db:
   farmatalent_storage:
-  farmatalent_cache:

@@ -375,6 +375,10 @@ export function PharmacyDashboardPage() {
   const companyId = company?.id ?? null
   const orgName = company?.name ?? user?.name ?? 'Botica'
 
+  if (!isCompanyAccount(user, appMode)) {
+    return <Navigate to="/app" replace />
+  }
+
   // Load summary data on mount (powers header KPIs + right column)
   const [summaryReady, setSummaryReady] = useState(false)
   useEffect(() => {
@@ -852,12 +856,12 @@ export function PharmacyDashboardPage() {
           applicationId={reviewApp.id}
           targetName={(reviewApp.worker ?? reviewApp.professional ?? {}).name}
           onClose={() => setReviewApp(null)}
-          onSuccess={() => { setReviewApp(null); loadTabData(activeTab) }}
+          onSuccess={() => {
+            setReviewApp(null)
+            loadTabData(activeTab)
+          }}
         />
       )}
     </>
   )
 }
-  if (!isCompanyAccount(user, appMode)) {
-    return <Navigate to="/app" replace />
-  }
