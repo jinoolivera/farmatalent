@@ -16,7 +16,7 @@ class ProfessionalProfileRequest extends FormRequest
     {
         return [
             'name' => ['sometimes', 'string', 'max:255'],
-            'professional_type' => ['nullable', Rule::in(['pharmacist', 'pharmacy_technician', 'doctor', 'assistant'])],
+            'professional_type' => ['nullable', Rule::in(['pharmacist', 'pharmacy_technician', 'doctor', 'assistant', 'nurse', 'intern'])],
             'photo_path' => ['nullable', 'string', 'max:255'],
             'professional_license' => ['nullable', 'string', 'max:100'],
             'experience_years' => ['nullable', 'integer', 'min:0', 'max:80'],

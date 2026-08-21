@@ -37,11 +37,12 @@ services:
       DB_DATABASE: farmatalent
       DB_USERNAME: farmatalent
       DB_PASSWORD: farmatalent
-      FRONTEND_URL: http://localhost:5173
-      SANCTUM_STATEFUL_DOMAINS: localhost:5173,127.0.0.1:5173
+      FRONTEND_URL: http://localhost:5176
+      SANCTUM_STATEFUL_DOMAINS: localhost:5176,127.0.0.1:5176
       SESSION_DRIVER: database
       CACHE_STORE: database
       QUEUE_CONNECTION: database
+      MAIL_MAILER: log
     ports:
       - "8000:8000"
     volumes:
@@ -73,11 +74,12 @@ services:
       DB_DATABASE: farmatalent
       DB_USERNAME: farmatalent
       DB_PASSWORD: farmatalent
-      FRONTEND_URL: http://localhost:5173
-      SANCTUM_STATEFUL_DOMAINS: localhost:5173,127.0.0.1:5173
+      FRONTEND_URL: http://localhost:5176
+      SANCTUM_STATEFUL_DOMAINS: localhost:5176,127.0.0.1:5176
       SESSION_DRIVER: database
       CACHE_STORE: database
       QUEUE_CONNECTION: database
+      MAIL_MAILER: log
     volumes:
       - ./farmatalent-api:/var/www/html
       - api-vendor:/var/www/html/vendor
@@ -90,7 +92,8 @@ services:
     depends_on:
       - api
     environment:
-      VITE_API_URL: http://localhost:8000/api/v1
+      VITE_API_URL: /api/v1
+      VITE_DEV_API_ORIGIN: http://api:8000
     ports:
       - "5176:5176"
     volumes:

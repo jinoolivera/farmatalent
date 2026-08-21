@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'default' => env('MAIL_MAILER', env('APP_ENV') === 'production' ? 'failover' : 'log'),
+    'default' => env('MAIL_MAILER', env('APP_ENV') === 'production' ? 'resend' : 'log'),
 
     /*
     |--------------------------------------------------------------------------
@@ -84,6 +84,7 @@ return [
         'failover' => [
             'transport' => 'failover',
             'mailers' => [
+                'resend',
                 'smtp',
                 'log',
             ],

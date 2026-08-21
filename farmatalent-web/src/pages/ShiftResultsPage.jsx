@@ -439,6 +439,8 @@ export function ShiftResultsPage() {
                 <option value="pharmacist">Q.F. responsable</option>
                 <option value="pharmacy_technician">Técnico farmacia</option>
                 <option value="assistant">Auxiliar / apoyo</option>
+                <option value="nurse">Enfermero/a</option>
+                <option value="intern">Practicante</option>
                 <option value="doctor">Médico</option>
               </select>
             </div>

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Notifications\VerifyEmailNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 
 class EmailVerificationController extends Controller
@@ -53,7 +55,8 @@ class EmailVerificationController extends Controller
             ]);
         }
 
-        $user->sendEmailVerificationNotification();
+        // Enviamos este reintento inmediatamente para que no dependa de un worker activo.
+        Notification::sendNow($user, new VerifyEmailNotification());
 
         return response()->json([
             'message' => 'Correo de verificación enviado. Revisa tu bandeja de entrada.',

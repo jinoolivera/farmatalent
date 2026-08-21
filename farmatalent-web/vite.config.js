@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+const proxyTarget = process.env.VITE_DEV_API_ORIGIN || 'http://localhost:8000'
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
@@ -10,24 +12,24 @@ export default defineConfig({
     proxy: {
       // API Laravel
       '/api': {
-        target: 'http://localhost:8000',
+        target: proxyTarget,
         changeOrigin: true,
         secure: false,
       },
       // Archivos públicos de Laravel (logos, imágenes subidas)
       '/storage': {
-        target: 'http://localhost:8000',
+        target: proxyTarget,
         changeOrigin: true,
         secure: false,
       },
       // Páginas de compartir con Open Graph dinámico
       '/compartir': {
-        target: 'http://localhost:8000',
+        target: proxyTarget,
         changeOrigin: true,
         secure: false,
       },
       '/images': {
-        target: 'http://localhost:8000',
+        target: proxyTarget,
         changeOrigin: true,
         secure: false,
       },

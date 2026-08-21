@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { isCompanyAccount } from '../auth/authRouting'
 import { Badge } from '../components/ui/Badge'
@@ -31,6 +31,7 @@ const TYPE_LABEL = {
   assistant:            'Auxiliar / apoyo',
   nurse:                'Enfermero/a',
   intern:               'Practicante',
+  doctor:               'Médico',
 }
 
 function relativeTime(iso) {
@@ -353,8 +354,10 @@ function AppRow({ app, onAccept, onReject, onMatch, onViewProfile, onReview, bus
 export function PharmacyDashboardPage() {
   const { user, appMode }  = useAuth()
   const navigate  = useNavigate()
+  const [searchParams] = useSearchParams()
   const [mode, setMode]             = useState('cobertura')
-  const [activeTab, setActiveTab]   = useState(0)
+  const initialTab = Math.min(3, Math.max(0, parseInt(searchParams.get('tab'), 10) || 0))
+  const [activeTab, setActiveTab]   = useState(initialTab)
   const [showPublicar, setShowPublicar] = useState(false)
   const [editingShift, setEditingShift] = useState(null)   // shift object to edit
   const [selectedShift, setSelectedShift] = useState(null)  // for PostulantesPanel

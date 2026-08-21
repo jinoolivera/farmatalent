@@ -21,6 +21,8 @@ const PROF_TYPE_COLOR = {
   pharmacist:           '#15803D',
   pharmacy_technician:  '#1E40AF',
   assistant:            '#B45309',
+  nurse:                '#0F766E',
+  intern:               '#6D28D9',
   doctor:               '#7C2D12',
 }
 
@@ -28,6 +30,8 @@ const PROF_TYPE_SHORT = {
   pharmacist:          'QF',
   pharmacy_technician: 'TF',
   assistant:           'PP',
+  nurse:               'EN',
+  intern:              'PR',
   doctor:              'DR',
 }
 

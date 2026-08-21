@@ -9,6 +9,7 @@ import { ShiftCard } from '../components/ui/ShiftCard'
 import { ScoreBar } from '../components/ui/ScoreBar'
 import { Badge } from '../components/ui/Badge'
 import { FeedItem } from '../components/ui/FeedItem'
+import { EmptyState } from '../components/ui/EmptyState'
 import { api } from '../api/client'
 
 /* ── icons ─────────────────────────────────────────────── */
@@ -17,15 +18,6 @@ const IconBolt    = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="
 const IconStar    = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg>
 const IconCard    = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><rect x="2" y="6" width="20" height="13" rx="2"/><line x1="2" y1="11" x2="22" y2="11"/></svg>
 const IconToggle  = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-
-/* ── static fallback data (shown when API is unavailable) ─ */
-const MOCK_SHIFTS = [
-  { id: 1, title: 'Químico farmacéutico · Nocturno', org: 'Química Suiza · Av. Larco 345, Miraflores', orgShort: 'QS', matchPercent: 98, date: 'Sáb 22 may', time: '22:00–06:00 · 8h', distance: '0.8 km', urgent: true, badges: [{ label: 'Colegiatura QF', variant: 'info' }, { label: 'Cadena', variant: 'neutral' }] },
-  { id: 2, title: 'QF responsable · Matutino', org: 'Inkafarma · Av. Pardo 215, Miraflores', orgShort: 'IF', matchPercent: 92, date: 'Lun 24 may', time: '07:00–15:00 · 8h', distance: '1.4 km', urgentLabel: '⏱ 6h restantes', badges: [{ label: 'Cadena', variant: 'neutral' }, { label: 'Colegiatura QF', variant: 'info' }] },
-  { id: 3, title: 'Q.F. responsable · Continuidad semanal', org: 'SmartFarma Surco — vacante estable L–V', orgShort: 'SF', matchPercent: 95, date: 'Lun a Vie', time: '14:00–22:00 · 8h/día', distance: '4.2 km', recurring: true, badges: [{ label: 'Equipo recurrente', variant: 'warning' }, { label: 'Disponibilidad fija', variant: 'info' }] },
-  { id: 4, title: 'QF en guardia · 24h', org: 'Clínica Internacional · Av. Garcilaso, Lima Centro', orgShort: 'CI', matchPercent: 91, date: 'Vie 21 may', time: '08:00 (24h)', distance: '2.2 km', urgent: true, badges: [{ label: 'Hospitalario', variant: 'info' }, { label: 'Colegiatura QF', variant: 'info' }] },
-  { id: 5, title: 'QF · Vie + Sáb nocturno', org: 'Boticas BTL · Av. Diagonal 530, Miraflores', orgShort: 'BT', matchPercent: 92, date: 'Vie 21 + Sáb 22', time: '22:00–06:00', distance: '1.1 km', badges: [{ label: '2 turnos', variant: 'info' }] },
-]
 
 /* ── tier computation from reputation_score ─────────────── */
 function computeTier(score) {
@@ -65,6 +57,54 @@ function normalizeShift(s) {
     badges:      s.badges ?? (tags.includes('turno_estable') ? [{ label: 'Estable', variant: 'success' }] : []),
     metadata:    meta,
   }
+}
+
+function FirstStepsCard({ steps, onGoProfile, onGoAvailability, onGoShifts }) {
+  const primaryStep = steps.find((step) => !step.done) ?? steps[steps.length - 1]
+
+  return (
+    <section className="ft-onboarding-card">
+      <div className="ft-onboarding-copy">
+        <span className="ft-onboarding-eyebrow">Primeros pasos</span>
+        <h2>Ya entraste a FarmaTalent. Esto te recomendamos hacer ahora.</h2>
+        <p>
+          Te vamos guiando paso a paso para que no tengas que adivinar cuál es el siguiente movimiento.
+        </p>
+        <div className="ft-onboarding-actions">
+          {primaryStep.key === 'profile' && (
+            <button className="ft-btn ft-btn-brand" onClick={onGoProfile}>
+              Completar perfil
+            </button>
+          )}
+          {primaryStep.key === 'availability' && (
+            <button className="ft-btn ft-btn-brand" onClick={onGoAvailability}>
+              Definir disponibilidad
+            </button>
+          )}
+          {primaryStep.key === 'explore' && (
+            <button className="ft-btn ft-btn-brand" onClick={onGoShifts}>
+              Buscar mi primer turno
+            </button>
+          )}
+          <button className="ft-btn ft-btn-outline" onClick={onGoShifts}>
+            Ver turnos
+          </button>
+        </div>
+      </div>
+
+      <div className="ft-onboarding-steps">
+        {steps.map((step, index) => (
+          <div key={step.key} className={`ft-onboarding-step${step.done ? ' done' : ''}`}>
+            <div className="ft-onboarding-step-index">{step.done ? <IconCheck /> : index + 1}</div>
+            <div>
+              <div className="ft-onboarding-step-title">{step.title}</div>
+              <div className="ft-onboarding-step-desc">{step.description}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
 }
 
 /* ── availability toggle ────────────────────────────────── */
@@ -110,9 +150,12 @@ export function DashboardPage() {
   const acceptedCount = applications.filter((a) => a.status === 'accepted' || a.status === 'confirmed').length
   const closedCount   = applications.filter((a) => ['accepted', 'confirmed', 'rejected', 'withdrawn'].includes(a.status)).length
   const acceptRate    = closedCount > 0 ? Math.round((acceptedCount / closedCount) * 100) : null
+  const professionalProfile = user?.professional_profile ?? user?.professionalProfile ?? {}
+  const hasVerifiedEmail = user?.email_verified !== false
+  const hasProfileDetails = Boolean(professionalProfile.specialty || professionalProfile.description)
 
   const metrics   = apiMetrics ?? {}
-  const rawShifts = apiShifts.length > 0 ? apiShifts.map(normalizeShift) : MOCK_SHIFTS
+  const rawShifts = apiShifts.map(normalizeShift)
   const firstName = user?.name?.split(' ')[0] ?? 'profesional'
 
   // Apply active filter
@@ -141,6 +184,41 @@ export function DashboardPage() {
   // Derive turnos completados
   const completedCount = applications.filter((a) => a.status === 'confirmed' || a.status === 'completed').length
   const totalCompleted = metrics.completed_shifts ?? completedCount
+  const isFirstSession = applications.length === 0 && totalCompleted === 0
+  const firstSteps = [
+    {
+      key: 'verify',
+      title: 'Verifica tu correo',
+      description: hasVerifiedEmail
+        ? 'Tu acceso ya está validado y listo para seguir.'
+        : 'Confirma tu email para recuperar acceso más fácil y recibir avisos importantes.',
+      done: hasVerifiedEmail,
+    },
+    {
+      key: 'profile',
+      title: 'Completa lo mínimo de tu perfil',
+      description: hasProfileDetails
+        ? 'Ya dejaste una base para que tu cuenta se entienda mejor.'
+        : 'Agrega tu especialidad o una breve descripción para dar más contexto.',
+      done: hasProfileDetails,
+    },
+    {
+      key: 'availability',
+      title: 'Define tu disponibilidad',
+      description: available
+        ? 'Hoy apareces como disponible para nuevos turnos.'
+        : 'Activa tu disponibilidad cuando quieras aparecer listo para postular.',
+      done: available,
+    },
+    {
+      key: 'explore',
+      title: 'Busca tu primer turno',
+      description: applications.length > 0
+        ? 'Ya comenzaste a usar la plataforma.'
+        : 'Explora turnos abiertos y postula cuando uno te encaje.',
+      done: applications.length > 0,
+    },
+  ]
 
   return (
     <>
@@ -165,47 +243,58 @@ export function DashboardPage() {
         </button>
       </div>
 
-      {/* Tier card */}
-      <TierCard
-        tier={tierData.label}
-        progress={tierData.progress}
-        turnosParaSiguiente={tierData.left}
-        topPercent={tierData.topPercent}
-      />
+      {isFirstSession && (
+        <FirstStepsCard
+          steps={firstSteps}
+          onGoProfile={() => navigate('/app/perfil')}
+          onGoAvailability={() => navigate('/app/disponibilidad')}
+          onGoShifts={() => navigate('/app/turnos')}
+        />
+      )}
 
-      {/* KPI row — matches prototype */}
-      <div className="ft-kpi-row">
-        <StatTile
-          label="Turnos completados"
-          valueDisplay={<em>{totalCompleted > 0 ? totalCompleted : '—'}</em>}
-          delta={totalCompleted > 0 ? `↑ ${Math.max(1, Math.round(totalCompleted * 0.05))} este mes` : 'Sin datos aún'}
-          deltaType="up"
-        />
-        <StatTile
-          label="Score global"
-          valueDisplay={repScore != null
-            ? <>{repScore}<span style={{ fontSize: 18, color: 'var(--ft-gray-400)', fontWeight: 500 }}>/100</span></>
-            : <span style={{ fontSize: 18, color: 'var(--ft-gray-400)' }}>—</span>
-          }
-          delta={repScore != null ? '→ Estable' : 'Completá turnos para obtener score'}
-          deltaType="flat"
-        />
-        <StatTile
-          label="Ranking local"
-          valueDisplay={metrics.ranking != null
-            ? <>#<span style={{ letterSpacing: '-0.01em' }}>{metrics.ranking}</span><span style={{ fontSize: 16, color: 'var(--ft-gray-400)', fontWeight: 500 }}> de {metrics.ranking_total ?? 480}</span></>
-            : <span style={{ fontSize: 18, color: 'var(--ft-gray-400)' }}>—</span>
-          }
-          delta={metrics.ranking != null ? '↑ subiste 3' : 'Sin datos aún'}
-          deltaType="up"
-        />
-        <StatTile
-          label="Tasa de aceptación"
-          valueDisplay={acceptRate != null ? `${acceptRate}%` : <span style={{ fontSize: 18, color: 'var(--ft-gray-400)' }}>—</span>}
-          delta={acceptRate != null ? `↑ ${closedCount > 0 ? '3.2%' : '0%'}` : 'Sin datos aún'}
-          deltaType={acceptRate != null && acceptRate >= 70 ? 'up' : 'flat'}
-        />
-      </div>
+      {!isFirstSession && (
+        <>
+          <TierCard
+            tier={tierData.label}
+            progress={tierData.progress}
+            turnosParaSiguiente={tierData.left}
+            topPercent={tierData.topPercent}
+          />
+
+          <div className="ft-kpi-row">
+            <StatTile
+              label="Turnos completados"
+              valueDisplay={<em>{totalCompleted > 0 ? totalCompleted : '—'}</em>}
+              delta={totalCompleted > 0 ? `↑ ${Math.max(1, Math.round(totalCompleted * 0.05))} este mes` : 'Sin datos aún'}
+              deltaType="up"
+            />
+            <StatTile
+              label="Score global"
+              valueDisplay={repScore != null
+                ? <>{repScore}<span style={{ fontSize: 18, color: 'var(--ft-gray-400)', fontWeight: 500 }}>/100</span></>
+                : <span style={{ fontSize: 18, color: 'var(--ft-gray-400)' }}>—</span>
+              }
+              delta={repScore != null ? '→ Estable' : 'Completá turnos para obtener score'}
+              deltaType="flat"
+            />
+            <StatTile
+              label="Ranking local"
+              valueDisplay={metrics.ranking != null
+                ? <>#<span style={{ letterSpacing: '-0.01em' }}>{metrics.ranking}</span><span style={{ fontSize: 16, color: 'var(--ft-gray-400)', fontWeight: 500 }}> de {metrics.ranking_total ?? 480}</span></>
+                : <span style={{ fontSize: 18, color: 'var(--ft-gray-400)' }}>—</span>
+              }
+              delta={metrics.ranking != null ? '↑ subiste 3' : 'Sin datos aún'}
+              deltaType="up"
+            />
+            <StatTile
+              label="Tasa de aceptación"
+              valueDisplay={acceptRate != null ? `${acceptRate}%` : <span style={{ fontSize: 18, color: 'var(--ft-gray-400)' }}>—</span>}
+              delta={acceptRate != null ? `↑ ${closedCount > 0 ? '3.2%' : '0%'}` : 'Sin datos aún'}
+              deltaType={acceptRate != null && acceptRate >= 70 ? 'up' : 'flat'}
+            />
+          </div>
+        </>
+      )}
 
       {/* Filter chips */}
       <div className="ft-filter-bar">
@@ -230,16 +319,30 @@ export function DashboardPage() {
                   <div style={{ height: 80, background: 'var(--ft-gray-100)', borderRadius: 8 }} />
                 </div>
               ))
-            : displayedShifts.map((shift, i) => (
-                <ShiftCard
-                  key={shift.id}
-                  shift={shift}
-                  colorIndex={i}
-                  selected={selectedShift === shift.id}
-                  onApply={() => navigate(`/app/turnos/${shift.id}`)}
-                  onDetail={() => { setSelectedShift(shift.id); navigate(`/app/turnos/${shift.id}`) }}
-                />
-              ))
+            : displayedShifts.length > 0
+              ? displayedShifts.map((shift, i) => (
+                  <ShiftCard
+                    key={shift.id}
+                    shift={shift}
+                    colorIndex={i}
+                    selected={selectedShift === shift.id}
+                    onApply={() => navigate(`/app/turnos/${shift.id}`)}
+                    onDetail={() => { setSelectedShift(shift.id); navigate(`/app/turnos/${shift.id}`) }}
+                  />
+                ))
+              : (
+                  <EmptyState
+                    title={isFirstSession ? 'Tu primer turno empieza aquí' : 'No encontramos turnos con estos filtros'}
+                    description={isFirstSession
+                      ? 'Entra a explorar turnos disponibles y postula cuando uno te encaje. Cuando tengas actividad, este dashboard se irá llenando solo.'
+                      : 'Prueba otra combinación de filtros o revisa nuevamente más tarde.'}
+                    action={(
+                      <button className="ft-btn ft-btn-brand" onClick={() => navigate('/app/turnos')}>
+                        Explorar turnos
+                      </button>
+                    )}
+                  />
+                )
           }
         </div>
 
@@ -247,31 +350,59 @@ export function DashboardPage() {
         <div>
           <div className="ft-pane">
             <div className="ft-pane-head">
-              <h3>Tu reputación esta semana</h3>
-              <a href="/app/reputacion">Ver todo →</a>
+              <h3>{isFirstSession ? 'Qué puedes hacer ahora' : 'Tu reputación esta semana'}</h3>
+              {!isFirstSession && <a href="/app/reputacion">Ver todo →</a>}
             </div>
-            <div className="ft-perf-grid">
-              <ScoreBar label="Puntualidad"   value={metrics.punctuality_score  ?? metrics.score_punctuality  ?? 98} />
-              <ScoreBar label="Operación"     value={metrics.operation_score    ?? metrics.score_operation    ?? 94} />
-              <ScoreBar label="Atención"      value={metrics.care_score         ?? metrics.score_attention    ?? 96} />
-              <ScoreBar label="Confiabilidad" value={metrics.reliability_score  ?? metrics.score_reliability  ?? 99} />
-            </div>
-            <div className="ft-badges-row">
-              <Badge variant="success">Puntual</Badge>
-              <Badge variant="info">Operador clave</Badge>
-              <Badge variant="coral">Top ventas</Badge>
-              <Badge variant="warning">Nocturno pro</Badge>
-            </div>
+            {isFirstSession ? (
+              <div className="ft-guidance-list">
+                <button className="ft-guidance-item" onClick={() => navigate('/app/turnos')}>
+                  <b>1. Buscar turnos</b>
+                  <span>Explora oportunidades abiertas y entiende cómo se ve una vacante dentro de la plataforma.</span>
+                </button>
+                <button className="ft-guidance-item" onClick={() => navigate('/app/perfil')}>
+                  <b>2. Completar perfil</b>
+                  <span>Agrega contexto básico para que tu cuenta se vea más lista al momento de postular.</span>
+                </button>
+                <button className="ft-guidance-item" onClick={() => navigate('/app/disponibilidad')}>
+                  <b>3. Activar disponibilidad</b>
+                  <span>Marca si hoy estás listo para tomar turnos y vuelve cuando cambie tu agenda.</span>
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="ft-perf-grid">
+                  <ScoreBar label="Puntualidad"   value={metrics.punctuality_score  ?? metrics.score_punctuality  ?? 98} />
+                  <ScoreBar label="Operación"     value={metrics.operation_score    ?? metrics.score_operation    ?? 94} />
+                  <ScoreBar label="Atención"      value={metrics.care_score         ?? metrics.score_attention    ?? 96} />
+                  <ScoreBar label="Confiabilidad" value={metrics.reliability_score  ?? metrics.score_reliability  ?? 99} />
+                </div>
+                <div className="ft-badges-row">
+                  <Badge variant="success">Puntual</Badge>
+                  <Badge variant="info">Operador clave</Badge>
+                  <Badge variant="coral">Top ventas</Badge>
+                  <Badge variant="warning">Nocturno pro</Badge>
+                </div>
+              </>
+            )}
           </div>
 
           <div className="ft-pane">
             <div className="ft-pane-head">
               <h3>Actividad reciente</h3>
             </div>
-            <FeedItem variant="success" icon={<IconCheck />} message="<b>Inkafarma Pardo</b> confirmó tu turno" time="Hace 12 min" />
-            <FeedItem variant="coral"   icon={<IconBolt />}  message="3 turnos urgentes cerca · <b>match alto</b>" time="Hace 1 hora" />
-            <FeedItem variant="info"    icon={<IconStar />}  message="Subiste a nivel <b>Oro</b> 🎉" time="Ayer" />
-            <FeedItem variant="warning" icon={<IconCard />}  message="Pago de tu última semana depositado" time="Hace 2 días" />
+            {isFirstSession ? (
+              <EmptyState
+                title="Todavía no hay actividad"
+                description="Cuando postules, confirmes turnos o recibas actualizaciones, las verás aquí sin tener que buscarlas."
+              />
+            ) : (
+              <>
+                <FeedItem variant="success" icon={<IconCheck />} message="<b>Inkafarma Pardo</b> confirmó tu turno" time="Hace 12 min" />
+                <FeedItem variant="coral"   icon={<IconBolt />}  message="3 turnos urgentes cerca · <b>match alto</b>" time="Hace 1 hora" />
+                <FeedItem variant="info"    icon={<IconStar />}  message="Subiste a nivel <b>Oro</b> 🎉" time="Ayer" />
+                <FeedItem variant="warning" icon={<IconCard />}  message="Pago de tu última semana depositado" time="Hace 2 días" />
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -3,15 +3,12 @@
 namespace App\Notifications;
 
 use App\Notifications\Concerns\BuildsTransactionalMailMessage;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ResetPasswordNotification extends Notification implements ShouldQueue
+class ResetPasswordNotification extends Notification
 {
     use BuildsTransactionalMailMessage;
-    use Queueable;
 
     public function __construct(public readonly string $token)
     {

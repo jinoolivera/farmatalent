@@ -122,27 +122,44 @@ export function PrivateLayout() {
           <img src="/farmatalent-logo.svg" alt="FarmaTalent" style={{ height: 28, width: 'auto' }} />
         </div>
 
-        {canSwitchModes && (
+        <div className="ft-sidebar-section">Modo</div>
+
+        {canSwitchModes ? (
+          <div style={{ display: 'grid', gap: 8, marginBottom: 14 }}>
+            <button
+              type="button"
+              className={`ft-btn ${!companyAccount ? 'ft-btn-brand' : 'ft-btn-outline'} ft-btn-sm`}
+              style={{ width: '100%', justifyContent: 'flex-start' }}
+              onClick={() => switchMode('professional')}
+            >
+              👤 Modo profesional
+            </button>
+            <button
+              type="button"
+              className={`ft-btn ${companyAccount ? 'ft-btn-brand' : 'ft-btn-outline'} ft-btn-sm`}
+              style={{ width: '100%', justifyContent: 'flex-start' }}
+              onClick={() => switchMode('company')}
+            >
+              🏪 Modo empresa
+            </button>
+          </div>
+        ) : (
           <>
-            <div className="ft-sidebar-section">Modo</div>
-            <div style={{ display: 'grid', gap: 8, marginBottom: 14 }}>
-              <button
-                type="button"
-                className={`ft-btn ${!companyAccount ? 'ft-btn-brand' : 'ft-btn-outline'} ft-btn-sm`}
-                style={{ width: '100%', justifyContent: 'flex-start' }}
-                onClick={() => switchMode('professional')}
-              >
-                👤 Modo profesional
-              </button>
-              <button
-                type="button"
-                className={`ft-btn ${companyAccount ? 'ft-btn-brand' : 'ft-btn-outline'} ft-btn-sm`}
-                style={{ width: '100%', justifyContent: 'flex-start' }}
-                onClick={() => switchMode('company')}
-              >
-                🏪 Modo empresa
-              </button>
+            <div className="ft-mode-badge">
+              {companyAccount ? '🏪 Estás en modo empresa' : '👤 Estás en modo profesional'}
             </div>
+            <button
+              type="button"
+              className="ft-mode-cta"
+              onClick={() => { closeSidebar(); navigate(companyAccount ? '/app/activar-profesional' : '/app/activar-empresa') }}
+            >
+              <span className="ft-mode-cta-ico">{companyAccount ? '👤' : '🏪'}</span>
+              <span className="ft-mode-cta-tx">
+                <b>{companyAccount ? '¿También buscas turnos?' : '¿También publicas turnos?'}</b>
+                <span>{companyAccount ? 'Activa tu perfil profesional' : 'Activa tu empresa'}</span>
+              </span>
+              <span className="ft-mode-cta-arrow">→</span>
+            </button>
           </>
         )}
 
@@ -163,11 +180,11 @@ export function PrivateLayout() {
           <IconDashboard /> Dashboard
         </NavLink>
 
-        <NavLink onClick={closeSidebar} className={({ isActive }) => `ft-nav-link${isActive ? ' active' : ''}`} to="/app/turnos">
+        <NavLink onClick={closeSidebar} className={({ isActive }) => `ft-nav-link${isActive ? ' active' : ''}`} to={companyAccount ? '/app/farmacia' : '/app/turnos'}>
           <IconCalendar /> {companyAccount ? 'Turnos publicados' : 'Mis turnos'}
         </NavLink>
 
-        <NavLink onClick={closeSidebar} className={({ isActive }) => `ft-nav-link${isActive ? ' active' : ''}`} to="/app/postulaciones">
+        <NavLink onClick={closeSidebar} className={({ isActive }) => `ft-nav-link${isActive ? ' active' : ''}`} to={companyAccount ? '/app/farmacia?tab=1' : '/app/postulaciones'}>
           <IconCheck />
           {companyAccount ? 'Postulaciones recibidas' : 'Postulaciones'}
         </NavLink>

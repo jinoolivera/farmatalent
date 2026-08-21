@@ -148,16 +148,20 @@ export function PostulacionModal({ shift, onClose, onSuccess }) {
 
           {/* Tarifa */}
           <div className="pm-qhead">
-            <h3>Tarifa propuesta por la botica</h3>
-            <span className="pm-qbadge" style={{ background: '#FEF3C7', color: '#92400E' }}>PROPUESTA · NEGOCIABLE</span>
+            <h3>{shift?.hasFixedRate ? 'Tarifa propuesta por la botica' : 'Tarifa de este turno'}</h3>
+            <span className="pm-qbadge" style={shift?.hasFixedRate ? { background: '#FEF3C7', color: '#92400E' } : { background: 'var(--ft-gray-100)', color: 'var(--ft-gray-700)' }}>
+              {shift?.hasFixedRate ? 'PROPUESTA · NEGOCIABLE' : 'A COORDINAR'}
+            </span>
           </div>
           <div className="pm-tarifa">
             <div className="pm-ti"><IconCoin /></div>
             <div className="pm-tx">
-              <b>Tarifa establecida por la botica</b>
-              <span>Acepta, negocia o rechaza antes de confirmar · pago a 24h del cierre</span>
+              <b>{shift?.hasFixedRate ? 'Tarifa establecida por la botica' : 'Sin tarifa fija todavía'}</b>
+              <span>{shift?.hasFixedRate ? 'Acepta, negocia o rechaza antes de confirmar · pago a 24h del cierre' : 'La botica prefiere coordinarla por chat una vez que confirmen el match'}</span>
             </div>
-            <div className="pm-tarifa-val"><sup>S/</sup>—</div>
+            <div className={`pm-tarifa-val${shift?.hasFixedRate ? '' : ' muted'}`}>
+              {shift?.hasFixedRate ? <><sup>S/</sup>{shift.tarifaValue.replace('S/ ', '')}</> : 'A coordinar'}
+            </div>
           </div>
 
           {/* Message */}
@@ -192,7 +196,7 @@ export function PostulacionModal({ shift, onClose, onSuccess }) {
         {/* CTAs */}
         <div className="pm-cta-stack">
           <button className="pm-btn pm-btn-primary" disabled={busy} onClick={handleApply}>
-            {busy ? 'Postulando…' : 'Aceptar tarifa y postular'}
+            {busy ? 'Postulando…' : shift?.hasFixedRate ? 'Aceptar tarifa y postular' : 'Postular al turno'}
             {!busy && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>}
           </button>
           <button className="pm-btn pm-btn-secondary" disabled={busy} onClick={onClose}>

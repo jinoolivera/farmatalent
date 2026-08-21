@@ -57,6 +57,7 @@ const TYPE_LABEL = {
   assistant:           'Auxiliar / apoyo',
   nurse:               'Enfermero/a',
   intern:              'Practicante',
+  doctor:              'Médico',
 }
 
 const QUICK_ACTIONS = [

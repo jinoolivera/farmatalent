@@ -111,6 +111,8 @@ export function ShiftDetailPage() {
   const startTime = shift?.starts_at  ?? shift?.start_time ?? ''
   const endTime   = shift?.ends_at    ?? shift?.end_time   ?? ''
   const appsCount = shift?.applications_count ?? shift?.applications?.length ?? 0
+  const hasFixedRate = shift?.proposed_rate != null && !shift?.coordinacion_chat
+  const tarifaValue = hasFixedRate ? `S/ ${shift.proposed_rate}` : 'A coordinar'
 
   return (
     <div className="sd-page">
@@ -185,9 +187,10 @@ export function ShiftDetailPage() {
             <div className="sd-tarifa">
               <div className="sd-tarifa-ico"><IconShield /></div>
               <div className="sd-tarifa-tx">
-                <b>Tarifa propuesta por la botica · acepta, negocia o rechaza</b>
+                <b>{hasFixedRate ? 'Tarifa propuesta por la botica · acepta, negocia o rechaza' : 'Sin tarifa fija · se coordina por chat tras el match'}</b>
                 <span>Tu privacidad está protegida hasta confirmar el match</span>
               </div>
+              <div className={`sd-tarifa-val${hasFixedRate ? '' : ' muted'}`}>{tarifaValue}</div>
             </div>
 
             {/* Error */}
@@ -268,6 +271,8 @@ export function ShiftDetailPage() {
             endTime,
             distanceKm:  shift.distance_km ? `${shift.distance_km} km` : null,
             urgent:      shift.urgent ?? false,
+            hasFixedRate: hasFixedRate,
+            tarifaValue: tarifaValue,
           }}
           onClose={() => setShowModal(false)}
           onSuccess={handleModalSuccess}

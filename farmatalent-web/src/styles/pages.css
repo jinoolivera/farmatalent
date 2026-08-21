@@ -231,7 +231,9 @@
 .reg-nav-link:hover { background: var(--ft-gray-100); color: var(--ft-fg); }
 .reg-nav-link b { color: #0F2A14; }
 
-.reg-wrap { min-height: 100vh; background: var(--ft-gray-50); }
+/* Same reasoning as .ft-embed-card above: OnboardingChoicePage also renders inside
+   the app shell (sidebar present), so it can't force its own 100vh viewport. */
+.reg-wrap { background: var(--ft-gray-50); }
 .reg-body { max-width: 1100px; margin: 0 auto; padding: 56px 28px 64px; display: flex; flex-direction: column; align-items: flex-start; }
 
 .reg-h1 { font-family: var(--ft-font-sans); font-weight: 600; font-size: clamp(40px, 5.4vw, 60px); line-height: 1.02; letter-spacing: -0.035em; margin: 18px 0 12px; max-width: 760px; }
@@ -443,6 +445,11 @@
    ===================================================== */
 .auth-shell { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--ft-gray-50); padding: 24px; }
 .auth-card { background: var(--ft-white); border: 1px solid var(--ft-border); border-radius: var(--ft-radius-2xl); padding: 40px; width: 100%; max-width: 400px; box-shadow: var(--ft-shadow-lg); }
+
+/* Same card look as .auth-card, but for auth-style forms (activate profile/company)
+   that render *inside* the app shell (sidebar present) instead of as a standalone page —
+   no min-height:100vh here, or the card gets centered miles below the visible viewport. */
+.ft-embed-card { background: var(--ft-white); border: 1px solid var(--ft-border); border-radius: var(--ft-radius-2xl); padding: 40px; width: 100%; max-width: 400px; margin: 4px auto 0; box-shadow: var(--ft-shadow-lg); }
 .auth-title { font-size: 28px; font-weight: 600; letter-spacing: -0.025em; margin: 0 0 6px; color: var(--ft-fg); }
 .auth-sub { font-size: 14px; color: var(--ft-fg-muted); margin: 0 0 28px; }
 .auth-form { display: flex; flex-direction: column; gap: 16px; }
@@ -955,6 +962,8 @@
 .sd-tarifa-tx { flex: 1; font-size: 13px; }
 .sd-tarifa-tx b { display: block; font-weight: 700; color: #0F2A14; }
 .sd-tarifa-tx span { font-size: 11px; color: #16A34A; }
+.sd-tarifa-val { font-size: 18px; font-weight: 700; color: #0F2A14; flex-shrink: 0; }
+.sd-tarifa-val.muted { font-size: 13px; font-weight: 600; color: #16A34A; }
 
 .sd-cta { display: flex; gap: 10px; flex-wrap: wrap; }
 
@@ -1068,8 +1077,9 @@
 .pm-tx { flex: 1; }
 .pm-tx b { font-size: 13px; font-weight: 600; color: #0F2A14; display: block; }
 .pm-tx span { font-size: 11px; color: #6B7280; }
-.pm-tarifa-val { font-size: 24px; font-weight: 700; letter-spacing: -0.025em; color: #0F2A14; }
+.pm-tarifa-val { font-size: 24px; font-weight: 700; letter-spacing: -0.025em; color: #0F2A14; flex-shrink: 0; white-space: nowrap; }
 .pm-tarifa-val sup { font-size: 11px; font-weight: 500; color: #6B7280; margin-right: 2px; vertical-align: top; }
+.pm-tarifa-val.muted { font-size: 14px; font-weight: 600; color: #6B7280; letter-spacing: 0; }
 
 /* Message */
 .pm-msg-box { margin-bottom: 18px; }

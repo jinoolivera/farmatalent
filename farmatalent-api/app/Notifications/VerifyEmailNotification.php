@@ -3,8 +3,6 @@
 namespace App\Notifications;
 
 use App\Notifications\Concerns\BuildsTransactionalMailMessage;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\URL;
@@ -15,10 +13,9 @@ use Illuminate\Support\Carbon;
  * Genera una URL firmada temporalmente que apunta al endpoint de la API,
  * la cual luego redirige al frontend.
  */
-class VerifyEmailNotification extends Notification implements ShouldQueue
+class VerifyEmailNotification extends Notification
 {
     use BuildsTransactionalMailMessage;
-    use Queueable;
 
     public function via(object $notifiable): array
     {

@@ -36,6 +36,14 @@ img, svg { display: block; }
   overflow: hidden;
 }
 
+/* Hidden by default (desktop). Without this, the empty backdrop div still counts
+   as a grid item: it eats the sidebar's column, pushes .ft-sidebar into the 1fr
+   column, and wraps .ft-main into a second row below the fold. Mobile media query
+   below re-enables it (fixed overlay) only while the sidebar is open. */
+.ft-sidebar-backdrop {
+  display: none;
+}
+
 /* ===== Sidebar ===== */
 .ft-sidebar {
   background: var(--ft-white);
@@ -104,6 +112,72 @@ img, svg { display: block; }
 .ft-nav-link.active .ft-nav-badge {
   background: var(--ft-white);
   color: var(--ft-gray-900);
+}
+
+.ft-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--ft-radius-pill);
+  background: var(--ft-gray-100);
+  color: var(--ft-gray-700);
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.ft-mode-cta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  border: 1px dashed var(--ft-green-500);
+  border-radius: 12px;
+  background: var(--ft-green-50);
+  text-align: left;
+  transition: background var(--ft-dur-fast) var(--ft-ease-out),
+              border-color var(--ft-dur-fast) var(--ft-ease-out);
+}
+
+.ft-mode-cta:hover {
+  background: var(--ft-green-100);
+  border-color: var(--ft-green-600);
+  border-style: solid;
+}
+
+.ft-mode-cta-ico {
+  font-size: 18px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.ft-mode-cta-tx {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ft-mode-cta-tx b {
+  font-size: 12.5px;
+  color: var(--ft-green-700);
+  font-weight: 700;
+}
+
+.ft-mode-cta-tx span {
+  font-size: 11.5px;
+  color: var(--ft-green-600);
+}
+
+.ft-mode-cta-arrow {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ft-green-600);
+  flex-shrink: 0;
 }
 
 .ft-sidebar-foot {

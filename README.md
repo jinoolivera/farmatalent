@@ -105,6 +105,25 @@ cp .env.example .env
 npm run dev
 ```
 
+## Produccion y correo
+
+El despliegue productivo usa `docker-compose.prod.yml` y toma variables desde el archivo raiz `.env.prod`.
+
+Para que la verificacion de correo funcione en produccion:
+
+- Usa `MAIL_MAILER=resend`.
+- Configura `RESEND_KEY` en `.env.prod`.
+- Mantén `MAIL_FROM_ADDRESS=notificaciones@farmatalent.pe` solo si ese dominio ya está verificado en Resend.
+- Ejecuta `./deploy.sh` para reconstruir contenedores y limpiar caches de Laravel.
+
+Prueba rapida sugerida despues del deploy:
+
+```bash
+docker exec farmatalent_backend php artisan tinker --execute="echo config('mail.default');"
+```
+
+El valor esperado en produccion es `resend`.
+
 ## Fuera de alcance en esta fase
 
 No se implemento matching inteligente, pagos, chat, IA, geolocalizacion, scoring automatico ni reputacion publica. La base queda lista para crecer hacia esos modulos mediante APIs.

@@ -43,7 +43,9 @@ const QUICK_CHIPS = [
 
 const TYPE_LABEL = {
   pharmacy_technician: 'Técnico',
-  assistant:           'Practicante',
+  assistant:           'Auxiliar',
+  nurse:               'Enfermero/a',
+  intern:              'Practicante',
   pharmacist:          'Q.F.',
   doctor:              'Dr.',
 }
@@ -309,7 +311,9 @@ export function LandingPage() {
                 <option value="">Todos</option>
                 <option value="pharmacist">Químico farmacéutico</option>
                 <option value="pharmacy_technician">Técnico farmacia</option>
-                <option value="assistant">Practicante / auxiliar</option>
+                <option value="assistant">Auxiliar / apoyo</option>
+                <option value="nurse">Enfermero/a</option>
+                <option value="intern">Practicante</option>
                 <option value="doctor">Médico</option>
               </select>
             </div>

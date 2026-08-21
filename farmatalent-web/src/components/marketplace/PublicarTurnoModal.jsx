@@ -12,6 +12,7 @@ const TIPOS = [
   { value: 'assistant',           label: 'Auxiliar / apoyo' },
   { value: 'nurse',               label: 'Enfermero/a' },
   { value: 'intern',              label: 'Practicante' },
+  { value: 'doctor',              label: 'Médico' },
 ]
 
 const HORARIOS = [

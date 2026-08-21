@@ -102,8 +102,8 @@ export function AuthProvider({ children }) {
     return data.user
   }, [token])
 
-  const setAppMode = useCallback((mode) => {
-    const nextMode = resolveAppMode(user, mode)
+  const setAppMode = useCallback((mode, forUser = user) => {
+    const nextMode = resolveAppMode(forUser, mode)
     if (!nextMode) return
     localStorage.setItem(APP_MODE_KEY, nextMode)
     setPreferredAppMode(nextMode)
