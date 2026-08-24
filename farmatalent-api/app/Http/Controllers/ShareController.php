@@ -68,10 +68,15 @@ class ShareController extends Controller
                 $this->renderShareImagePng($payload, $cacheRelativePath);
             } catch (\Throwable $exception) {
                 if (! app()->environment('testing')) {
-                    Log::warning('No se pudo generar la imagen OG PNG del turno.', [
-                        'shift_id' => $shift->id,
-                        'error' => $exception->getMessage(),
-                    ]);
+                    try {
+                        Log::warning('No se pudo generar la imagen OG PNG del turno.', [
+                            'shift_id' => $shift->id,
+                            'error' => $exception->getMessage(),
+                        ]);
+                    } catch (\Throwable) {
+                        // Si logging falla por permisos u otro problema de infraestructura,
+                        // no debemos bloquear el fallback del share.
+                    }
                 }
             }
         }
