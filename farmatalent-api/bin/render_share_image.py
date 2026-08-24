@@ -98,7 +98,7 @@ def draw_logo_circle(base: Image.Image, logo_path: str | None, initials: str):
         except Exception:
             pass
 
-    base.alpha_composite(bg, (circle_x, circle_y), mask)
+    base.paste(bg, (circle_x, circle_y), mask)
 
     if not logo_path or not Path(logo_path).exists():
         draw = ImageDraw.Draw(base)
