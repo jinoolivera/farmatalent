@@ -8,7 +8,8 @@ RUN npm ci --prefer-offline
 COPY . .
 
 ARG VITE_API_URL=/api/v1
-RUN VITE_API_URL=${VITE_API_URL} npm run build
+ARG VITE_SHARE_BASE_URL=https://farmatalent.pe
+RUN VITE_API_URL=${VITE_API_URL} VITE_SHARE_BASE_URL=${VITE_SHARE_BASE_URL} npm run build
 
 # ---- serve stage ----
 FROM nginx:1.25-alpine
