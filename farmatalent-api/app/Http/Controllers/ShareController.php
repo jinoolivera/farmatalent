@@ -65,7 +65,12 @@ class ShareController extends Controller
 
         if (! Storage::disk('public')->exists($cacheRelativePath)) {
             try {
-                $this->renderShareImagePng($payload, $cacheRelativePath);
+                $pngBytes = $this->renderShareImagePng($payload, $cacheRelativePath);
+
+                return response($pngBytes, 200, [
+                    'Content-Type' => 'image/png',
+                    'Cache-Control' => 'public, max-age=3600',
+                ]);
             } catch (\Throwable $exception) {
                 if (! app()->environment('testing')) {
                     try {
@@ -165,7 +170,7 @@ class ShareController extends Controller
         return $this->viewFactory->make('share.turno-image', $payload)->render();
     }
 
-    private function renderShareImagePng(array $payload, string $cacheRelativePath): void
+    private function renderShareImagePng(array $payload, string $cacheRelativePath): string
     {
         $cacheAbsolutePath = Storage::disk('public')->path($cacheRelativePath);
         $cacheDirectory = dirname($cacheAbsolutePath);
@@ -189,7 +194,19 @@ class ShareController extends Controller
 
         try {
             $this->runShareImageRenderer($tempPayloadPath, $tempPngPath);
-            Storage::disk('public')->put($cacheRelativePath, file_get_contents($tempPngPath) ?: '');
+            $pngBytes = file_get_contents($tempPngPath);
+            if ($pngBytes === false) {
+                throw new \RuntimeException('No se pudo leer el PNG generado temporalmente.');
+            }
+
+            try {
+                Storage::disk('public')->put($cacheRelativePath, $pngBytes);
+            } catch (\Throwable) {
+                // Si el storage compartido no permite escritura, devolvemos la
+                // imagen generada igualmente y omitimos el cache persistente.
+            }
+
+            return $pngBytes;
         } finally {
             @unlink($tempPayloadPath);
             @unlink($tempPngPath);
