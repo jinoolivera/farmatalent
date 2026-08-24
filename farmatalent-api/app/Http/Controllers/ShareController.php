@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ShareController extends Controller
 {
+    private const SHARE_IMAGE_RENDERER_VERSION = '2026-08-24-2';
+
     public function __construct(
         private readonly ViewFactory $viewFactory,
     ) {
@@ -155,6 +157,7 @@ class ShareController extends Controller
     private function shareImageVersion(ShiftRequest $shift): string
     {
         return md5(implode('|', [
+            self::SHARE_IMAGE_RENDERER_VERSION,
             (string) $shift->updated_at,
             (string) $shift->company?->updated_at,
             (string) $shift->company?->logo_path,
