@@ -2,6 +2,7 @@ FROM php:8.3-fpm-alpine
 
 RUN apk add --no-cache \
     bash git icu-dev libzip-dev oniguruma-dev unzip zip \
+    python3 py3-pillow font-dejavu \
     && docker-php-ext-install intl mbstring pdo_mysql zip opcache
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
