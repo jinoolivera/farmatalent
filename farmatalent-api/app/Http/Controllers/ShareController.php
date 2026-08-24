@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ShareController extends Controller
 {
-    private const SHARE_IMAGE_RENDERER_VERSION = '2026-08-24-2';
+    private const SHARE_IMAGE_RENDERER_VERSION = '2026-08-24-3';
 
     public function __construct(
         private readonly ViewFactory $viewFactory,
@@ -118,12 +118,12 @@ class ShareController extends Controller
 
         $title = $this->wrapText(
             $shift->title ?: $this->professionalLabel($shift->professional_type),
-            25,
-            2,
+            24,
+            3,
         );
 
-        $companyName = $this->wrapText($company?->name ?? 'FarmaTalent', 28, 2);
-        $location = $this->truncateText($shift->location ?: ($company?->address ?? 'Ubicacion por confirmar'), 34);
+        $companyName = $this->wrapText($company?->name ?? 'FarmaTalent', 24, 2);
+        $location = $this->truncateText($shift->location ?: ($company?->address ?? 'Ubicacion por confirmar'), 42);
         $schedule = $this->truncateText($this->buildScheduleLabel($shift), 30);
         $date = $shift->shift_date?->format('d/m/Y') ?? 'Fecha por confirmar';
         $tagline = $shift->coordinacion_chat

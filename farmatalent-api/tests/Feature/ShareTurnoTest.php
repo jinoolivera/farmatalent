@@ -61,6 +61,10 @@ class ShareTurnoTest extends TestCase
 
         $response->assertOk();
         $response->assertHeader('content-type', 'image/png');
-        $this->assertStringStartsWith("\x89PNG", $response->streamedContent() ?: $response->getContent());
+        $content = method_exists($response->baseResponse, 'getContent')
+            ? $response->getContent()
+            : $response->streamedContent();
+
+        $this->assertStringStartsWith("\x89PNG", $content);
     }
 }
