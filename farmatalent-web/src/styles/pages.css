@@ -124,17 +124,26 @@
   transition: transform 160ms, box-shadow 160ms, background 160ms, border-color 160ms;
 }
 .lp-city-feat .lp-shift-mini {
-  background: linear-gradient(180deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,.10) 100%);
-  border-color: rgba(255,255,255,.14);
+  background: linear-gradient(180deg, rgba(255,255,255,.14) 0%, rgba(255,255,255,.08) 100%);
+  border-color: rgba(255,255,255,.12);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
 }
 .lp-shift-mini.recurring {
   background: linear-gradient(135deg, rgba(254,243,199,.55), rgba(255,255,255,.95));
   border-color: rgba(245,158,11,.16);
 }
+.lp-city-feat .lp-shift-mini.recurring {
+  background: linear-gradient(180deg, rgba(120, 53, 15, .24) 0%, rgba(255,255,255,.10) 100%);
+  border-color: rgba(253,224,71,.18);
+}
 .lp-shift-mini:hover {
   transform: translateY(-1px);
   border-color: #86EFAC;
   box-shadow: 0 14px 28px -18px rgba(17,24,39,.30);
+}
+.lp-city-feat .lp-shift-mini:hover {
+  border-color: rgba(255,255,255,.24);
+  box-shadow: 0 16px 30px -20px rgba(6, 18, 42, .52);
 }
 .lp-shift-code {
   width: 42px;
@@ -176,7 +185,7 @@
 .lp-shift-kind.gold { background: rgba(180,83,9,.14); color: #B45309; }
 .lp-shift-role { background: rgba(17,24,39,.06); color: #374151; }
 .lp-city-feat .lp-shift-kind { background: rgba(255,255,255,.16); color: #fff; }
-.lp-city-feat .lp-shift-kind.gold { background: rgba(255,255,255,.18); color: #FEF3C7; }
+.lp-city-feat .lp-shift-kind.gold { background: rgba(253,224,71,.16); color: #FEF3C7; }
 .lp-city-feat .lp-shift-role { background: rgba(255,255,255,.12); color: rgba(255,255,255,.9); }
 .lp-shift-tx b {
   display: block;
@@ -190,7 +199,7 @@
 }
 .lp-city-feat .lp-shift-tx b { color: #fff; }
 .lp-shift-tx span { color: #6B7280; font-size: 11px; display: block; margin-top: 4px; }
-.lp-city-feat .lp-shift-tx span { color: rgba(255,255,255,.75); }
+.lp-city-feat .lp-shift-tx span { color: rgba(255,255,255,.84); }
 .lp-shift-arrow {
   align-self: center;
   width: 34px;
@@ -210,6 +219,10 @@
 .lp-city-feat .lp-shift-arrow { background: rgba(255,255,255,.12); }
 .lp-shift-arrow.gold { color: #B45309; }
 .lp-shift-mini.recurring .lp-shift-arrow { background: rgba(180,83,9,.12); }
+.lp-city-feat .lp-shift-mini.recurring .lp-shift-arrow {
+  background: rgba(253,224,71,.16);
+  color: #FDE68A;
+}
 
 .lp-city-cta { font-size: 13px; font-weight: 600; color: #15803D; display: inline-flex; align-items: center; gap: 6px; margin-top: auto; }
 .lp-city-feat .lp-city-cta { color: #fff; }
