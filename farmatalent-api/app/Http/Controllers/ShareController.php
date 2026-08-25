@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ShiftRequest;
 use Illuminate\Contracts\View\Factory as ViewFactory;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -12,14 +13,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ShareController extends Controller
 {
-    private const SHARE_IMAGE_RENDERER_VERSION = '2026-08-25-2';
+    private const SHARE_IMAGE_RENDERER_VERSION = '2026-08-25-13';
 
     public function __construct(
         private readonly ViewFactory $viewFactory,
     ) {
     }
 
-    public function turno(int $id): View
+    public function turno(Request $request, int $id): View
     {
         $shift = ShiftRequest::with('company')->findOrFail($id);
 
@@ -34,7 +35,7 @@ class ShareController extends Controller
 
         $companyName = $shift->company?->name ?? 'una farmacia';
         $typeLabel = $typeLabels[$shift->professional_type] ?? 'profesional de salud';
-        $location = $shift->location;
+        $location = $this->publicLocationLabel($shift->location ?: $shift->company?->address);
         $time = trim(sprintf('%s%s', substr((string) $shift->starts_at, 0, 5), $shift->ends_at ? '–' . substr((string) $shift->ends_at, 0, 5) : ''));
 
         $title = $shift->title ?: "Turno de {$typeLabel} · {$companyName}";
@@ -54,7 +55,7 @@ class ShareController extends Controller
             'title' => $title,
             'description' => $description,
             'image' => $this->shareImageUrl($shift, $appUrl),
-            'shareUrl' => $appUrl . '/compartir/turno/' . $id,
+            'shareUrl' => $request->fullUrl(),
             'redirectUrl' => $frontendUrl . '/app/turnos/' . $id,
         ]);
     }
@@ -119,14 +120,14 @@ class ShareController extends Controller
         $headline = $this->buildHeadlineParts($displayTitle);
         $companyName = $company?->name ?? 'FarmaTalent';
         $companyLines = $this->wrapText($companyName, 26, 2);
-        $location = $this->truncateText($shift->location ?: ($company?->address ?? 'Ubicacion por confirmar'), 42);
-        $locationShort = $this->shortLocation($location, 26);
+        $location = $this->truncateText($this->publicLocationLabel($shift->location ?: ($company?->address ?? 'Ubicacion por confirmar')), 42);
+        $locationShort = $this->publicLocationLabel($location, 26);
         $schedule = $this->truncateText($this->buildScheduleLabel($shift), 30);
         $date = $shift->shift_date?->format('d/m/Y') ?? 'Fecha por confirmar';
         $tagline = $shift->coordinacion_chat
             ? 'Coordinacion por chat despues del match'
             : 'Postula gratis en FarmaTalent';
-        $companyMeta = 'BOTICA · ' . Str::upper($locationShort ?: 'LIMA');
+        $companyMeta = 'BOTICA · ' . Str::upper($this->truncateText($locationShort ?: 'LIMA', 22));
 
         return [
             'titleLines' => $this->wrapText($displayTitle, 24, 2),
@@ -329,14 +330,14 @@ class ShareController extends Controller
 
     private function shareBackgroundFilePath(): ?string
     {
-        $candidate = realpath(base_path('../farmatalent-web/public/imagen_flayer.jpg'));
+        $candidate = realpath(public_path('images/share/imagen_flayer.jpg'));
 
         return is_string($candidate) && is_file($candidate) ? $candidate : null;
     }
 
     private function farmatalentLogoFilePath(): ?string
     {
-        $candidate = realpath(base_path('../farmatalent-web/public/favicon-512.png'));
+        $candidate = realpath(public_path('images/share/farmatalent-logo.png'));
 
         return is_string($candidate) && is_file($candidate) ? $candidate : null;
     }
@@ -344,18 +345,10 @@ class ShareController extends Controller
     private function shareDisplayTitle(ShiftRequest $shift): string
     {
         $title = trim($shift->title ?: $this->professionalLabel($shift->professional_type));
-        $companyName = trim((string) $shift->company?->name);
-
-        if ($companyName !== '') {
-            $quoted = preg_quote($companyName, '/');
-            $title = preg_replace('/\s*[-|·]\s*' . $quoted . '\b/iu', '', $title) ?? $title;
-            $title = preg_replace('/\b' . $quoted . '\b/iu', '', $title) ?? $title;
-        }
-
-        $title = trim(preg_replace('/\s+/', ' ', $title) ?? '', " \t\n\r\0\x0B-|·");
+        $title = trim(preg_replace('/\s+/', ' ', $title) ?? '');
 
         return $title !== ''
-            ? $this->truncateText($title, 52)
+            ? $this->truncateText($title, 72)
             : $this->professionalLabel($shift->professional_type);
     }
 
@@ -364,28 +357,28 @@ class ShareController extends Controller
         $clean = trim(preg_replace('/\s+/', ' ', $title) ?? '');
         if ($clean === '') {
             return [
-                'main' => 'Buscamos talento',
-                'accent' => 'para tu siguiente turno',
+                'main' => 'Practicante',
+                'accent' => 'Pre-profesional',
             ];
         }
 
-        $segments = $this->wrapText($clean, 22, 2);
-        $main = trim($segments[0] ?? $clean);
-        $accent = trim($segments[1] ?? '');
+        $parts = preg_split('/\s*[-|·]\s*/u', $clean, 2) ?: [];
+        $main = trim($parts[0] ?? $clean);
+        $accent = trim($parts[1] ?? '');
 
         if ($accent === '') {
-            $accent = Str::contains(Str::lower($clean), 'farmacia')
-                ? 'de farmacia'
-                : 'para este turno';
+            $segments = $this->wrapText($clean, 30, 2);
+            $main = trim($segments[0] ?? $clean);
+            $accent = trim($segments[1] ?? '');
         }
 
         return [
-            'main' => 'Buscamos ' . Str::lower($main),
-            'accent' => $accent,
+            'main' => $this->truncateText($main, 40),
+            'accent' => $this->truncateText($accent, 36),
         ];
     }
 
-    private function shortLocation(?string $value, int $limit = 26): string
+    private function publicLocationLabel(?string $value, int $limit = 26): string
     {
         $text = trim(preg_replace('/\s+/', ' ', (string) $value) ?? '');
         if ($text === '') {
@@ -393,7 +386,9 @@ class ShareController extends Controller
         }
 
         $parts = array_values(array_filter(array_map('trim', explode(',', $text))));
-        $short = implode(', ', array_slice($parts, 0, 2));
+        $short = count($parts) >= 2
+            ? implode(', ', array_slice($parts, -2))
+            : ($parts[0] ?? $text);
 
         return $this->truncateText($short !== '' ? $short : $text, $limit);
     }

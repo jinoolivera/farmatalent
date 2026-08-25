@@ -39,6 +39,30 @@ class ShareTurnoTest extends TestCase
         $response->assertDontSee('/images/og-share.png', false);
     }
 
+    public function test_share_page_preserves_versioned_url_for_social_scrapers(): void
+    {
+        $company = Company::query()->create([
+            'name' => 'SmartFarma Campoy',
+            'type' => 'botica',
+        ]);
+
+        $shift = ShiftRequest::query()->create([
+            'company_id' => $company->id,
+            'title' => 'Practicante pre-profesional',
+            'professional_type' => 'intern',
+            'shift_date' => '2026-08-24',
+            'starts_at' => '08:00:00',
+            'ends_at' => '14:00:00',
+            'location' => 'Campoy, SJL',
+            'status' => 'open',
+        ]);
+
+        $response = $this->get('/compartir/turno/' . $shift->id . '?v=fb-cache-bust-1');
+
+        $response->assertOk();
+        $response->assertSee('property="og:url" content="https://farmatalent.pe/compartir/turno/' . $shift->id . '?v=fb-cache-bust-1"', false);
+    }
+
     public function test_share_image_endpoint_returns_png(): void
     {
         $company = Company::query()->create([
