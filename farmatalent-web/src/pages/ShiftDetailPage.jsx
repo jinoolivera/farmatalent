@@ -47,7 +47,7 @@ function shareTurnoOnFacebook(shift) {
     return
   }
 
-  const version = encodeURIComponent(String(shift?.updatedAt ?? shift?.date ?? Date.now()))
+  const version = encodeURIComponent(`${shift?.id ?? 'turno'}-${Date.now()}`)
   const shareUrl = `${baseUrl}/compartir/turno/${shift.id}?v=${version}`
   const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`
   window.open(fbUrl, 'compartir-facebook', 'width=600,height=640,noopener,noreferrer')

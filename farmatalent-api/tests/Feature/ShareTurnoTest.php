@@ -61,6 +61,8 @@ class ShareTurnoTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('property="og:url" content="https://farmatalent.pe/compartir/turno/' . $shift->id . '?v=fb-cache-bust-1"', false);
+        $response->assertSee('/compartir/turno/' . $shift->id . '/imagen.png?v=', false);
+        $response->assertSee('fb-cache-bust-1', false);
     }
 
     public function test_share_image_endpoint_returns_png(): void

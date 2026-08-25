@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ShareController extends Controller
 {
-    private const SHARE_IMAGE_RENDERER_VERSION = '2026-08-25-13';
+    private const SHARE_IMAGE_RENDERER_VERSION = '2026-08-25-14';
 
     public function __construct(
         private readonly ViewFactory $viewFactory,
@@ -54,8 +54,8 @@ class ShareController extends Controller
         return view('share.turno', [
             'title' => $title,
             'description' => $description,
-            'image' => $this->shareImageUrl($shift, $appUrl),
-            'shareUrl' => $request->fullUrl(),
+            'image' => $this->shareImageUrl($shift, $appUrl, (string) $request->query('v', '')),
+            'shareUrl' => $this->normalizedShareUrl($request, $appUrl),
             'redirectUrl' => $frontendUrl . '/app/turnos/' . $id,
         ]);
     }
@@ -151,17 +151,17 @@ class ShareController extends Controller
         ];
     }
 
-    private function shareImageUrl(ShiftRequest $shift, string $appUrl): string
+    private function shareImageUrl(ShiftRequest $shift, string $appUrl, string $shareNonce = ''): string
     {
         $relativePath = route('share.turno.image', [
             'id' => $shift->id,
-            'v' => $this->shareImageVersion($shift),
+            'v' => $this->shareImageVersion($shift, $shareNonce),
         ], false);
 
         return $appUrl . $relativePath;
     }
 
-    private function shareImageVersion(ShiftRequest $shift): string
+    private function shareImageVersion(ShiftRequest $shift, string $shareNonce = ''): string
     {
         return md5(implode('|', [
             self::SHARE_IMAGE_RENDERER_VERSION,
@@ -172,7 +172,16 @@ class ShareController extends Controller
             (string) $shift->location,
             (string) $shift->starts_at,
             (string) $shift->ends_at,
+            $shareNonce,
         ]));
+    }
+
+    private function normalizedShareUrl(Request $request, string $appUrl): string
+    {
+        $baseUrl = preg_replace('/^http:\/\//i', 'https://', rtrim($appUrl, '/')) ?: rtrim($appUrl, '/');
+        $query = $request->getQueryString();
+
+        return $baseUrl . $request->getPathInfo() . ($query ? '?' . $query : '');
     }
 
     private function renderShareImageSvg(array $payload): string
