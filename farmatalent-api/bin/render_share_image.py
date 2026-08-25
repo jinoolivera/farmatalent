@@ -8,10 +8,10 @@ from PIL import Image, ImageDraw, ImageFont
 
 WIDTH = 1200
 HEIGHT = 630
-CARD_X = 18
-CARD_Y = 14
-CARD_WIDTH = WIDTH - (CARD_X * 2)
-CARD_HEIGHT = HEIGHT - (CARD_Y * 2)
+CARD_X = 0
+CARD_Y = 0
+CARD_WIDTH = WIDTH
+CARD_HEIGHT = HEIGHT
 
 
 def load_font(size: int, bold: bool = False, italic: bool = False) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
@@ -301,6 +301,24 @@ def draw_brand_mark(base: Image.Image, x: int, y: int, size: int, logo_path: str
     fallback.ellipse((x + size - 19, y + 7, x + size - 7, y + 19), fill=(91, 176, 122, 255))
 
 
+def draw_soft_panel(base: Image.Image, box, radius: int, fill, outline=None, blur_layers: int = 3):
+    x0, y0, x1, y1 = box
+    layer = Image.new("RGBA", base.size, (0, 0, 0, 0))
+    panel_draw = ImageDraw.Draw(layer)
+    panel_draw.rounded_rectangle(box, radius=radius, fill=fill, outline=outline, width=1 if outline else 0)
+    for step in range(blur_layers):
+        alpha = max(0, fill[3] - ((step + 1) * 10))
+        if alpha <= 0:
+            continue
+        panel_draw.rounded_rectangle(
+            (x0 - step - 1, y0 - step - 1, x1 + step + 1, y1 + step + 1),
+            radius=radius + step + 1,
+            outline=(255, 255, 255, alpha // 5),
+            width=1,
+        )
+    base.alpha_composite(layer)
+
+
 def main():
     if len(sys.argv) != 3:
         print("Usage: render_share_image.py <payload.json> <output.png>", file=sys.stderr)
@@ -312,19 +330,18 @@ def main():
     canvas = Image.new("RGBA", (WIDTH, HEIGHT), (6, 18, 42, 255))
     card = open_cover_image(payload.get("backgroundFilePath"), CARD_WIDTH, CARD_HEIGHT)
 
-    draw_vertical_gradient(card, (0, 0, CARD_WIDTH, CARD_HEIGHT), (6, 18, 42, 82), (6, 18, 42, 136))
-    draw_horizontal_gradient(card, (0, 0, CARD_WIDTH, CARD_HEIGHT), (6, 18, 42, 106), (6, 18, 42, 18))
-    draw_radial_glow(card, (180, 480), 220, (6, 18, 42, 52))
+    draw_vertical_gradient(card, (0, 0, CARD_WIDTH, CARD_HEIGHT), (6, 18, 42, 78), (6, 18, 42, 138))
+    draw_horizontal_gradient(card, (0, 0, CARD_WIDTH, CARD_HEIGHT), (6, 18, 42, 104), (6, 18, 42, 18))
+    draw_radial_glow(card, (220, 500), 260, (6, 18, 42, 52))
     draw_radial_glow(card, (1020, 80), 180, (255, 255, 255, 24))
 
-    card_mask = rounded_mask((CARD_WIDTH, CARD_HEIGHT), 14)
-    canvas.paste(card, (CARD_X, CARD_Y), card_mask)
+    canvas.paste(card, (CARD_X, CARD_Y))
 
     draw = ImageDraw.Draw(canvas)
 
-    inner_x = CARD_X + 52
-    inner_y = CARD_Y + 44
-    logo_size = 56
+    inner_x = CARD_X + 58
+    inner_y = CARD_Y + 34
+    logo_size = 82
 
     draw_logo_circle(
         canvas,
@@ -337,51 +354,52 @@ def main():
     )
 
     company_x = inner_x + logo_size + 18
-    company_name = fit_line(draw, payload.get("companyName", "FarmaTalent"), load_font(22, bold=True), 420)
-    company_meta = fit_line(draw, payload.get("companyMeta", "BOTICA · LIMA"), load_font(10, bold=True), 420)
-    draw.text((company_x, inner_y + 6), company_name, font=load_font(22, bold=True), fill=(255, 255, 255, 255))
-    draw.text((company_x, inner_y + 34), company_meta, font=load_font(10, bold=True), fill=(255, 255, 255, 154))
+    company_name = fit_line(draw, payload.get("companyName", "FarmaTalent"), load_font(32, bold=True), 500)
+    company_meta = fit_line(draw, payload.get("companyMeta", "BOTICA · LIMA"), load_font(13, bold=True), 500)
+    draw.text((company_x, inner_y + 12), company_name, font=load_font(32, bold=True), fill=(255, 255, 255, 255))
+    draw.text((company_x, inner_y + 54), company_meta, font=load_font(13, bold=True), fill=(255, 255, 255, 182))
 
     badge_font = load_font(12, bold=True)
     badge_text = fit_line(draw, payload.get("badgeText", "TURNO ACTIVO"), badge_font, 190)
     badge_w, _ = text_size(draw, badge_text, badge_font)
-    badge_box = (CARD_X + CARD_WIDTH - 220, inner_y + 4, CARD_X + CARD_WIDTH - 32, inner_y + 42)
-    draw.rounded_rectangle(badge_box, radius=19, fill=(242, 109, 125, 255))
-    draw.text((badge_box[0] + ((badge_box[2] - badge_box[0] - badge_w) // 2), badge_box[1] + 11), badge_text, font=badge_font, fill=(59, 9, 18, 255))
+    badge_box = (CARD_X + CARD_WIDTH - 232, inner_y + 16, CARD_X + CARD_WIDTH - 34, inner_y + 60)
+    draw.rounded_rectangle(badge_box, radius=22, fill=(242, 109, 125, 252))
+    draw.text((badge_box[0] + ((badge_box[2] - badge_box[0] - badge_w) // 2), badge_box[1] + 14), badge_text, font=badge_font, fill=(59, 9, 18, 255))
 
-    label_y = CARD_Y + 362
-    draw.text((inner_x, label_y), "REQUERIMIENTO DE PERSONAL", font=load_font(12, bold=True), fill=(126, 226, 168, 255))
+    label_y = CARD_Y + 258
+    draw.text((inner_x, label_y), "REQUERIMIENTO DE PERSONAL", font=load_font(20, bold=True), fill=(126, 226, 168, 255))
 
-    main_font = load_font(52, bold=True)
-    headline_main = fit_line(draw, payload.get("headlineMain", "Buscamos talento"), main_font, 860)
-    draw.text((inner_x, label_y + 38), headline_main, font=main_font, fill=(255, 255, 255, 255))
+    main_font = load_font(62, bold=True)
+    headline_main_lines = wrap_for_width(draw, payload.get("headlineMain", "Buscamos talento"), main_font, 900, 2)
+    headline_y = label_y + 52
+    draw_text_block(draw, headline_main_lines, inner_x, headline_y, 64, main_font, (255, 255, 255, 255))
 
-    accent_font = load_font(28, italic=True)
-    accent_lines = wrap_for_width(draw, payload.get("headlineAccent", "para tu siguiente turno"), accent_font, 820, 2)
-    draw_text_block(draw, accent_lines, inner_x, label_y + 98, 32, accent_font, (181, 217, 196, 255))
+    accent_font = load_font(34, italic=True)
+    accent_lines = wrap_for_width(draw, payload.get("headlineAccent", "para tu siguiente turno"), accent_font, 900, 2)
+    accent_y = headline_y + (len(headline_main_lines) * 64) + 4
+    draw_text_block(draw, accent_lines, inner_x, accent_y, 36, accent_font, (197, 229, 211, 255))
 
-    chip_font = load_font(15, bold=False)
-    chip_y = CARD_Y + 506
+    chip_font = load_font(19, bold=False)
+    chip_y = CARD_Y + 492
     chip_x = inner_x
     chips = [
-        ("pin", f"{payload.get('locationShort', payload.get('location', 'Ubicacion por confirmar'))}"),
         ("clock", f"{payload.get('schedule', 'Horario por confirmar')}"),
         ("calendar", f"{payload.get('date', 'Fecha por confirmar')}"),
     ]
     for chip_icon, chip_text in chips:
-        chip_x += draw_chip(draw, chip_x, chip_y, chip_text, chip_font, chip_icon) + 14
+        chip_x += draw_chip(draw, chip_x, chip_y, chip_text, chip_font, chip_icon) + 16
 
-    cta_box = (inner_x, CARD_Y + 550, inner_x + 248, CARD_Y + 596)
+    cta_box = (inner_x, CARD_Y + 552, inner_x + 290, CARD_Y + 610)
     draw.rounded_rectangle(cta_box, radius=31, fill=(255, 255, 255, 255))
-    draw.text((cta_box[0] + 32, cta_box[1] + 12), "Postula ahora", font=load_font(18, bold=True), fill=(15, 23, 42, 255))
-    draw_arrow_icon(draw, cta_box[0] + 186, cta_box[1] + 11, (15, 23, 42, 255))
+    draw.text((cta_box[0] + 36, cta_box[1] + 17), "Postula ahora", font=load_font(24, bold=True), fill=(15, 23, 42, 255))
+    draw_arrow_icon(draw, cta_box[0] + 224, cta_box[1] + 20, (15, 23, 42, 255))
 
-    footer_x = cta_box[2] + 28
-    footer_y = cta_box[1] - 4
-    draw.text((footer_x, footer_y), "PUBLICADO EN", font=load_font(11, bold=True), fill=(255, 255, 255, 108))
-    brand_y = footer_y + 16
-    draw_brand_mark(canvas, footer_x + 130, brand_y, 24, payload.get("farmatalentLogoFilePath"))
-    draw.text((footer_x + 162, brand_y + 2), "FarmaTalent", font=load_font(16, bold=True), fill=(255, 255, 255, 255))
+    footer_x = cta_box[2] + 34
+    footer_y = cta_box[1] + 14
+    draw.text((footer_x, footer_y), "PUBLICADO EN", font=load_font(12, bold=True), fill=(255, 255, 255, 118))
+    brand_y = footer_y + 18
+    draw_brand_mark(canvas, footer_x + 138, brand_y, 26, payload.get("farmatalentLogoFilePath"))
+    draw.text((footer_x + 174, brand_y + 3), "FarmaTalent", font=load_font(18, bold=True), fill=(255, 255, 255, 236))
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     flattened = Image.alpha_composite(Image.new("RGBA", canvas.size, (6, 18, 42, 255)), canvas)

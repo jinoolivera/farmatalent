@@ -162,7 +162,7 @@ export function ShiftMap({ shifts = [], activeId, onPinClick, userLocation }) {
             `<div class="sm-popup">
               <div class="sm-popup-title">${shift.title}</div>
               <div class="sm-popup-sub">${companyName}${dist}</div>
-              <div class="sm-popup-sub">${shift.location ?? ''}</div>
+              <div class="sm-popup-sub">${shift.publicArea ?? ''}</div>
               <div class="sm-popup-time">${shift.starts_at ?? '?'} – ${shift.ends_at ?? '?'}</div>
             </div>`,
             { maxWidth: 220, closeButton: false }

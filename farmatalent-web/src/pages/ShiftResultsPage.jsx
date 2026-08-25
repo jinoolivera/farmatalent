@@ -31,6 +31,15 @@ const QUICK_CHIPS = [
   { label: '⭐ Match ≥90%',  key: 'high'   },
 ]
 
+const TYPE_LABEL = {
+  pharmacist: 'Químico farmacéutico',
+  pharmacy_technician: 'Técnico farmacia',
+  assistant: 'Auxiliar / apoyo',
+  nurse: 'Enfermero/a',
+  intern: 'Practicante',
+  doctor: 'Médico',
+}
+
 /* ── icons ──────────────────────────────────────────────── */
 const IconSearch = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
@@ -65,6 +74,11 @@ function norm(s, idx) {
   const logoUrl  = logoPath ? `${API_BASE}/storage/${logoPath}` : null
   const meta    = s.metadata ?? {}
   const tags    = meta.tags ?? []
+  const publicArea = meta.district
+    ?? (() => {
+      const parts = String(s.location ?? s.address ?? '').split(',').map((part) => part.trim()).filter(Boolean)
+      return parts.length >= 2 ? parts.slice(-2).join(', ') : (parts[0] ?? '')
+    })()
   return {
     id:              s.id,
     title:           s.title ?? s.role ?? 'Turno',
@@ -77,6 +91,7 @@ function norm(s, idx) {
     startTime:       s.starts_at ?? s.start_time ?? '',
     endTime:         s.ends_at   ?? s.end_time   ?? '',
     address:         s.location  ?? s.address    ?? '',
+    publicArea,
     distanceKm:      s.distance_km ? `${s.distance_km} km` : null,
     urgent:          s.urgent ?? s.priority === 'high',
     recurring:       tags.includes('turno_estable') || s.recurring === true,
@@ -139,18 +154,18 @@ function SearchNav({ user, onLogout }) {
 function ShiftItem({ shift, active, onSelect, onApply, applied, busy }) {
   const matchHigh = (shift.matchPercent ?? 0) >= 90
   return (
-    <div className={`sr-item${active ? ' active' : ''}`} onClick={() => onSelect(shift)}>
+    <article className={`sr-item${active ? ' active' : ''}`}>
       <div className="sr-it-logo" style={{ background: shift.logoUrl ? '#fff' : GRADIENTS[shift.colorIdx] }}>
         {shift.logoUrl
           ? <img src={shift.logoUrl} alt={shift.org} style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 'inherit', padding: 2 }} />
           : shift.orgShort}
       </div>
       <div className="sr-it-body">
-        <div className="sr-it-top">
+        <div className="sr-it-top sr-it-top-link" onClick={() => onSelect(shift)} role="button" tabIndex={0} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onSelect(shift)}>
           <div style={{ minWidth: 0 }}>
             <div className="sr-it-title">{shift.title}</div>
             <div className="sr-it-org">
-              {shift.org}{shift.address ? ` · ${shift.address}` : ''}
+              {shift.org}{shift.publicArea ? ` · ${shift.publicArea}` : ''}
             </div>
           </div>
           {shift.matchPercent != null && (
@@ -166,6 +181,7 @@ function ShiftItem({ shift, active, onSelect, onApply, applied, busy }) {
             <span>🕐 {shift.startTime}{shift.endTime ? `–${shift.endTime}` : ''}</span>
           )}
           {shift.distanceKm && <span>📍 {shift.distanceKm}</span>}
+          {shift.professional_type && <span>👤 {TYPE_LABEL[shift.professional_type] ?? shift.professional_type}</span>}
         </div>
 
         <div className="sr-it-tags">
@@ -174,21 +190,35 @@ function ShiftItem({ shift, active, onSelect, onApply, applied, busy }) {
           {shift.requiresLicense && <span className="sr-tag col">Colegiatura QF</span>}
         </div>
 
+        {shift.description && (
+          <p className="sr-it-desc">
+            {shift.description}
+          </p>
+        )}
+
         <div className="sr-it-pay">
           <div className="sr-pay-est">
             <span className="sr-pay-ico">✓</span>
             {shift.recurring ? 'Posición estable · sin contrato' : 'Tarifa propuesta por la botica'}
           </div>
-          <button
-            className="sr-apply-btn"
-            disabled={applied || busy}
-            onClick={(e) => { e.stopPropagation(); onApply(shift.id) }}
-          >
-            {applied ? 'Postulado' : busy ? '…' : shift.recurring ? 'Postular' : 'Aplicar'}
-          </button>
+          <div className="sr-it-actions">
+            <button
+              className="sr-detail-btn"
+              onClick={(e) => { e.stopPropagation(); onSelect(shift) }}
+            >
+              Ver turno
+            </button>
+            <button
+              className="sr-apply-btn"
+              disabled={applied || busy}
+              onClick={(e) => { e.stopPropagation(); onApply(shift.id) }}
+            >
+              {applied ? 'Postulado' : busy ? '…' : shift.recurring ? 'Postular' : 'Aplicar'}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </article>
   )
 }
 
@@ -220,7 +250,7 @@ function PreviewCard({ shift, applied, busy, onApply, onDetail, onClose }) {
       <div className="sr-pv-bd">
         <h3>{shift.title}</h3>
         <div className="sr-pv-org">
-          📍 {shift.org}{shift.address ? ` · ${shift.address}` : ''}{shift.distanceKm ? ` · ${shift.distanceKm}` : ''}
+          📍 {shift.org}{shift.publicArea ? ` · ${shift.publicArea}` : ''}{shift.distanceKm ? ` · ${shift.distanceKm}` : ''}
         </div>
         <div className="sr-pv-grid">
           {shift.matchPercent != null && (
@@ -306,6 +336,7 @@ export function ShiftResultsPage() {
     district:          searchParams.get('district')          ?? '',
     shift_date:        searchParams.get('shift_date')        ?? '',
     horario:           searchParams.get('horario')           ?? '',
+    selected:          Number(searchParams.get('selected') ?? 0),
     page:              Number(searchParams.get('page') ?? 1),
   }), [searchParams])
 
@@ -388,6 +419,12 @@ export function ShiftResultsPage() {
     if (applicationId) navigate(`/app/match/${applicationId}`)
   }
 
+  function goToShift(shift) {
+    const params = new URLSearchParams(searchParams)
+    params.set('selected', String(shift.id))
+    navigate(`/app/turnos/${shift.id}?${params.toString()}`)
+  }
+
   /* ── lista filtrada y ordenada ──────────────────────────── */
   const displayShifts = useMemo(() => {
     let list = items.map((s, i) => norm(s, i))
@@ -404,8 +441,25 @@ export function ShiftResultsPage() {
     return list
   }, [items, sort, activeChip])
 
-  const coverageCount  = displayShifts.filter((s) => !s.recurring).length
-  const continuidadCount = displayShifts.filter((s) => s.recurring).length
+  const orderedShifts = useMemo(() => {
+    if (!filters.selected) return displayShifts
+    const selectedShift = displayShifts.find((shift) => Number(shift.id) === Number(filters.selected))
+    if (!selectedShift) return displayShifts
+
+    return [
+      selectedShift,
+      ...displayShifts.filter((shift) => Number(shift.id) !== Number(filters.selected)),
+    ]
+  }, [displayShifts, filters.selected])
+
+  useEffect(() => {
+    if (!filters.selected || orderedShifts.length === 0) return
+    const selectedShift = orderedShifts.find((shift) => Number(shift.id) === Number(filters.selected))
+    if (selectedShift) setActiveShift(selectedShift)
+  }, [filters.selected, orderedShifts])
+
+  const coverageCount  = orderedShifts.filter((s) => !s.recurring).length
+  const continuidadCount = orderedShifts.filter((s) => s.recurring).length
 
   /* ── render ─────────────────────────────────────────────── */
   return (
@@ -538,12 +592,12 @@ export function ShiftResultsPage() {
                     <div style={{ fontSize: 13 }}>Probá con otro distrito, profesional o fecha.</div>
                   </div>
                 )
-                : displayShifts.map((shift) => (
+                : orderedShifts.map((shift) => (
                   <ShiftItem
                     key={shift.id}
                     shift={shift}
-                    active={activeShift?.id === shift.id}
-                    onSelect={(s) => setActiveShift(activeShift?.id === s.id ? null : s)}
+                    active={activeShift?.id === shift.id || Number(filters.selected) === Number(shift.id)}
+                    onSelect={goToShift}
                     onApply={handleApply}
                     applied={appliedIds.has(shift.id)}
                     busy={false}
@@ -555,9 +609,9 @@ export function ShiftResultsPage() {
 
         {/* mapa Leaflet (columna derecha) */}
         <ShiftMap
-          shifts={displayShifts}
-          activeId={activeShift?.id}
-          onPinClick={(s) => setActiveShift(activeShift?.id === s.id ? null : s)}
+          shifts={orderedShifts}
+          activeId={activeShift?.id ?? filters.selected}
+          onPinClick={(s) => setActiveShift(s)}
           userLocation={userLocation}
         />
 
@@ -568,7 +622,7 @@ export function ShiftResultsPage() {
             applied={appliedIds.has(activeShift.id)}
             busy={false}
             onApply={handleApply}
-            onDetail={(id) => navigate(`/app/turnos/${id}`)}
+            onDetail={(id) => navigate(`/app/turnos/${id}${location.search}`)}
             onClose={() => setActiveShift(null)}
           />
         )}

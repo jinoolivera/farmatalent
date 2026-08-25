@@ -84,19 +84,35 @@ function DistrictCard({ district, shifts, featured }) {
           const local   = meta.local ?? s.company?.name ?? s.company_name ?? 'Farmacia'
           const time    = `${s.starts_at?.slice(0,5) ?? ''} – ${s.ends_at?.slice(0,5) ?? ''}`
           const stable  = (meta.tags ?? []).includes('turno_estable')
+          const role    = TYPE_LABEL[s.professional_type] ?? 'Profesional'
+          const day     = s.shift_date ?? 'Fecha por definir'
           // Iniciales del establecimiento (ej: "Botica San Marcos" → "BS", "Inkafarma" → "IN")
           const initials = local.split(' ').filter(w => w.length > 1).map(w => w[0]).slice(0,2).join('').toUpperCase() || 'SF'
+          const shiftParams = new URLSearchParams({
+            status: 'open',
+            district,
+            selected: String(s.id),
+          })
           return (
-            <div key={s.id} className={`lp-shift-mini${stable ? ' recurring' : ''}`}>
+            <Link
+              key={s.id}
+              className={`lp-shift-mini${stable ? ' recurring' : ''}`}
+              to={`/app/turnos?${shiftParams.toString()}`}
+            >
               <div className="lp-shift-code" style={stable ? { color: '#B45309' } : {}}>
                 {initials}
               </div>
               <div className="lp-shift-tx">
+                <div className="lp-shift-topline">
+                  <small className={`lp-shift-kind${stable ? ' gold' : ''}`}>{stable ? 'Posición estable' : 'Turno activo'}</small>
+                  <small className="lp-shift-role">{role}</small>
+                </div>
                 <b>{local}</b>
+                <span>{day}</span>
                 <span>{stable ? `★ Posición estable · ${time}` : time}</span>
               </div>
               <div className={`lp-shift-arrow${stable ? ' gold' : ''}`}>{stable ? '★' : '→'}</div>
-            </div>
+            </Link>
           )
         })}
       </div>
