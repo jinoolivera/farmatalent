@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ShareController extends Controller
 {
-    private const SHARE_IMAGE_RENDERER_VERSION = '2026-08-24-3';
+    private const SHARE_IMAGE_RENDERER_VERSION = '2026-08-25-2';
 
     public function __construct(
         private readonly ViewFactory $viewFactory,
@@ -115,25 +115,26 @@ class ShareController extends Controller
     private function buildShareImagePayload(ShiftRequest $shift): array
     {
         $company = $shift->company;
-
-        $title = $this->wrapText(
-            $shift->title ?: $this->professionalLabel($shift->professional_type),
-            24,
-            3,
-        );
-
-        $companyName = $this->wrapText($company?->name ?? 'FarmaTalent', 24, 2);
+        $displayTitle = $this->shareDisplayTitle($shift);
+        $headline = $this->buildHeadlineParts($displayTitle);
+        $companyName = $company?->name ?? 'FarmaTalent';
+        $companyLines = $this->wrapText($companyName, 26, 2);
         $location = $this->truncateText($shift->location ?: ($company?->address ?? 'Ubicacion por confirmar'), 42);
+        $locationShort = $this->shortLocation($location, 26);
         $schedule = $this->truncateText($this->buildScheduleLabel($shift), 30);
         $date = $shift->shift_date?->format('d/m/Y') ?? 'Fecha por confirmar';
         $tagline = $shift->coordinacion_chat
             ? 'Coordinacion por chat despues del match'
             : 'Postula gratis en FarmaTalent';
+        $companyMeta = 'BOTICA · ' . Str::upper($locationShort ?: 'LIMA');
 
         return [
-            'titleLines' => $title,
-            'companyLines' => $companyName,
+            'titleLines' => $this->wrapText($displayTitle, 24, 2),
+            'companyLines' => $companyLines,
+            'companyName' => $companyName,
+            'companyMeta' => $companyMeta,
             'location' => $location,
+            'locationShort' => $locationShort,
             'schedule' => $schedule,
             'date' => $date,
             'professionalType' => $this->professionalLabel($shift->professional_type),
@@ -141,6 +142,11 @@ class ShareController extends Controller
             'logoFilePath' => $this->companyLogoFilePath($company?->logo_path),
             'companyInitials' => $this->companyInitials($company?->name),
             'tagline' => $tagline,
+            'headlineMain' => $headline['main'],
+            'headlineAccent' => $headline['accent'],
+            'badgeText' => $this->shareBadgeText($shift),
+            'backgroundFilePath' => $this->shareBackgroundFilePath(),
+            'farmatalentLogoFilePath' => $this->farmatalentLogoFilePath(),
         ];
     }
 
@@ -319,6 +325,90 @@ class ShareController extends Controller
         }
 
         return Storage::disk('public')->path($path);
+    }
+
+    private function shareBackgroundFilePath(): ?string
+    {
+        $candidate = realpath(base_path('../farmatalent-web/public/imagen_flayer.jpg'));
+
+        return is_string($candidate) && is_file($candidate) ? $candidate : null;
+    }
+
+    private function farmatalentLogoFilePath(): ?string
+    {
+        $candidate = realpath(base_path('../farmatalent-web/public/favicon-512.png'));
+
+        return is_string($candidate) && is_file($candidate) ? $candidate : null;
+    }
+
+    private function shareDisplayTitle(ShiftRequest $shift): string
+    {
+        $title = trim($shift->title ?: $this->professionalLabel($shift->professional_type));
+        $companyName = trim((string) $shift->company?->name);
+
+        if ($companyName !== '') {
+            $quoted = preg_quote($companyName, '/');
+            $title = preg_replace('/\s*[-|·]\s*' . $quoted . '\b/iu', '', $title) ?? $title;
+            $title = preg_replace('/\b' . $quoted . '\b/iu', '', $title) ?? $title;
+        }
+
+        $title = trim(preg_replace('/\s+/', ' ', $title) ?? '', " \t\n\r\0\x0B-|·");
+
+        return $title !== ''
+            ? $this->truncateText($title, 52)
+            : $this->professionalLabel($shift->professional_type);
+    }
+
+    private function buildHeadlineParts(string $title): array
+    {
+        $clean = trim(preg_replace('/\s+/', ' ', $title) ?? '');
+        if ($clean === '') {
+            return [
+                'main' => 'Buscamos talento',
+                'accent' => 'para tu siguiente turno',
+            ];
+        }
+
+        $segments = $this->wrapText($clean, 22, 2);
+        $main = trim($segments[0] ?? $clean);
+        $accent = trim($segments[1] ?? '');
+
+        if ($accent === '') {
+            $accent = Str::contains(Str::lower($clean), 'farmacia')
+                ? 'de farmacia'
+                : 'para este turno';
+        }
+
+        return [
+            'main' => 'Buscamos ' . Str::lower($main),
+            'accent' => $accent,
+        ];
+    }
+
+    private function shortLocation(?string $value, int $limit = 26): string
+    {
+        $text = trim(preg_replace('/\s+/', ' ', (string) $value) ?? '');
+        if ($text === '') {
+            return 'Ubicacion por confirmar';
+        }
+
+        $parts = array_values(array_filter(array_map('trim', explode(',', $text))));
+        $short = implode(', ', array_slice($parts, 0, 2));
+
+        return $this->truncateText($short !== '' ? $short : $text, $limit);
+    }
+
+    private function shareBadgeText(ShiftRequest $shift): string
+    {
+        if (! $shift->shift_date) {
+            return 'TURNO ACTIVO';
+        }
+
+        $daysUntilShift = now()->startOfDay()->diffInDays($shift->shift_date->copy()->startOfDay(), false);
+
+        return $daysUntilShift >= 0 && $daysUntilShift <= 2
+            ? 'CUBRE EN 48 H'
+            : 'TURNO ACTIVO';
     }
 
     private function companyInitials(?string $name): string
