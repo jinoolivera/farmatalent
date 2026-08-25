@@ -1,7 +1,7 @@
 <?php
     $esc = static fn (?string $value): string => e($value ?? '');
-    $titleY = 354;
-    $titleStep = 62;
+    $titleY = 320;
+    $titleStep = 54;
     $companyY = 194;
     $companyStep = 34;
 ?>
@@ -66,32 +66,30 @@
             x="98"
             y="{{ $titleY + ($index * $titleStep) }}"
             fill="#0F172A"
-            font-size="56"
+            font-size="48"
             font-weight="700"
             font-family="Arial, Helvetica, sans-serif"
             letter-spacing="-1.6"
         >{{ $esc($line) }}</text>
     @endforeach
 
-    <rect x="98" y="455" width="262" height="50" rx="25" fill="#0F766E"/>
-    <text x="126" y="487" fill="#FFFFFF" font-size="20" font-weight="700" font-family="Arial, Helvetica, sans-serif">Comparte y postula</text>
-
-    <text x="98" y="518" fill="#475569" font-size="22" font-weight="400" font-family="Arial, Helvetica, sans-serif">{{ $esc($tagline) }}</text>
+    <rect x="98" y="430" width="292" height="50" rx="25" fill="#0F766E"/>
+    <text x="126" y="462" fill="#FFFFFF" font-size="22" font-weight="700" font-family="Arial, Helvetica, sans-serif">Postula en FarmaTalent</text>
 
     <text x="804" y="112" fill="#D1FAE5" font-size="16" font-weight="700" font-family="Arial, Helvetica, sans-serif" letter-spacing="1.8">DETALLES DEL TURNO</text>
     <text x="804" y="152" fill="#FFFFFF" font-size="34" font-weight="700" font-family="Arial, Helvetica, sans-serif">{{ $esc(implode(' ', $companyLines)) }}</text>
 
-    <rect x="804" y="222" width="302" height="126" rx="24" fill="#FFFFFF" fill-opacity=".12"/>
+    <rect x="804" y="222" width="302" height="126" rx="24" fill="#FFFFFF" fill-opacity=".92"/>
     <text x="828" y="246" fill="#D1FAE5" font-size="18" font-weight="700" font-family="Arial, Helvetica, sans-serif">Ubicacion</text>
-    <text x="828" y="286" fill="#FFFFFF" font-size="20" font-weight="400" font-family="Arial, Helvetica, sans-serif">{{ $esc($location) }}</text>
+    <text x="828" y="286" fill="#0F172A" font-size="20" font-weight="400" font-family="Arial, Helvetica, sans-serif">{{ $esc($location) }}</text>
 
-    <rect x="804" y="372" width="142" height="100" rx="24" fill="#FFFFFF" fill-opacity=".12"/>
+    <rect x="804" y="372" width="142" height="100" rx="24" fill="#FFFFFF" fill-opacity=".92"/>
     <text x="828" y="395" fill="#D1FAE5" font-size="17" font-weight="700" font-family="Arial, Helvetica, sans-serif">Horario</text>
-    <text x="828" y="428" fill="#FFFFFF" font-size="28" font-weight="700" font-family="Arial, Helvetica, sans-serif">{{ $esc($schedule) }}</text>
+    <text x="828" y="428" fill="#0F172A" font-size="28" font-weight="700" font-family="Arial, Helvetica, sans-serif">{{ $esc($schedule) }}</text>
 
-    <rect x="964" y="372" width="142" height="100" rx="24" fill="#FFFFFF" fill-opacity=".12"/>
+    <rect x="964" y="372" width="142" height="100" rx="24" fill="#FFFFFF" fill-opacity=".92"/>
     <text x="988" y="395" fill="#D1FAE5" font-size="17" font-weight="700" font-family="Arial, Helvetica, sans-serif">Fecha</text>
-    <text x="988" y="428" fill="#FFFFFF" font-size="20" font-weight="700" font-family="Arial, Helvetica, sans-serif">{{ $esc($date) }}</text>
+    <text x="988" y="428" fill="#0F172A" font-size="20" font-weight="700" font-family="Arial, Helvetica, sans-serif">{{ $esc($date) }}</text>
 
     <rect x="804" y="496" width="302" height="44" rx="22" fill="#064E3B" fill-opacity=".48"/>
     <text x="828" y="524" fill="#DCFCE7" font-size="18" font-weight="700" font-family="Arial, Helvetica, sans-serif">Encuentra personal de salud por turnos</text>
