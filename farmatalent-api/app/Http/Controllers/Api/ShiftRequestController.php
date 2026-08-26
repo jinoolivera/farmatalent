@@ -44,6 +44,10 @@ class ShiftRequestController extends Controller
         $company = Company::findOrFail($data['company_id']);
         $this->authorizeCompanyMember($request, $company);
 
+        if (array_key_exists('metadata', $data)) {
+            $data['metadata'] = array_merge($company->metadata ?? [], $data['metadata'] ?? []);
+        }
+
         $shiftRequest = ShiftRequest::create($data + [
             'created_by' => $request->user()->id,
             'status' => $data['status'] ?? 'open',
@@ -73,7 +77,12 @@ class ShiftRequestController extends Controller
     {
         $this->authorizeCompanyMember($request, $shiftRequest->company);
 
-        $shiftRequest->update($request->validated());
+        $data = $request->validated();
+        if (array_key_exists('metadata', $data)) {
+            $data['metadata'] = array_merge($shiftRequest->metadata ?? [], $data['metadata'] ?? []);
+        }
+
+        $shiftRequest->update($data);
 
         return ShiftRequestResource::make($shiftRequest->fresh(['company'])->loadCount('applications'));
     }

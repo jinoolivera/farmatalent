@@ -30,6 +30,9 @@ class ShiftRequestFormRequest extends FormRequest
             'priority'          => ['sometimes', Rule::in(['low', 'normal', 'high', 'urgent'])],
             'support_type'      => ['sometimes', Rule::in(['shift_coverage', 'campaign', 'inventory', 'customer_care', 'medical_support'])],
             'status'            => ['sometimes', Rule::in(['open', 'in_review', 'assigned', 'completed', 'cancelled'])],
+            'metadata'          => ['sometimes', 'array'],
+            'metadata.lat'      => ['nullable', 'numeric', 'between:-90,90'],
+            'metadata.lng'      => ['nullable', 'numeric', 'between:-180,180'],
         ];
     }
 }

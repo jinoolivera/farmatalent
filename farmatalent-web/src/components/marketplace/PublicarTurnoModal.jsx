@@ -23,6 +23,47 @@ const HORARIOS = [
   { value: 'custom',     label: 'Personalizado…',            start: '',      end: '' },
 ]
 
+const LIMA_CENTER = [-12.0464, -77.0428]
+let leafletCssLoaded = false
+
+function ensureLeafletCss() {
+  if (leafletCssLoaded) return
+  const link = document.createElement('link')
+  link.rel = 'stylesheet'
+  link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
+  document.head.appendChild(link)
+  leafletCssLoaded = true
+}
+
+async function geocodeAddress(query) {
+  const clean = query.trim()
+  if (!clean) return null
+
+  const url = new URL('https://nominatim.openstreetmap.org/search')
+  url.searchParams.set('q', clean)
+  url.searchParams.set('format', 'jsonv2')
+  url.searchParams.set('limit', '1')
+  url.searchParams.set('countrycodes', 'pe')
+
+  const response = await fetch(url.toString(), {
+    headers: {
+      Accept: 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    throw new Error('No se pudo ubicar la dirección en el mapa.')
+  }
+
+  const [first] = await response.json()
+  if (!first?.lat || !first?.lon) return null
+
+  return {
+    lat: Number(first.lat),
+    lng: Number(first.lon),
+  }
+}
+
 function detectHorario(starts, ends) {
   for (const h of HORARIOS) {
     if (h.value !== 'custom' && h.start === starts && h.end === ends) return h.value
@@ -40,9 +81,20 @@ function detectHorario(starts, ends) {
  */
 export function PublicarTurnoModal({ company, shiftData = null, onClose, onSuccess }) {
   const backdropRef = useRef(null)
+  const mapRef = useRef(null)
+  const mapObjRef = useRef(null)
+  const markerRef = useRef(null)
+  const lastResolvedAddressRef = useRef((shiftData?.location ?? company?.address ?? '').trim())
+  const autoLocatedRef = useRef(false)
   const editMode    = shiftData != null
   const [busy, setBusy]   = useState(false)
+  const [locating, setLocating] = useState(false)
   const [error, setError] = useState('')
+  const [coords, setCoords] = useState(() => {
+    const lat = shiftData?.metadata?.lat
+    const lng = shiftData?.metadata?.lng
+    return lat != null && lng != null ? { lat: Number(lat), lng: Number(lng) } : null
+  })
 
   const initHorario = editMode
     ? detectHorario(shiftData.starts_at ?? '', shiftData.ends_at ?? '')
@@ -67,6 +119,27 @@ export function PublicarTurnoModal({ company, shiftData = null, onClose, onSucce
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }))
 
+  async function resolveLocationOnMap(address = form.location, { silent = false } = {}) {
+    const clean = address.trim()
+    if (!clean) return
+
+    if (!silent) setError('')
+    setLocating(true)
+    try {
+      const nextCoords = await geocodeAddress(clean)
+      if (!nextCoords) {
+        if (!silent) setError('No encontramos esa dirección en el mapa. Ajusta el texto o mueve el pin manualmente.')
+        return
+      }
+      setCoords(nextCoords)
+      lastResolvedAddressRef.current = clean
+    } catch (err) {
+      if (!silent) setError(getApiErrorMessage(err, 'No se pudo ubicar la dirección en el mapa.'))
+    } finally {
+      setLocating(false)
+    }
+  }
+
   function handleHorario(val) {
     const preset = HORARIOS.find((h) => h.value === val)
     set('horario', val)
@@ -81,6 +154,95 @@ export function PublicarTurnoModal({ company, shiftData = null, onClose, onSucce
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [onClose])
+
+  useEffect(() => {
+    ensureLeafletCss()
+    let cancelled = false
+
+    import('leaflet').then((L) => {
+      if (cancelled || mapObjRef.current || !mapRef.current) return
+
+      delete L.Icon.Default.prototype._getIconUrl
+      L.Icon.Default.mergeOptions({
+        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      })
+
+      const center = coords ? [coords.lat, coords.lng] : LIMA_CENTER
+      const map = L.map(mapRef.current, {
+        center,
+        zoom: coords ? 15 : 12,
+        zoomControl: true,
+        attributionControl: true,
+      })
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+      }).addTo(map)
+
+      L.control.attribution({ position: 'bottomleft', prefix: false })
+        .addAttribution('© OpenStreetMap')
+        .addTo(map)
+
+      map.on('click', (event) => {
+        setCoords({
+          lat: Number(event.latlng.lat.toFixed(6)),
+          lng: Number(event.latlng.lng.toFixed(6)),
+        })
+      })
+
+      mapObjRef.current = map
+    })
+
+    return () => {
+      cancelled = true
+      if (mapObjRef.current) {
+        mapObjRef.current.remove()
+        mapObjRef.current = null
+        markerRef.current = null
+      }
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!mapObjRef.current) return
+
+    import('leaflet').then((L) => {
+      const map = mapObjRef.current
+      if (!map) return
+
+      if (!coords) {
+        markerRef.current?.remove()
+        markerRef.current = null
+        map.setView(LIMA_CENTER, 12)
+        return
+      }
+
+      const latLng = [coords.lat, coords.lng]
+      if (!markerRef.current) {
+        markerRef.current = L.marker(latLng, { draggable: true }).addTo(map)
+        markerRef.current.on('dragend', () => {
+          const point = markerRef.current.getLatLng()
+          setCoords({
+            lat: Number(point.lat.toFixed(6)),
+            lng: Number(point.lng.toFixed(6)),
+          })
+        })
+      } else {
+        markerRef.current.setLatLng(latLng)
+      }
+
+      map.setView(latLng, Math.max(map.getZoom(), 15), { animate: true })
+    })
+  }, [coords])
+
+  useEffect(() => {
+    const currentAddress = form.location.trim()
+    if (autoLocatedRef.current || coords || !currentAddress) return
+    autoLocatedRef.current = true
+    resolveLocationOnMap(currentAddress, { silent: true })
+  }, [coords, form.location])
 
   function handleBackdrop(e) {
     if (e.target === backdropRef.current) onClose()
@@ -112,6 +274,10 @@ export function PublicarTurnoModal({ company, shiftData = null, onClose, onSucce
         coordinacion_chat: form.coordinacion_chat,
         recurring:         form.recurring,
         description:       form.description.trim() || undefined,
+        metadata:          {
+          ...(shiftData?.metadata ?? {}),
+          ...(coords ? { lat: coords.lat, lng: coords.lng } : {}),
+        },
         status:            'open',
       }
       let res
@@ -235,8 +401,25 @@ export function PublicarTurnoModal({ company, shiftData = null, onClose, onSucce
                 placeholder="Av. Larco 345, Miraflores"
                 value={form.location}
                 onChange={(e) => set('location', e.target.value)}
+                onBlur={() => {
+                  const clean = form.location.trim()
+                  if (clean && clean !== lastResolvedAddressRef.current) {
+                    resolveLocationOnMap(clean, { silent: true })
+                  }
+                }}
                 required
               />
+              <div className="pt-map-actions">
+                <button
+                  type="button"
+                  className="pt-map-btn"
+                  onClick={() => resolveLocationOnMap()}
+                  disabled={locating || !form.location.trim()}
+                >
+                  {locating ? 'Ubicando…' : 'Usar esta dirección en el mapa'}
+                </button>
+                <span className="pt-map-help">También puedes mover el pin manualmente en el mapa.</span>
+              </div>
             </div>
             <div className="pt-field">
               <label className="pt-label">
@@ -253,6 +436,18 @@ export function PublicarTurnoModal({ company, shiftData = null, onClose, onSucce
                 disabled={form.coordinacion_chat}
               />
             </div>
+          </div>
+
+          <div className="pt-field">
+            <label className="pt-label">Ubicación exacta en el mapa</label>
+            <div className="pt-mapbox">
+              <div ref={mapRef} className="pt-mapcanvas" />
+            </div>
+            {coords && (
+              <div className="pt-map-coords">
+                Lat: {coords.lat.toFixed(6)} · Lng: {coords.lng.toFixed(6)}
+              </div>
+            )}
           </div>
 
           {/* Coordinación por chat toggle */}
