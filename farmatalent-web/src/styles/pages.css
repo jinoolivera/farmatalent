@@ -1027,11 +1027,27 @@
 .sd-page { max-width: 900px; margin: 0 auto; }
 .sd-page-wide { max-width: 1360px; }
 .sd-back {
-  display: inline-flex; align-items: center; gap: 6px; background: none; border: 0;
-  color: var(--ft-fg-muted); font-size: 13px; font-weight: 500; cursor: pointer;
-  padding: 0 0 20px; transition: color 160ms;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid var(--ft-border);
+  border-radius: 999px;
+  color: var(--ft-fg);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 10px 16px;
+  margin-bottom: 18px;
+  box-shadow: 0 10px 24px -18px rgba(17,24,39,.26);
+  transition: transform 160ms, box-shadow 160ms, border-color 160ms, background 160ms;
 }
-.sd-back:hover { color: var(--ft-fg); }
+.sd-back:hover {
+  background: #F8FAF8;
+  border-color: #D1D5DB;
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px -18px rgba(17,24,39,.30);
+ }
 .sd-layout { display: grid; grid-template-columns: 1fr 300px; gap: 24px; align-items: flex-start; }
 .sd-layout-explore { grid-template-columns: minmax(0, 1fr) 380px; }
 .sd-maincol { min-width: 0; }
