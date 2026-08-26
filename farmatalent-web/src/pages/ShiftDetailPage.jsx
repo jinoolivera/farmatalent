@@ -57,16 +57,22 @@ function shareTurnoOnFacebook(shift) {
 function shareTurnoOnWhatsApp(shift) {
   const appBaseUrl = window.location.origin.replace(/\/$/, '')
   const detailUrl = `${appBaseUrl}/app/turnos/${shift.id}`
-  const area = shift.publicArea ? `\nZona: ${shift.publicArea}` : ''
-  const schedule = shift.startTime || shift.endTime ? `\nHorario: ${shift.startTime}${shift.endTime ? ` – ${shift.endTime}` : ''}` : ''
-  const date = shift.date ? `\nFecha: ${shift.date}` : ''
-  const role = shift.professional_type ? `\nPerfil: ${TYPE_LABEL[shift.professional_type] ?? shift.professional_type}` : ''
+  const pharmacyName = shift.org || 'Botica por confirmar'
+  const exactLocation = shift.address || shift.location || shift.publicArea || 'Ubicacion por confirmar'
+  const schedule = shift.startTime || shift.endTime ? `${shift.startTime}${shift.endTime ? ` – ${shift.endTime}` : ''}` : 'Horario por confirmar'
+  const date = shift.date || 'Fecha por confirmar'
+  const role = TYPE_LABEL[shift.professional_type] ?? shift.professional_type ?? 'Perfil por confirmar'
   const text = [
-    `Hola, te comparto este turno publicado en FarmaTalent:`,
+    'Hola, te comparto el detalle de esta solicitud de personal publicada en FarmaTalent:',
     '',
-    `${shift.title}`,
-    `Botica: ${shift.org}${area}${date}${schedule}${role}`,
+    `Puesto: ${shift.title}`,
+    `Botica: ${pharmacyName}`,
+    `Perfil requerido: ${role}`,
+    `Fecha: ${date}`,
+    `Horario: ${schedule}`,
+    `Ubicacion: ${exactLocation}`,
     '',
+    'Puedes revisar el detalle completo y ver la ubicacion en el mapa aqui:',
     `Ver detalle: ${detailUrl}`,
   ].join('\n')
 

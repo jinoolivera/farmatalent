@@ -53,12 +53,18 @@ const TYPE_LABEL = {
 function shareHomeOnWhatsApp(mode) {
   const appBaseUrl = window.location.origin.replace(/\/$/, '')
   const homeUrl = `${appBaseUrl}/`
-  const objective = mode === 'profesional'
-    ? 'FarmaTalent conecta profesionales de salud con turnos y posiciones activas en farmacias y boticas del Peru.'
-    : 'FarmaTalent ayuda a farmacias y boticas a cubrir turnos con profesionales verificados en menos tiempo.'
   const text = [
-    'Te comparto FarmaTalent.',
-    objective,
+    'Hola, te comparto FarmaTalent.',
+    '',
+    mode === 'profesional'
+      ? 'Es una plataforma donde puedes encontrar turnos activos y turnos estables en farmacias y boticas, segun el tiempo que tengas disponible.'
+      : 'Es una plataforma para publicar y cubrir turnos con profesionales verificados de una forma mucho mas agil.',
+    '',
+    'Que puedes hacer en FarmaTalent:',
+    '- Ver turnos segun tu tiempo disponible.',
+    '- Encontrar boticas cercanas segun tu ubicacion.',
+    '- Revisar el detalle del turno antes de postular.',
+    '- Coordinar tarifa y horario segun cada oportunidad.',
     '',
     `Exploralo aqui: ${homeUrl}`,
   ].join('\n')
