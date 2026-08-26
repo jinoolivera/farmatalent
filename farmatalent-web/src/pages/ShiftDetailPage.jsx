@@ -33,6 +33,7 @@ const IconClock = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="no
 const IconMapPin = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
 const IconUsers = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
 const IconFacebook = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12.06C22 6.51 17.52 2 12 2S2 6.51 2 12.06c0 5 3.66 9.15 8.44 9.94v-7.03H7.9v-2.91h2.54V9.84c0-2.5 1.49-3.89 3.78-3.89 1.1 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.91h-2.34V22c4.78-.79 8.44-4.94 8.44-9.94z"/></svg>
+const IconWhatsApp = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.07 0C5.52 0 .17 5.35.17 11.9c0 2.1.55 4.16 1.58 5.97L0 24l6.31-1.65a11.84 11.84 0 0 0 5.76 1.47h.01c6.55 0 11.9-5.35 11.9-11.9 0-3.18-1.24-6.16-3.46-8.44ZM12.08 21.8h-.01a9.82 9.82 0 0 1-5.01-1.37l-.36-.21-3.74.98 1-3.65-.24-.37a9.83 9.83 0 0 1-1.5-5.28c0-5.43 4.42-9.85 9.86-9.85 2.63 0 5.11 1.02 6.97 2.88a9.79 9.79 0 0 1 2.88 6.97c0 5.43-4.42 9.85-9.85 9.85Zm5.4-7.36c-.29-.14-1.72-.85-1.98-.95-.27-.1-.46-.14-.65.14-.19.29-.75.95-.92 1.14-.17.19-.34.22-.63.08-.29-.14-1.22-.45-2.33-1.43-.86-.76-1.44-1.7-1.61-1.99-.17-.29-.02-.45.13-.59.13-.13.29-.34.43-.51.14-.17.19-.29.29-.48.1-.19.05-.36-.02-.51-.08-.14-.65-1.57-.89-2.15-.23-.56-.46-.48-.65-.49h-.55c-.19 0-.5.07-.76.36-.26.29-1 1-.99 2.43 0 1.43 1.03 2.81 1.17 3 .14.19 2.02 3.08 4.89 4.31.68.29 1.21.46 1.62.58.68.21 1.31.18 1.8.11.55-.08 1.72-.7 1.96-1.38.24-.68.24-1.26.17-1.38-.07-.12-.26-.19-.55-.33Z"/></svg>
 
 const API_URL = import.meta.env.VITE_API_URL ?? '/api/v1'
 const API_BASE = API_URL.startsWith('http') ? API_URL.replace(/\/api\/v\d+$/, '') : ''
@@ -51,6 +52,25 @@ function shareTurnoOnFacebook(shift) {
   const shareUrl = `${baseUrl}/compartir/turno/${shift.id}?v=${version}`
   const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`
   window.open(fbUrl, 'compartir-facebook', 'width=600,height=640,noopener,noreferrer')
+}
+
+function shareTurnoOnWhatsApp(shift) {
+  const appBaseUrl = window.location.origin.replace(/\/$/, '')
+  const detailUrl = `${appBaseUrl}/app/turnos/${shift.id}`
+  const area = shift.publicArea ? `\nZona: ${shift.publicArea}` : ''
+  const schedule = shift.startTime || shift.endTime ? `\nHorario: ${shift.startTime}${shift.endTime ? ` – ${shift.endTime}` : ''}` : ''
+  const date = shift.date ? `\nFecha: ${shift.date}` : ''
+  const role = shift.professional_type ? `\nPerfil: ${TYPE_LABEL[shift.professional_type] ?? shift.professional_type}` : ''
+  const text = [
+    `Hola, te comparto este turno publicado en FarmaTalent:`,
+    '',
+    `${shift.title}`,
+    `Botica: ${shift.org}${area}${date}${schedule}${role}`,
+    '',
+    `Ver detalle: ${detailUrl}`,
+  ].join('\n')
+
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer')
 }
 
 function normShift(s, idx = 0) {
@@ -382,6 +402,13 @@ export function ShiftDetailPage() {
                   title="Compartir este turno en Facebook"
                 >
                   <IconFacebook /> Compartir en Facebook
+                </button>
+                <button
+                  className="ft-btn sd-share-wa"
+                  onClick={() => shareTurnoOnWhatsApp(shift)}
+                  title="Compartir este turno en WhatsApp"
+                >
+                  <IconWhatsApp /> Compartir en WhatsApp
                 </button>
                 {!isCompany && (
                   <button

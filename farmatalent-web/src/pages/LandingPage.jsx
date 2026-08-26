@@ -50,6 +50,22 @@ const TYPE_LABEL = {
   doctor:              'Dr.',
 }
 
+function shareHomeOnWhatsApp(mode) {
+  const appBaseUrl = window.location.origin.replace(/\/$/, '')
+  const homeUrl = `${appBaseUrl}/`
+  const objective = mode === 'profesional'
+    ? 'FarmaTalent conecta profesionales de salud con turnos y posiciones activas en farmacias y boticas del Peru.'
+    : 'FarmaTalent ayuda a farmacias y boticas a cubrir turnos con profesionales verificados en menos tiempo.'
+  const text = [
+    'Te comparto FarmaTalent.',
+    objective,
+    '',
+    `Exploralo aqui: ${homeUrl}`,
+  ].join('\n')
+
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer')
+}
+
 /* ── tarjeta de distrito ─────────────────────────────────── */
 function DistrictCard({ district, shifts, featured }) {
   const total  = shifts.length
@@ -376,6 +392,16 @@ export function LandingPage() {
               <div className="lp-ava" style={{ background: '#F3F4F6', color: '#4B5563' }}>+</div>
             </div>
             <span><b style={{ color: '#111827' }}>{proCount != null ? `${proCount.toLocaleString('es-PE')}+ profesionales activos` : '50+ profesionales activos'}</b> en Perú</span>
+          </div>
+
+          <div className="lp-share-row">
+            <button
+              type="button"
+              className="lp-btn lp-btn-wa"
+              onClick={() => shareHomeOnWhatsApp(mode)}
+            >
+              Compartir por WhatsApp
+            </button>
           </div>
         </div>
       </section>
